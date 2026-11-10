@@ -5,9 +5,9 @@ Centang hanya bila ada buktinya. Format: `- [x] A0.1 Kerangka proyek · 10 Nov �
 ## A (Darryl): mesin deteksi, engine, repo
 
 - [x] A0.1 Kerangka proyek · 10 Nov · b4af8f2 · CI GitHub tidak jalan (akun terkunci billing), periksa lokal hijau
-- [ ] A0.2 MediaPipe lokal
-- [ ] A0.3 Kontrak sinyal dan sesi
-- [ ] A0.4 Rute dev dan README kerangka
+- [x] A0.2 MediaPipe lokal · 10 Nov · 428a262 · model + WASM termuat dari localhost di browser; kamera asli belum dicoba
+- [x] A0.3 Kontrak sinyal dan sesi · 10 Nov · 428a262 · menunggu review B dan C
+- [x] A0.4 Rute dev dan README kerangka · 10 Nov · 428a262 · /dev/kamera belum dites dengan kamera sungguhan
 - [ ] A1.1 Pelacak wajah
 - [ ] A1.2 Pemilihan wajah anak
 - [ ] A1.3 Pengolah sinyal
