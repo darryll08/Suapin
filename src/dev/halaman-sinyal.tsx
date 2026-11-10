@@ -6,10 +6,7 @@ import type { Sinyal } from "../../bersama/kontrak/sinyal.ts";
 import { bacaAmbang } from "../mesin/ambang.ts";
 import { kunyahAwal, langkahKunyah } from "../mesin/kunyah.ts";
 import { PanelSlider } from "./panel-slider.tsx";
-import { DAFTAR_REKAMAN, bacaJenisSumber, sumberRekaman, sumberSlider } from "./sinyal-palsu.ts";
-
-// Getar rahang saat diam untuk sumber palsu (setara derau ±0,003); ambang siklus jatuh ke batas minimal.
-const GETAR_PALSU = 0.0017;
+import { DAFTAR_REKAMAN, GETAR_PALSU, bacaJenisSumber, sumberRekaman, sumberSlider } from "./sinyal-palsu.ts";
 
 export function HalamanSinyal() {
   const [param, setParam] = useSearchParams();

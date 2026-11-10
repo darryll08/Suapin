@@ -23,7 +23,7 @@ const SELESAI_MS = 4000;
 
 /**
  * Satu langkah per frame. `getarDiam` = simpangan baku rahang saat diam (baseline).
- * aktif: ≥ 3 siklus dalam 3 detik dengan jarak antar siklus 0,4–1,25 detik.
+ * aktif: ≥ 3 siklus dalam 3 detik dengan jarak antar siklus 0,4–1,25 detik, dan siklus terakhir ≤ 1,25 detik lalu.
  * selesai: pernah aktif lalu tidak ada siklus selama 4 detik.
  */
 export function langkahKunyah(
@@ -55,8 +55,10 @@ export function langkahKunyah(
     sebelum = v;
   }
 
+  // Siklus terakhir harus baru (≤ 1,25 s); tanpa ini kunyah dianggap aktif sampai 3 s setelah rahang berhenti.
   const aktif =
     siklus.length >= 3 &&
+    terakhir !== null && s.t - terakhir <= JARAK_MAKS_MS &&
     siklus.every((t, i) => i === 0 || (t - siklus[i - 1] >= JARAK_MIN_MS && t - siklus[i - 1] <= JARAK_MAKS_MS));
   const pernahAktif = k.pernahAktif || aktif;
   const selesai = pernahAktif && terakhir !== null && s.t - terakhir >= SELESAI_MS;

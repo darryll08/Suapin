@@ -31,6 +31,15 @@ Tulis bagianmu di akhir setiap titik integrasi: apa yang jadi, apa yang belum, k
 - `/dev/kamera` sekarang alat gerbang: pilih sisi pengasuh, kalibrasi 3 detik, ketuk wajah di pratinjau, tombol Suap pencatat (jendela 3 detik sebelum + 12 detik sesudah), statistik lama buka + usulan `batasBukaDetik`, Rekam sinyal → unduh JSON, Unduh log.
 - Rekaman gerbang yang diunduh disimpan di `uji/mesin/data/`; otomatis muncul sebagai `?sumber=rekaman:<nama>` dan dipakai tes regresi A2.2.
 - `sisiPengasuh` didefinisikan dari arah anak menghadap layar (Guidelines 10.7). Tanda yaw mentah = konstanta `TANDA_YAW_KANAN_ANAK` di `src/deteksi/sinyal.ts`, diverifikasi saat gerbang.
+
+**Engine sesi · 11 Nov 2026**
+
+- A2.2 `src/mesin/sesi.ts`: state machine murni `next(keadaan, kejadian, konteks)`, 12 status sesuai II.6.5. Tampilan dibaca lewat `tampilan()`, hasil lewat `hasilSesi()`. Kalibrasi 3 detik diatur engine sendiri (perintah `kalibrasi`), jadi tidak ada kejadian `kalibrasi_selesai`. Tidak ada angka ambang di file ini (K10).
+- Keputusan saat membangun: (1) kunyah dianggap aktif hanya bila siklus terakhir ≤ 1,25 detik lalu, supaya suapan berikutnya tidak ditolak "masih ngunyah" sampai 3 detik setelah rahang berhenti; (2) wajah hilang > 1,5 detik hanya menghentikan MENUNGGU_SUAP dan JEDA_KUNYAH; (3) dugaan ngemut hanya bila belum ada kunyahan sejak jeda mulai dan mulut tertutup 15 detik; (4) Ya pada ngemut mengubah suapan terakhir jadi `ngemut` (dikoreksi); (5) teks "jangan dibujuk" dihapus saat suapan diterima.
+- A2.3 `src/mesin/use-sesi-makan.ts`: `useSesiMakan({ aturan, sisiPengasuh, sumber, video, anak })` → `{ tampilan, hasil, galat, fps, slider, mulai, tekan, selesaiPemanasan, pilihWajahDiTitik }`. `sumber = null` = tanpa kamera. Bila kamera gagal, sesi lanjut otomatis dalam mode tombol pengasuh dan `galat` berisi pesannya. `aturan` cukup `{ max_minutes, end_after_refusal_minutes, stage, ngemut_hint }` (cocok dengan `AturanSchema` C). Pemutaran klip, Wake Lock, dan izin audio tetap di layar B.
+- A2.4 `src/mesin/tahap.ts`: `saklarTahap(stage)` sesuai II.7.
+- `/dev/sesi?sumber=slider|rekaman:contoh|kamera|tanpa&tahap=1..4&sisi=kiri|kanan`: satu sesi penuh dengan tampilan angka. Teruji di browser: slider (kalibrasi → pemanasan → giliran → diterima → jeda redup → menolak → stop → hasil lolos skema), tanpa kamera + tahap 3 (layar hitam, Suap → tadi masuk → Ya → diterima dikoreksi).
+- 66 tes lolos, termasuk semua kasus wajib A2.2 dan rekaman contoh (3 diterima, 1 ditolak).
 - **Satya:** karakter bisa dikembangkan dengan `/dev/sinyal?sumber=rekaman:contoh` atau slider. `SumberSinyal` dan `PanelSlider` siap dipakai di `/sesi`.
 - **Adit:** ganti `KirimanSesiSchema` di `api.ts` dengan `SesiSelesaiSchema` dari `bersama/kontrak/sesi.ts`.
 

@@ -5,6 +5,9 @@ import type { SumberSinyal } from "../deteksi/sumber-kamera.ts";
 
 const INTERVAL_MS = 50; // 20 fps, sama dengan kamera
 
+/** Getar rahang saat diam untuk sumber palsu (setara derau ±0,003); ambang siklus jatuh ke batas minimal. */
+export const GETAR_PALSU = 0.0017;
+
 export type NilaiSlider = Omit<Sinyal, "t">;
 
 export type SumberSlider = SumberSinyal & {
