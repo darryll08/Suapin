@@ -4,7 +4,7 @@ Centang hanya bila ada buktinya. Format: `- [x] A0.1 Kerangka proyek · 10 Nov �
 
 ## A (Darryl): mesin deteksi, engine, repo
 
-- [ ] A0.1 Kerangka proyek
+- [x] A0.1 Kerangka proyek · 10 Nov · b4af8f2 · CI GitHub tidak jalan (akun terkunci billing), periksa lokal hijau
 - [ ] A0.2 MediaPipe lokal
 - [ ] A0.3 Kontrak sinyal dan sesi
 - [ ] A0.4 Rute dev dan README kerangka

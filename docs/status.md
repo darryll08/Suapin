@@ -16,7 +16,15 @@ Tulis bagianmu di akhir setiap titik integrasi: apa yang jadi, apa yang belum, k
 
 ## A (Darryl)
 
-_(belum ada)_
+**I0 · 10 Nov 2026**
+
+- A0.1 kerangka di-push (b4af8f2). Kode Adit (66d2bf5) di-revert oleh Adit sendiri; Adit push ulang di atas kerangka.
+- A0.2: `public/mediapipe/face_landmarker.task` (float16 v1, 3.758.596 byte, sha256 `64184e22…bc9ff`) di-commit. WASM disalin `postinstall`. Diuji di browser: model + WASM termuat dari localhost dalam ±0,8 detik, tidak ada request ke luar localhost.
+- A0.3: `bersama/kontrak/sinyal.ts`, `sesi.ts` (persis jobdesk 2.2–2.3; `SesiSelesaiSchema` memakai `z.strictObject` dan `z.iso.datetime()` karena gaya lama sudah usang di Zod 4). Rekaman contoh `bersama/kontrak/contoh/rekaman-sinyal.json` dibuat skrip `uji/mesin/buat-rekaman-contoh.ts` (30 detik, 20 fps: 3 suapan, 1 menoleh menjauh, 2 detik tidak terlihat). Tes `uji/mesin/kontrak.test.ts` 8 kasus, termasuk K5 (kolom `landmark` ditolak).
+- `sesi.ts` butuh `IdKlip` dan `IdTeks`, jadi A mengisi awal `bersama/konten/klip.ts` dan `teks.ts` dengan daftar id dan kalimat draf dari jobdesk 2.6. **Satya: file ini milikmu**, silakan lanjutkan (variasi, sapaan lain, `makanan.ts`). Id yang ada tidak boleh dihapus.
+- A0.4: `/dev/kamera` (lazy, tidak ikut bundle utama) menampilkan pratinjau, fps, jumlah wajah, `jawOpen`, yaw mentah. `src/deteksi/pelacak.ts` = versi dasar A1.1 (GPU dengan cadangan CPU, 640×480, dibatasi 20 fps, pesan galat kamera Indonesia).
+- **Belum diuji dengan kamera sungguhan** (panel browser Claude memblokir kamera). Darryl: buka `/dev/kamera` di Chrome laptop final, pastikan `jawOpen` naik saat mulut dibuka dan fps ≥ 15.
+- **Adit:** ganti `KirimanSesiSchema` di `api.ts` dengan `SesiSelesaiSchema` dari `bersama/kontrak/sesi.ts`.
 
 ## B (Satya)
 
