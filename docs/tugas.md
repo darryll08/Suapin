@@ -14,9 +14,9 @@ Centang hanya bila ada buktinya. Format: `- [x] A0.1 Kerangka proyek · 10 Nov �
 - [x] A1.4 Sumber sinyal palsu · 11 Nov · 0c7e44c · tes lolos; belum dicoba dengan kamera sungguhan
 - [ ] A1.5 Gerbang go/no-go (≤ 11 Nov 12.00)
 - [x] A2.1 Penghitung kunyahan · 11 Nov · 0c7e44c · tes lolos; belum dicoba dengan kamera sungguhan
-- [ ] A2.2 State machine sesi
-- [ ] A2.3 Hook `useSesiMakan`
-- [ ] A2.4 Saklar tahap
+- [x] A2.2 State machine sesi · 11 Nov · 89df866 · tes lolos, /dev/sesi teruji dengan slider dan tanpa kamera; kamera asli belum
+- [x] A2.3 Hook `useSesiMakan` · 11 Nov · 89df866 · tes lolos, /dev/sesi teruji dengan slider dan tanpa kamera; kamera asli belum
+- [x] A2.4 Saklar tahap · 11 Nov · 89df866 · tes lolos, /dev/sesi teruji dengan slider dan tanpa kamera; kamera asli belum
 - [ ] A3.1 Panel ambang
 - [ ] A3.2 Tuning dan uji akurasi
 - [ ] A4.1 Vercel + Turso (bonus)
