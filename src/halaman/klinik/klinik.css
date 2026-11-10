@@ -1,0 +1,78 @@
+.suapin-klinik {
+  --klinik-nasi: var(--color-latar, #faf6ee);
+  --klinik-ubi: var(--color-ungu, #4b2e5a);
+  --klinik-ungu-muda: var(--color-ungu-muda, #6e5a78);
+  --klinik-jagung: var(--color-jagung-tua, #8a5f0b);
+  box-sizing: border-box;
+  width: min(100%, 1024px);
+  margin-inline: auto;
+  padding: clamp(16px, 4vw, 40px);
+  color: var(--klinik-ubi);
+  background: var(--klinik-nasi);
+  overflow-wrap: anywhere;
+  font-family: var(--font-isi, system-ui, sans-serif);
+}
+.suapin-klinik h1 { margin-block: 16px; font-size: clamp(1.5rem, 4vw, 2.25rem); }
+.suapin-klinik h2 { margin-block: 0 12px; font-size: 1.25rem; }
+.suapin-klinik a { color: inherit; }
+.suapin-klinik :focus-visible { outline: 3px solid var(--klinik-ubi); outline-offset: 3px; }
+.suapin-klinik .suapin-merek { font-weight: 800; }
+.suapin-klinik .suapin-kartu {
+  min-width: 0;
+  background: #fffdf8;
+  border: 1px solid #c9b79c;
+  border-radius: 16px;
+  padding: clamp(12px, 3vw, 24px);
+  margin-block: 16px;
+}
+.suapin-baris, .suapin-aksi { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.suapin-baris { justify-content: space-between; }
+.suapin-masuk { min-height: 75vh; display: grid; place-items: center; }
+.suapin-masuk .suapin-kartu { width: min(100%, 400px); box-sizing: border-box; }
+.suapin-klinik form, .suapin-kolom-resep { display: grid; gap: 12px; }
+.suapin-klinik label { display: block; font-weight: 600; }
+.suapin-klinik :is(input, textarea, select) {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  color: inherit;
+  background: #fffdf8;
+  border: 1px solid var(--klinik-ungu-muda);
+  padding: 10px;
+  border-radius: 8px;
+  font: inherit;
+}
+.suapin-klinik :is(button, .suapin-tombol) {
+  display: inline-grid;
+  place-items: center;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--klinik-ubi);
+  border-radius: 10px;
+  background: #fffdf8;
+  font: inherit;
+  color: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.suapin-klinik button.suapin-utama { background: var(--klinik-ubi); color: #fffdf8; }
+.suapin-klinik button:disabled { opacity: 0.55; cursor: default; }
+.suapin-klinik :is([role="alert"], .suapin-peringatan) { color: var(--klinik-jagung); }
+.suapin-klinik [aria-invalid="true"] { border-color: var(--klinik-jagung); background: #fbefd2; }
+.suapin-pil { display: inline-block; background: #eee7f1; border-radius: 999px; padding: 4px 10px; }
+.suapin-pil.suapin-peringatan { background: #fbefd2; }
+.suapin-pasien { list-style: none; padding: 0; }
+.suapin-kolom { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); align-items: center; gap: 8px; }
+.suapin-kolom.suapin-kartu { text-decoration: none; }
+.suapin-resep { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 20px; }
+.suapin-kolom-resep { margin-block: 12px; gap: 4px; }
+.suapin-teks-asli { white-space: pre-wrap; }
+.suapin-tabel { max-width: 100%; overflow-x: auto; }
+.suapin-tabel table { width: 100%; min-width: 38rem; overflow-wrap: normal; border-collapse: collapse; text-align: left; font-variant-numeric: tabular-nums; }
+.suapin-tabel :is(th, td) { padding: 8px; border-bottom: 1px solid #c9b79c; }
+.suapin-tabel tbody tr:nth-child(even) { background: var(--klinik-nasi); }
+@media (max-width: 1023px) { .suapin-resep { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 700px) {
+  .suapin-kolom { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .suapin-kolom[aria-hidden="true"] { display: none; }
+}
