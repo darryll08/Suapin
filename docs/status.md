@@ -24,6 +24,14 @@ Tulis bagianmu di akhir setiap titik integrasi: apa yang jadi, apa yang belum, k
 - `sesi.ts` butuh `IdKlip` dan `IdTeks`, jadi A mengisi awal `bersama/konten/klip.ts` dan `teks.ts` dengan daftar id dan kalimat draf dari jobdesk 2.6. **Satya: file ini milikmu**, silakan lanjutkan (variasi, sapaan lain, `makanan.ts`). Id yang ada tidak boleh dihapus.
 - A0.4: `/dev/kamera` (lazy, tidak ikut bundle utama) menampilkan pratinjau, fps, jumlah wajah, `jawOpen`, yaw mentah. `src/deteksi/pelacak.ts` = versi dasar A1.1 (GPU dengan cadangan CPU, 640×480, dibatasi 20 fps, pesan galat kamera Indonesia).
 - **Belum diuji dengan kamera sungguhan** (panel browser Claude memblokir kamera). Darryl: buka `/dev/kamera` di Chrome laptop final, pastikan `jawOpen` naik saat mulut dibuka dan fps ≥ 15.
+
+**Menuju gerbang · 11 Nov 2026 dini hari**
+
+- A1.1–A1.4 dan A2.1 selesai: `src/deteksi/` (pelacak, pilih-wajah, baseline, sinyal, sumber-kamera), `src/mesin/ambang.ts` (semua angka ambang, simpan di `localStorage` `tm_ambang_v1`), `src/mesin/kunyah.ts`, `src/dev/sinyal-palsu.ts` + `/dev/sinyal` + `PanelSlider`. 37 tes lolos.
+- `/dev/kamera` sekarang alat gerbang: pilih sisi pengasuh, kalibrasi 3 detik, ketuk wajah di pratinjau, tombol Suap pencatat (jendela 3 detik sebelum + 12 detik sesudah), statistik lama buka + usulan `batasBukaDetik`, Rekam sinyal → unduh JSON, Unduh log.
+- Rekaman gerbang yang diunduh disimpan di `uji/mesin/data/`; otomatis muncul sebagai `?sumber=rekaman:<nama>` dan dipakai tes regresi A2.2.
+- `sisiPengasuh` didefinisikan dari arah anak menghadap layar (Guidelines 10.7). Tanda yaw mentah = konstanta `TANDA_YAW_KANAN_ANAK` di `src/deteksi/sinyal.ts`, diverifikasi saat gerbang.
+- **Satya:** karakter bisa dikembangkan dengan `/dev/sinyal?sumber=rekaman:contoh` atau slider. `SumberSinyal` dan `PanelSlider` siap dipakai di `/sesi`.
 - **Adit:** ganti `KirimanSesiSchema` di `api.ts` dengan `SesiSelesaiSchema` dari `bersama/kontrak/sesi.ts`.
 
 ## B (Satya)

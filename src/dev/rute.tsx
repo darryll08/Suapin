@@ -4,4 +4,5 @@ import type { RouteObject } from "react-router";
 
 export const rutDev: RouteObject[] = [
   { path: "/dev/kamera", lazy: async () => ({ Component: (await import("./halaman-kamera.tsx")).HalamanKamera }) },
+  { path: "/dev/sinyal", lazy: async () => ({ Component: (await import("./halaman-sinyal.tsx")).HalamanSinyal }) },
 ];
