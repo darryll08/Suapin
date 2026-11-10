@@ -1,0 +1,52 @@
+{
+  "name": "suapin",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n web,api \"vite\" \"tsx watch server/dev.ts\"",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "oxlint",
+    "uji": "vitest run",
+    "periksa": "tsc -b && oxlint && vitest run && vite build",
+    "db:generate": "drizzle-kit generate",
+    "db:migrasi": "drizzle-kit migrate",
+    "db:seed": "tsx server/db/seed.ts",
+    "klip": "tsx scripts/buat-klip.ts",
+    "postinstall": "node scripts/salin-mediapipe.mjs"
+  },
+  "dependencies": {
+    "@hono/node-server": "2.1.6",
+    "@libsql/client": "0.18.0",
+    "@mediapipe/tasks-vision": "1.2.2",
+    "bcryptjs": "3.0.3",
+    "drizzle-orm": "0.45.4",
+    "hono": "4.13.17",
+    "openai": "7.55.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-router": "8.5.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.3.5",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "@vitest/coverage-v8": "5.1.0",
+    "concurrently": "10.0.7",
+    "drizzle-kit": "0.31.11",
+    "oxlint": "1.93.0",
+    "tailwindcss": "4.3.5",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vite": "8.3.7",
+    "vite-plugin-pwa": "2.0.0",
+    "vitest": "5.1.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

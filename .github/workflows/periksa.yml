@@ -1,0 +1,26 @@
+# Cek tipe, lint, tes, dan build untuk setiap push dan PR, siapa pun penulisnya.
+# Bila merah, tanda silang muncul di commit penulisnya di GitHub.
+# Deploy Vercel (kartu A4.1, bonus) ditambahkan sebagai job terpisah bila jadi.
+name: Periksa
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: periksa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  periksa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run periksa

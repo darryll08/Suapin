@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 140" width="1280" height="280" font-family="system-ui,sans-serif" font-size="13"><title>Palet Suapin</title><rect width="640" height="140" fill="#FFFFFF"/>
+<rect x="10" y="10" width="145" height="80" rx="8" fill="#FAF6EE" stroke="#C9B79C"/><rect x="165" y="10" width="145" height="80" rx="8" fill="#E0A526"/><rect x="320" y="10" width="145" height="80" rx="8" fill="#4B2E5A"/><rect x="475" y="10" width="145" height="80" rx="8" fill="#C9B79C"/>
+<text x="82" y="115" text-anchor="middle" fill="#4B2E5A">Nasi #FAF6EE</text><text x="237" y="115" text-anchor="middle" fill="#4B2E5A">Jagung manis #E0A526</text><text x="392" y="115" text-anchor="middle" fill="#4B2E5A">Ubi ungu #4B2E5A</text><text x="547" y="115" text-anchor="middle" fill="#4B2E5A">Kerupuk #C9B79C</text>
+</svg>

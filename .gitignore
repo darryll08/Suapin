@@ -1,0 +1,36 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Suapin
+.env*
+!.env.example
+*.db
+*.db-journal
+.vercel
+coverage
+# Dibuat ulang oleh postinstall (scripts/salin-mediapipe.mjs)
+public/mediapipe/wasm/
+# Catatan lokal agen AI (tidak di-commit)
+CLAUDE.local.md
