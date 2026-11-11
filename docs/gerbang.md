@@ -5,6 +5,7 @@ Pemilik: A (Darryl). Batas: 11 Nov 2026 12.00 WIB. Kriteria dari `docs/produk/Su
 - Laptop: _(merek/model, browser, versi)_
 - Pencahayaan: _(ruangan, lampu)_
 - Penguji: 3 anggota tim dewasa, 10 percobaan per uji. Rekaman per uji di `uji/mesin/data/`.
+- Cara: di `/dev/kamera` pilih uji → Kalibrasi → Rekam sinyal → 10× Suap (tombol atau Spasi) → Berhenti & unduh rekaman (dua file: `.json` + `.suap.json`, izinkan unduhan ganda di Chrome). Salin keduanya ke `uji/mesin/data/`, lalu `npx tsx uji/mesin/akurasi.ts` mencetak tabel di bawah.
 
 | Uji | Lolos jika | Darryl | Satya | Adit | Total | Lolos? |
 |---|---|---|---|---|---|---|

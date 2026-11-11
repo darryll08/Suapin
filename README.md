@@ -8,7 +8,11 @@ Tim BOOMERANG, Universitas Airlangga · LOGICODIX Hackathon 2026 · Web App, Inc
 
 ## Ringkasan
 
-_(diisi)_
+Banyak balita sulit makan (gerakan tutup mulut), dan cara paling umum di rumah adalah menyuapi sambil menonton video. Suapin mengganti tontonan pasif itu dengan permainan bergiliran: karakter menggigit, lalu giliran anak. Kamera membaca mulut anak langsung di browser, karakter meniru mulut anak, lalu merayakan saat suapan diterima. Saat anak menolak, karakter menanggapi dengan datar, supaya penolakan tidak menjadi hadiah.
+
+Bantuan layar dikurangi dalam empat tahap sampai pengasuh menjalankan ritual makan tanpa aplikasi. Keluarga bisa memakai program bawaan sendiri, atau membagikan laporan ke dokter. Dokter menulis aturan makan dengan bahasa bebas, AI mengubahnya menjadi aturan terstruktur, dan sesi keluarga ikut berubah setelah dokter mengonfirmasi.
+
+Suapin tidak mendiagnosis, tidak memberi resep makanan, dan tidak menggantikan dokter.
 
 ## Cara menjalankan (lokal)
 
@@ -101,11 +105,31 @@ Video kamera tidak pernah keluar dari perangkat.
 
 ## Fitur AI
 
-_(diisi)_
+| Fitur | Teknologi | Di mana jalan |
+|---|---|---|
+| Membaca mulut, rahang, dan arah kepala anak | MediaPipe `FaceLandmarker` (blendshape `jawOpen`, landmark, matriks pose) | Browser, di perangkat |
+| Aturan makan dari kalimat dokter | OpenAI, structured output, divalidasi skema dan rentang aman | Server |
+| Ringkasan mingguan untuk keluarga dan dokter | OpenAI, dengan cadangan cache dan template | Server |
+
+**Cara kerja deteksi.** Setiap frame kamera diolah menjadi satu sinyal `{ mulut, rahang, yaw, nangis, terlihat }` (`src/deteksi/`). Nilai normal tiap anak diukur terus dari beberapa detik terakhir (baseline bergulir), karena balita jarang mau diam untuk kalibrasi. Bila dua wajah masuk kamera, wajah anak dipilih saat kalibrasi lalu dilacak dari posisi dan ukurannya.
+
+Sinyal masuk ke state machine sesi (`src/mesin/sesi.ts`), sebuah fungsi murni tanpa waktu sistem atau DOM sehingga bisa dites tanpa kamera:
+
+- **Diterima:** mulut terbuka lalu menutup di jendela penilaian setelah tombol Suap, termasuk mulut yang sudah terbuka sebelum Suap ditekan, dan kepala tidak menoleh menjauhi pengasuh.
+- **Menolak:** kepala menoleh menjauhi sisi pengasuh, atau mulut tidak pernah terbuka.
+- **Tidak pasti:** pengasuh ditanya "Tadi masuk?". Sistem tidak menebak bila sinyal tidak jelas.
+- **Kunyahan** dihitung dari gerak rahang, juga saat bibir tertutup. Kunyahan hanya dipakai untuk animasi dan akhir jeda kunyah, bukan untuk menentukan hasil suapan.
+
+Semua ambang ada di satu tempat (`src/mesin/ambang.ts`) dan bisa disetel saat aplikasi jalan lewat `/dev/ambang`, tanpa mengubah kode.
 
 ## Privasi dan etika
 
-_(diisi)_
+- Video kamera diproses di browser dan tidak pernah direkam atau dikirim. Model dan WASM MediaPipe disajikan dari server lokal.
+- Yang dikirim ke server hanya angka sesi: waktu, hasil tiap suapan, durasi. Skema `SesiSelesai` menolak kolom tambahan, jadi landmark atau gambar tidak bisa ikut terkirim.
+- Kunci API hanya di server. Browser tidak pernah memanggil OpenAI.
+- Teks buatan AI selalu diberi label. Aturan hasil AI baru berlaku setelah dokter mengonfirmasi.
+- Skrining tanda bahaya wajib sebelum jalur mandiri dimulai. Hadiah berupa stiker karena mau mencoba, bukan karena porsi habis.
+- Program sengaja mengurangi layar sampai anak makan tanpa aplikasi.
 
 ## Bahan persiapan
 
@@ -122,7 +146,18 @@ _(diisi dari `docs/gerbang.md` dan `docs/hasil-uji.md`)_
 ## Kontribusi anggota
 
 ### Darryl (A)
-_(diisi)_
+
+Mesin deteksi dan engine sesi, kerangka repo, dan alat uji. Claude Code membantu menulis kode dan tes; pengujian kamera dan keputusan ambang dilakukan sendiri.
+
+- **Deteksi** (`src/deteksi/`): kamera dan `FaceLandmarker` lokal (GPU dengan cadangan CPU), pemilihan wajah anak, pengolah sinyal, baseline bergulir.
+- **Engine** (`src/mesin/`): state machine sesi, penghitung kunyahan, saklar tahap lepas layar, hook `useSesiMakan` yang dipakai layar sesi, dan satu objek ambang.
+- **Alat uji** (`src/dev/`, `uji/mesin/`): sumber sinyal palsu (slider dan rekaman ulang) supaya layar bisa dibangun tanpa kamera, `/dev/kamera` untuk gerbang, `/dev/ambang` untuk menyetel ambang dan reset demo, serta skrip `uji/mesin/akurasi.ts` yang memutar ulang rekaman ke engine.
+- **Kerangka repo:** Vite, TypeScript strict, kontrak Zod untuk sinyal dan sesi, `npm run periksa`, PWA dasar.
+
+**Keputusan teknis.**
+- **Hasil suapan dari mulut buka-lalu-tutup, bukan kunyahan.** Kunyahan dengan bibir tertutup sulit dibaca, sedangkan momen mulut menutup di sendok terlihat jelas.
+- **Engine sebagai fungsi murni.** Semua waktu datang dari kejadian, sehingga rekaman kamera bisa diputar ulang dan hasilnya selalu sama.
+- **Ambang bisa disetel tanpa kode**, karena kode beku setelah submit sedangkan cahaya ruangan saat final bisa berbeda.
 
 ### Wayan Satya (B)
 

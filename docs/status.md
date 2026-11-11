@@ -43,6 +43,15 @@ Tulis bagianmu di akhir setiap titik integrasi: apa yang jadi, apa yang belum, k
 - **Satya:** karakter bisa dikembangkan dengan `/dev/sinyal?sumber=rekaman:contoh` atau slider. `SumberSinyal` dan `PanelSlider` siap dipakai di `/sesi`.
 - **Adit:** ganti `KirimanSesiSchema` di `api.ts` dengan `SesiSelesaiSchema` dari `bersama/kontrak/sesi.ts`.
 
+**Kamera, panel ambang, alat uji · 11 Nov 2026**
+
+- Kamera asli dicoba di `/dev/kamera`: wajah terbaca, `jawOpen` naik jelas saat mulut terbuka, fps ±15. `TANDA_YAW_KANAN_ANAK` terverifikasi = `-1` (6a5935c).
+- Perbaikan: kamera tidak lagi galat "play() request was interrupted" setelah halaman dimuat ulang (berlaku juga untuk `/sesi`). `/dev/kamera`: Spasi = Suap.
+- A3.1 `/dev/ambang`: semua ambang bisa disetel dan disimpan di browser, berlaku di sesi berikutnya tanpa build ulang; tombol masuk demo (keluarga Dika, dokter), reset data demo, cek `/api/sehat`. **Adit:** tombol reset dari panel sudah tersambung ke `POST /api/demo/reset`.
+- Alat gerbang dan akurasi: berhenti merekam di `/dev/kamera` kini mengunduh dua file (`X.json` + `X.suap.json` berisi waktu Suap). `npx tsx uji/mesin/akurasi.ts` memutar ulang rekaman ke engine dan mencetak tabel gerbang, usulan `batasBukaDetik`, serta precision/recall/F1. Templat `docs/hasil-uji.md`.
+- README: Ringkasan, Fitur AI, Privasi dan etika, Kontribusi Darryl.
+- **Belum:** tabel gerbang lengkap dengan angka asli (A1.5), `batasBukaDetik` final, hasil akurasi (A3.2), deploy (A4.1).
+
 ## B (Satya)
 
 **Sesi keluarga utuh · 11 Nov 2026 siang**

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Sinyal } from "../../bersama/kontrak/sinyal.ts";
-import { nilaiPercobaan, statistikLamaBuka } from "../../src/dev/gerbang.ts";
+import { cocok, nilaiPercobaan, nilaiSuap, statistikLamaBuka } from "../../src/dev/gerbang.ts";
+import { AMBANG_AWAL } from "../../src/mesin/ambang.ts";
 import { buatRekaman } from "./buat-rekaman-contoh.ts";
 
 describe("alat gerbang", () => {
@@ -31,5 +32,20 @@ describe("alat gerbang", () => {
     expect(st.p90).toBe(2.4);
     expect(st.usulanBatas).toBe(3.5);
     expect(statistikLamaBuka([0, 0])).toBeNull();
+  });
+
+  it("nilaiSuap memutar ulang ke engine: buka-tutup diterima, menoleh menjauh ditolak, buka lama tidak pasti", () => {
+    const deret = (f: (d: number) => Partial<Sinyal>): Sinyal[] =>
+      Array.from({ length: 400 }, (_, i) => ({ t: i * 50, mulut: 0, rahang: 0, yaw: 0, nangis: false, terlihat: true, ...f(i * 0.05) }));
+    const tSuap = 10_000;
+    const bukaTutup = nilaiSuap(deret((d) => ({ mulut: d >= 10.3 && d < 11.3 ? 0.6 : 0 })), tSuap, AMBANG_AWAL);
+    expect(bukaTutup.hasil).toBe("diterima");
+    expect(cocok("diterima", bukaTutup)).toBe(true);
+    const menoleh = nilaiSuap(deret((d) => ({ yaw: d >= 10.2 && d < 12 ? -35 : 0 })), tSuap, AMBANG_AWAL);
+    expect(menoleh.hasil).toBe("ditolak");
+    expect(cocok("bukan_ditolak", menoleh)).toBe(false);
+    const lama = nilaiSuap(deret((d) => ({ mulut: d >= 10.2 && d < 16.5 ? 0.6 : 0 })), tSuap, AMBANG_AWAL);
+    expect(lama.hasil).toBe("tidak_pasti");
+    expect(cocok("bukan_diterima", lama)).toBe(true);
   });
 });

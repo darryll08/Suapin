@@ -22,6 +22,7 @@ export function HalamanKamera() {
   const sinyalRef = useRef<Sinyal[]>([]);
   const kunyahRef = useRef({ aktif: false, siklus: 0 });
   const rekamRef = useRef<Sinyal[] | null>(null);
+  const suapRekamRef = useRef<number[]>([]); // waktu Suap selama merekam, ikut diunduh sebagai *.suap.json
 
   const [ambang] = useState(bacaAmbang);
   const [sisi, setSisi] = useState<Sisi>(bacaSisi);
@@ -79,6 +80,7 @@ export function HalamanKamera() {
   // Suap: catat waktu, nilai jendela 12 detik setelahnya (+3 detik sebelum) begitu jendela lewat.
   const suap = () => {
     const tSuap = performance.now();
+    if (rekamRef.current) suapRekamRef.current.push(tSuap);
     const siklusAwal = kunyahRef.current.siklus;
     window.setTimeout(() => {
       setLog((l) => [...l, {
@@ -103,7 +105,7 @@ export function HalamanKamera() {
   });
 
   const rekam = () => {
-    if (!rekamRef.current) { rekamRef.current = []; setMerekam(true); return; }
+    if (!rekamRef.current) { rekamRef.current = []; suapRekamRef.current = []; setMerekam(true); return; }
     const isi: RekamanSinyal = {
       versi: 1, fps: ambang.fpsMaks,
       catatan: `Gerbang: ${uji} · penguji ${penguji} · sisi pengasuh ${sisi} · ${new Date().toISOString()}`,
@@ -112,7 +114,10 @@ export function HalamanKamera() {
     rekamRef.current = null;
     setMerekam(false);
     const slug = uji.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-    unduhJson(`gerbang-${slug}-${penguji.toLowerCase()}-${Date.now()}.json`, isi);
+    const nama = `gerbang-${slug}-${penguji.toLowerCase()}-${Date.now()}`;
+    unduhJson(`${nama}.json`, isi);
+    // Waktu Suap disimpan terpisah (kontrak RekamanSinyal tidak punya kolomnya); dibaca uji/mesin/akurasi.ts.
+    unduhJson(`${nama}.suap.json`, { uji, penguji, sisi, suap: suapRekamRef.current });
   };
 
   const statistik = statistikLamaBuka(log.filter((p) => p.uji === UJI_GERBANG[1]).map((p) => p.lamaBukaDetik));

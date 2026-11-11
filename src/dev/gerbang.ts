@@ -1,5 +1,9 @@
 // Pemilik: A (Darryl). A1.5: hitungan untuk log percobaan gerbang go/no-go. Fungsi murni, dites di uji/mesin.
 import type { Sinyal } from "../../bersama/kontrak/sinyal.ts";
+import type { Ambang } from "../mesin/ambang.ts";
+import { kunyahAwal, langkahKunyah } from "../mesin/kunyah.ts";
+import { next, sesiAwal, type Kejadian, type Konteks } from "../mesin/sesi.ts";
+import { saklarTahap } from "../mesin/tahap.ts";
 
 export const UJI_GERBANG = [
   "Mulut terbuka setelah Suap",
@@ -62,4 +66,81 @@ export function unduhJson(namaFile: string, isi: unknown) {
   const a = Object.assign(document.createElement("a"), { href: url, download: namaFile });
   a.click();
   URL.revokeObjectURL(url);
+}
+
+// ---- Penilaian dengan engine (dipakai uji/mesin/akurasi.ts untuk gerbang A1.5 dan uji akurasi A3.2) ----
+
+export type HasilSuap = "diterima" | "ditolak" | "tidak_pasti";
+/** Label yang diharapkan per percobaan. `bukan_*` = lolos asal hasilnya bukan itu. */
+export type Label = HasilSuap | "bukan_ditolak" | "bukan_diterima" | "kunyah" | "bukan_kunyah";
+
+/** Harapan tiap uji gerbang (dokumen produk bagian 20). */
+export const HARAPAN_UJI: Record<(typeof UJI_GERBANG)[number], { label: Label; lolos: number }> = {
+  "Mulut terbuka setelah Suap": { label: "diterima", lolos: 9 },
+  "Sendok + makanan asli, disuapi dari samping": { label: "diterima", lolos: 8 },
+  "Mulut sudah terbuka / aaa 3 detik lalu tutup": { label: "diterima", lolos: 8 },
+  "Dua wajah di kamera": { label: "diterima", lolos: 9 },
+  "Menoleh menjauh": { label: "ditolak", lolos: 9 },
+  "Menoleh ke arah pengasuh": { label: "bukan_ditolak", lolos: 9 },
+  "Kunyah bibir tertutup, makanan asli": { label: "kunyah", lolos: 7 },
+  "Angguk tanpa mengunyah": { label: "bukan_kunyah", lolos: 9 },
+  "Mulut terbuka lama (pura-pura menangis)": { label: "bukan_diterima", lolos: 9 },
+};
+
+const simpangan = (v: number[]) => {
+  if (v.length < 2) return 0;
+  const r = v.reduce((a, b) => a + b, 0) / v.length;
+  return Math.sqrt(v.reduce((a, b) => a + (b - r) ** 2, 0) / v.length);
+};
+
+/**
+ * Putar ulang rekaman ke engine sesi untuk satu Suap. Engine baru per percobaan supaya percobaan sebelumnya
+ * (kunyahan, penolakan) tidak ikut memengaruhi. Mengembalikan hasil engine dan apakah kunyah aktif terdeteksi
+ * dalam 12 detik setelah Suap.
+ */
+export function nilaiSuap(sinyal: Sinyal[], tSuap: number, ambang: Ambang): { hasil: HasilSuap; kunyah: boolean } {
+  const tenang = sinyal.filter((s) => s.terlihat && s.t >= tSuap - 13_000 && s.t < tSuap - 3000).map((s) => s.rahang);
+  const kx: Konteks = {
+    aturan: { max_minutes: 30, end_after_refusal_minutes: 15, stage: 1, ngemut_hint: "" },
+    saklar: saklarTahap(1), ambang, getarDiam: simpangan(tenang),
+  };
+  // Siapkan engine sampai MENUNGGU_SUAP dengan sinyal diam sebelum buffer Suap.
+  let t = tSuap - 15_000;
+  let k = sesiAwal(t).keadaan;
+  const kirim = (e: Kejadian) => { k = next(k, e, kx).keadaan; };
+  for (; t < tSuap - ambang.bufferSebelumSuapDetik * 1000; t += 50) {
+    kirim({ jenis: "sinyal", s: { t, mulut: 0, rahang: 0, yaw: 0, nangis: false, terlihat: true } });
+    if (k.status === "PEMANASAN") kirim({ jenis: "tombol", tombol: "lewati_pemanasan", t });
+  }
+
+  let hasil: HasilSuap | null = null;
+  let kunyah = false;
+  let kk = kunyahAwal();
+  let ditekan = false;
+  for (const s of sinyal) {
+    if (s.t < tSuap - ambang.bufferSebelumSuapDetik * 1000) continue;
+    if (s.t > tSuap + 12_000) break;
+    if (!ditekan && s.t >= tSuap) { kirim({ jenis: "tombol", tombol: "suap", t: s.t }); ditekan = true; }
+    if (hasil === null) {
+      kirim({ jenis: "sinyal", s });
+      kirim({ jenis: "detik", t: s.t });
+      if (k.gigitan.length) hasil = k.gigitan[0].hasil === "ditolak" ? "ditolak" : "diterima";
+      else if (k.status === "TIDAK_PASTI") hasil = "tidak_pasti";
+    }
+    if (s.t >= tSuap) {
+      const h = langkahKunyah(kk, s, kx.getarDiam, ambang);
+      kk = h.k;
+      kunyah ||= h.aktif;
+    }
+  }
+  return { hasil: hasil ?? "tidak_pasti", kunyah };
+}
+
+/** Apakah hasil sesuai label. */
+export function cocok(label: Label, h: { hasil: HasilSuap; kunyah: boolean }): boolean {
+  if (label === "kunyah") return h.kunyah;
+  if (label === "bukan_kunyah") return !h.kunyah;
+  if (label === "bukan_ditolak") return h.hasil !== "ditolak";
+  if (label === "bukan_diterima") return h.hasil !== "diterima";
+  return h.hasil === label;
 }

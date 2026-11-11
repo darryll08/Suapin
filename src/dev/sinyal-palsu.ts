@@ -77,7 +77,7 @@ export function sumberRekaman(muat: () => Promise<RekamanSinyal>): SumberSinyal 
 // Rekaman tersedia: contoh bersama + rekaman gerbang di uji/mesin/data/. Dimuat lewat bundler, bukan fetch.
 const BERKAS = {
   ...import.meta.glob<unknown>("../../bersama/kontrak/contoh/rekaman-sinyal.json", { import: "default" }),
-  ...import.meta.glob<unknown>("../../uji/mesin/data/*.json", { import: "default" }),
+  ...import.meta.glob<unknown>(["../../uji/mesin/data/*.json", "!../../uji/mesin/data/*.suap.json"], { import: "default" }),
 };
 export const DAFTAR_REKAMAN: Record<string, () => Promise<RekamanSinyal>> = Object.fromEntries(
   Object.entries(BERKAS).map(([jalur, muat]) => {

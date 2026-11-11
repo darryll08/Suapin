@@ -3,6 +3,7 @@
 import type { RouteObject } from "react-router";
 
 export const rutDev: RouteObject[] = [
+  { path: "/dev/ambang", lazy: async () => ({ Component: (await import("./halaman-ambang.tsx")).HalamanAmbang }) },
   { path: "/dev/kamera", lazy: async () => ({ Component: (await import("./halaman-kamera.tsx")).HalamanKamera }) },
   { path: "/dev/sesi", lazy: async () => ({ Component: (await import("./halaman-sesi.tsx")).HalamanSesi }) },
   { path: "/dev/sinyal", lazy: async () => ({ Component: (await import("./halaman-sinyal.tsx")).HalamanSinyal }) },
