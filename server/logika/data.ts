@@ -42,8 +42,8 @@ export async function bacaAksesSesi(db: Kueri, anak: typeof children.$inferSelec
   const plan = expired ? "expired" : anak.plan
   const skrining = await db.select().from(screenings).where(eq(screenings.child_id, anak.id))
     .orderBy(desc(screenings.tanggal), sql`rowid desc`).get()
-  const alasan_terkunci = plan === "klinik" ? null :
-    !skrining ? "skrining_belum" : skrining.ada_tanda_bahaya ? "tanda_bahaya" :
+  const alasan_terkunci = !skrining ? "skrining_belum" :
+    skrining.ada_tanda_bahaya && plan !== "klinik" ? "tanda_bahaya" :
     plan === "expired" ? "trial_habis" : null
   return { plan, alasan_terkunci, sesi_dibuka: alasan_terkunci === null } as const
 }

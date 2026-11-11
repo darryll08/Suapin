@@ -38,6 +38,7 @@ export function ruteKlinik(daftar: Daftar, db: Db, env: Env) {
     ])
     return { child: { panggilan: anak.panggilan, usia_bulan: usiaBulan(anak.tanggal_lahir) },
       tahap: anak.stage, sesi: sesi.map(tampilSesi), ringkasan_dokter: ringkasan?.dokter ?? null,
+      ringkasan_sumber: ringkasan?.sumber,
       sudah_pasien_klinik: anak.clinic_id !== null, pasien_saya: dokter && dokter.clinic_id === anak.clinic_id }
   })
   daftar("pasienKlaim", async (c) => {
@@ -93,7 +94,7 @@ export function ruteKlinik(daftar: Daftar, db: Db, env: Env) {
     return { dokter_nama: c.var.dokter!.nama, child: { ...anak, usia_bulan: usiaBulan(anak.tanggal_lahir) }, aturan_aktif, riwayat_aturan,
       sesi: sesi.map(tampilSesi), paparan, ngemut_dikonfirmasi: ngemut?.n ?? 0,
       siap_naik_tahap: hasil.siapNaik, saran_turun_tahap: hasil.saranTurun,
-      ringkasan_dokter: ringkasan?.dokter ?? null }
+      ringkasan_dokter: ringkasan?.dokter ?? null, ringkasan_sumber: ringkasan?.sumber }
   })
   daftar("aturanKonfirmasi", (c, data) => db.transaction(async (tx) => {
     pasienMilikDokter(c, await bacaAnak(tx, data.child_id))

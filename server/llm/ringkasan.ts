@@ -27,7 +27,10 @@ export async function buatRingkasan(
 ): Promise<Keluaran<"ringkasanBuat">> {
   const [mulai, akhir] = batasMinggu(minggu)
   const tersimpan = await bacaRingkasan(db, id, minggu)
-  if (!ulang && tersimpan) return { keluarga: tersimpan.keluarga, dokter: tersimpan.dokter, sumber: "cache" }
+  if (!ulang && tersimpan) return {
+    keluarga: tersimpan.keluarga, dokter: tersimpan.dokter,
+    sumber: tersimpan.sumber === "template" ? "template" : "cache",
+  }
   const filter = and(eq(sessions.child_id, id), gte(sessions.mulai, mulai), lt(sessions.mulai, akhir))
   const [riwayat, dikonfirmasi, aktif, paparan] = await Promise.all([
     db.select({ sesi: sessions, mood: session_notes.mood }).from(sessions)

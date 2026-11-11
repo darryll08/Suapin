@@ -48,10 +48,7 @@ export async function parseResep(db: Db, llm: Llm | null, clinicId: string, teks
       const valid = KeluaranResep.safeParse(await llm("resep", KeluaranResep, instruksi, teks))
       if (valid.success) hasil = valid.data
     } catch { /* Cadangan tetap tersedia saat penyedia LLM gagal. */ }
-    if (hasil) {
-      sumber = "ai"
-      await simpanCache(db, kunci, "resep", hasil)
-    }
+    if (hasil) sumber = "ai"
   }
   if (!hasil) {
     const valid = KeluaranResep.safeParse(await bacaCache(db, kunci))
@@ -62,9 +59,11 @@ export async function parseResep(db: Db, llm: Llm | null, clinicId: string, teks
   }
 
   const kolom_bermasalah: Keluaran<"aturanParse">["kolom_bermasalah"] = []
+  let adaNilaiDiLuarBatas = false
   function isi<T>(kolom: string, skema: z.ZodType<T>, nilai: unknown, rentang: string) {
     const valid = skema.safeParse(nilai)
     if (valid.success) return valid.data
+    if (nilai != null) adaNilaiDiLuarBatas = true
     const alasan = sumber === "gagal" ? "AI tidak tersedia, isi manual" :
       nilai == null ? "Tidak disebut, isi manual atau pakai nilai sekarang" :
       String(nilai) + " di luar batas " + rentang
@@ -73,16 +72,18 @@ export async function parseResep(db: Db, llm: Llm | null, clinicId: string, teks
   }
   const s = AturanSchema.shape
   const a = s.advance_rule.shape
-  return { sumber, kolom_bermasalah, tidak_dipetakan: hasil?.tidak_dipetakan ?? [],
-    aturan: {
-      max_minutes: isi("max_minutes", s.max_minutes, hasil?.max_minutes, "10–30 menit"),
-      stage: isi("stage", s.stage, hasil?.stage, "1–4"),
-      advance_rule: {
-        sessions: isi("advance_rule.sessions", a.sessions, hasil?.advance_sessions, "1–7 sesi"),
-        min_accepted_bites: isi("advance_rule.min_accepted_bites", a.min_accepted_bites, hasil?.advance_min_accepted_bites, "1–15 suapan"),
-      },
-      end_after_refusal_minutes: isi("end_after_refusal_minutes", s.end_after_refusal_minutes, hasil?.end_after_refusal_minutes, "5–15 menit"),
-      ngemut_hint: isi("ngemut_hint", s.ngemut_hint, hasil?.ngemut_hint, "100 karakter"),
+  const aturan = {
+    max_minutes: isi("max_minutes", s.max_minutes, hasil?.max_minutes, "10–30 menit"),
+    stage: isi("stage", s.stage, hasil?.stage, "1–4"),
+    advance_rule: {
+      sessions: isi("advance_rule.sessions", a.sessions, hasil?.advance_sessions, "1–7 sesi"),
+      min_accepted_bites: isi("advance_rule.min_accepted_bites", a.min_accepted_bites, hasil?.advance_min_accepted_bites, "1–15 suapan"),
     },
+    end_after_refusal_minutes: isi("end_after_refusal_minutes", s.end_after_refusal_minutes, hasil?.end_after_refusal_minutes, "5–15 menit"),
+    ngemut_hint: isi("ngemut_hint", s.ngemut_hint, hasil?.ngemut_hint, "100 karakter"),
   }
+  if (sumber === "ai" && hasil && !adaNilaiDiLuarBatas) {
+    await simpanCache(db, kunci, "resep", hasil)
+  }
+  return { aturan, sumber, kolom_bermasalah, tidak_dipetakan: hasil?.tidak_dipetakan ?? [] }
 }

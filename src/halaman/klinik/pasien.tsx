@@ -3,7 +3,7 @@ import { Link, Navigate, useParams } from "react-router"
 import { FormResep } from "../../komponen/klinik/form-resep"
 import { TabelSesi } from "../../komponen/klinik/tabel-sesi"
 import { GalatApi, panggil, usePanggil } from "../../lib/panggil"
-import { pesan, usia } from "./format"
+import { labelRingkasan, pesan, usia } from "./format"
 import { TataLetakKlinik } from "./tata-letak"
 
 export function Pasien() {
@@ -53,7 +53,7 @@ function DetailPasien({ id }: { id: string }) {
     <FormResep id={id} aktif={aktif} selesai={() => { setSukses("Aturan baru berlaku di sesi berikutnya."); ulang() }} />
     <section className="suapin-kartu">
       <h2>Ringkasan dokter minggu ini</h2>
-      {data.ringkasan_dokter ? <><small className="suapin-pil">Dibuat oleh AI dari data sesi</small><p>{data.ringkasan_dokter}</p></> :
+      {data.ringkasan_dokter ? <><small className="suapin-pil">{labelRingkasan(data.ringkasan_sumber)}</small><p>{data.ringkasan_dokter}</p></> :
         <button type="button" disabled={!!aksi} onClick={() => void jalankan("ringkasan")}>
           {aksi === "ringkasan" ? "Membuat ringkasan…" : "Buat ringkasan"}</button>}
     </section>

@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Link, useNavigate, useParams } from "react-router"
 import { TabelSesi } from "../../komponen/klinik/tabel-sesi"
 import { GalatApi, panggil, usePanggil } from "../../lib/panggil"
-import { pesan, usia } from "../klinik/format"
+import { labelRingkasan, pesan, usia } from "../klinik/format"
 
 export function LaporanBagikan() {
   const { token = "" } = useParams()
@@ -38,7 +38,7 @@ export function LaporanBagikan() {
       </section>
       {galatAksi && <p role="alert">{galatAksi}</p>}
       {data.ringkasan_dokter && <section className="suapin-kartu"><h2>Ringkasan dokter</h2>
-        <small className="suapin-pil">Dibuat oleh AI dari data sesi</small><p>{data.ringkasan_dokter}</p></section>}
+        <small className="suapin-pil">{labelRingkasan(data.ringkasan_sumber)}</small><p>{data.ringkasan_dokter}</p></section>}
       <section className="suapin-kartu"><h2>Sesi 14 hari terakhir</h2><TabelSesi sesi={data.sesi} /></section>
     </>}
   </main>

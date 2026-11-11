@@ -61,9 +61,11 @@ it("bagikan, klaim, baca resep dari cache, konfirmasi, lalu keluarga mendapat at
   })
   const teks = contohResep[0]!.teks
   const mock: Llm = async (_nama, skema) => skema.parse({ ...contohResep[0]!.hasil, max_minutes: 60 })
-  const invalid = await (await uji.sebagai(uji.dokter, mock)("/api/rules/parse", "POST", { teks: teks + " Uji." })).json()
+  const teksDiLuarBatas = { teks: teks + " Uji." }
+  const invalid = await (await uji.sebagai(uji.dokter, mock)("/api/rules/parse", "POST", teksDiLuarBatas)).json()
   expect(invalid.aturan).not.toHaveProperty("max_minutes")
   expect(invalid.kolom_bermasalah[0].kolom).toBe("max_minutes")
+  expect(await (await dokter("/api/rules/parse", "POST", teksDiLuarBatas)).json()).toMatchObject({ sumber: "gagal" })
   const parsed = await (await dokter("/api/rules/parse", "POST", { teks })).json()
   expect(parsed).toMatchObject({ sumber: "cache", aturan: { max_minutes: 20 } })
   const llmValid: Llm = async (_nama, skema, _instruksi, input) => {
@@ -82,7 +84,35 @@ it("bagikan, klaim, baca resep dari cache, konfirmasi, lalu keluarga mendapat at
   expect(await detail.json()).toMatchObject({
     dokter_nama: "dr. Demo", riwayat_aturan: [{ source: "dokter" }, { source: "default" }],
   })
-  expect(await (await dokter("/api/summaries/" + DIKA, "POST")).json()).toMatchObject({ sumber: "template" })
+  const urlRingkasan = "/api/summaries/" + DIKA
+  const ringkasan = await (await dokter(urlRingkasan, "POST")).json()
+  expect(ringkasan).toMatchObject({ sumber: "template" })
+  expect(await (await dokter(urlRingkasan, "POST")).json()).toEqual(ringkasan)
+  expect(await (await dokter("/api/clinic/patients/" + DIKA)).json()).toMatchObject({
+    ringkasan_dokter: ringkasan.dokter, ringkasan_sumber: "template",
+  })
+  expect(await (await uji.req("/api" + share.url)).json()).toMatchObject({
+    ringkasan_dokter: ringkasan.dokter, ringkasan_sumber: "template",
+  })
+})
+
+it("klaim klinik tetap memerlukan skrining sebelum keluarga dapat menyimpan sesi", async () => {
+  const daftar = await uji.req("/api/children", "POST",
+    { panggilan: "Anak Klinik", tanggal_lahir: "2022-09-01", sapaan: "bu", nama_pengasuh: "Ibu Uji" })
+  const { child_id } = API.anakBuat.res.parse(await daftar.json())
+  const keluarga = uji.sebagai(daftar.headers.getSetCookie()[0]!.split(";")[0]!)
+  const { token } = API.laporanBagikan.res.parse(await (await keluarga("/api/reports/share", "POST")).json())
+  expect((await uji.sebagai(uji.dokter)("/api/clinic/claim/" + token, "POST")).status).toBe(200)
+  expect(await (await keluarga("/api/saya")).json()).toMatchObject({
+    sesi_dibuka: false, alasan_terkunci: "skrining_belum", child: { plan: "klinik" },
+  })
+  const waktu = new Date().toISOString()
+  expect((await keluarga("/api/sessions", "POST", {
+    child_id, menu: "umum", makanan_baru: false, mulai: waktu, selesai: waktu,
+    durasi_detik: 0, tahap: 1, alasan_selesai: "stop", gigitan: [],
+  })).status).toBe(403)
+  expect((await keluarga("/api/screenings", "POST", { jawaban: [true, ...Array(6).fill(false)] })).status).toBe(200)
+  expect(await (await keluarga("/api/saya")).json()).toMatchObject({ sesi_dibuka: true, alasan_terkunci: null })
 })
 
 it("aktivasi program tercatat di profil keluarga", async () => {
