@@ -26,6 +26,22 @@ export const kartu = "rounded-kartu border border-garis/60 bg-permukaan p-5 shad
 /** Kartu bento: radius besar, tanpa garis, bayangan lembut. */
 export const bento = "rounded-bento bg-permukaan p-5 shadow-kartu";
 
+/** Tombol pil jagung di atas kartu hero ungu (teks ungu di jagung 5,21:1). Isi kanan: <Panah />. */
+export const tombolHero =
+  "inline-flex min-h-14 w-full items-center justify-between gap-3 rounded-full bg-jagung pl-5 pr-2 font-judul text-isi sm:text-tombol font-bold text-ungu whitespace-nowrap " +
+  "transition-transform duration-150 active:scale-[0.98] outline-none focus-visible:ring-4 focus-visible:ring-latar";
+
+/** Tombol garis nasi di atas kartu hero ungu (10,6:1). */
+export const tombolHeroKedua =
+  "inline-flex min-h-14 w-full items-center justify-center rounded-full border-2 border-latar/70 px-6 font-judul text-tombol font-bold text-latar " +
+  "transition-[transform,background-color] duration-150 hover:bg-latar/10 active:scale-[0.98] outline-none focus-visible:ring-4 focus-visible:ring-jagung";
+
+/** Pilihan pil bersegmen (Ya/Tidak, porsi, mood): wadah + tombol. */
+export const wadahSegmen = "grid gap-1 rounded-full bg-latar p-1";
+export const tombolSegmen = (aktif: boolean) =>
+  `min-h-12 rounded-full px-3 text-isi font-semibold transition-colors duration-150 ${fokus} ` +
+  (aktif ? "bg-ungu text-permukaan shadow-kartu" : "text-ungu hover:bg-ungu-tint");
+
 /** Tombol ikon bulat 48 px (kepala halaman). */
 export const tombolIkon =
   `inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-permukaan text-ungu shadow-kartu hover:bg-ungu-tint ${fokus}`;

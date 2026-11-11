@@ -1,8 +1,9 @@
-// Pemilik: B (Satya). Skrining tanda bahaya `/mulai/skrining` (B3.3, UI UX 10.5). Tanpa merah, nada tenang.
+// Pemilik: B (Satya). Skrining tanda bahaya `/mulai/skrining` (B3.3, UI UX 10.5), gaya bento.
+// Tanpa merah, nada tenang. Tidak di kiri supaya jawaban paling umum mudah dijangkau.
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Kartu, KepalaHalaman, PesanGalat, Tombol } from "../../komponen/dasar.tsx";
-import { wadahKeluarga } from "../../gaya/gaya.ts";
+import { KepalaHalaman, PesanGalat, Tombol } from "../../komponen/dasar.tsx";
+import { bento, tombolSegmen, wadahKeluarga, wadahSegmen } from "../../gaya/gaya.ts";
 import { PERTANYAAN_SKRINING } from "./bantu.ts";
 import { api } from "./data.ts";
 import { useSaya } from "./tata-letak.tsx";
@@ -33,30 +34,43 @@ export function Skrining() {
   if (bahaya) return <TandaBahaya />;
 
   return (
-    <main className={wadahKeluarga}>
+    <main className={`${wadahKeluarga} pb-28`}>
       <KepalaHalaman judul="Sebelum mulai" sub="Jawab 7 pertanyaan ini supaya program aman untuk anak." />
-      <p className="mb-3 text-kecil font-semibold text-ungu-muda tabular-nums" aria-live="polite">{terjawab} dari 7 terjawab</p>
+
+      <section className={`${bento} mb-4 flex flex-col gap-3`}>
+        <p className="text-isi font-semibold tabular-nums" aria-live="polite">{terjawab} dari 7 terjawab</p>
+        <div className="flex gap-1.5" aria-hidden="true">
+          {jawaban.map((j, i) => <span key={i} className={`h-2 flex-1 rounded-full ${j === null ? "bg-ungu-tint" : "bg-ungu"}`} />)}
+        </div>
+      </section>
+
       <ol className="flex flex-col gap-3">
         {PERTANYAAN_SKRINING.map((q, i) => (
-          <li key={q}>
-            <Kartu as="div" className="flex flex-col gap-3 p-4">
-              <p className="text-isi font-semibold">{q}</p>
-              <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label={q}>
-                {([false, true] as const).map((nilai) => (
-                  <button key={String(nilai)} type="button" role="radio" aria-checked={jawaban[i] === nilai}
-                    onClick={() => setJawaban((j) => j.map((x, k) => (k === i ? nilai : x)))}
-                    className={`min-h-12 rounded-full border-2 text-isi font-semibold transition-colors ${jawaban[i] === nilai ? "border-ungu bg-ungu text-permukaan" : "border-garis bg-permukaan text-ungu"}`}>
-                    {nilai ? "Ya" : "Tidak"}
-                  </button>
-                ))}
-              </div>
-            </Kartu>
+          <li key={q} className={`${bento} flex flex-col gap-4`}>
+            <div className="flex items-start gap-3">
+              <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-ungu-tint text-kecil font-bold tabular-nums">{i + 1}</span>
+              <p className="pt-1 text-isi font-semibold">{q}</p>
+            </div>
+            <div className={`${wadahSegmen} grid-cols-2`} role="radiogroup" aria-label={q}>
+              {([false, true] as const).map((nilai) => (
+                <button key={String(nilai)} type="button" role="radio" aria-checked={jawaban[i] === nilai}
+                  onClick={() => setJawaban((j) => j.map((x, k) => (k === i ? nilai : x)))}
+                  className={tombolSegmen(jawaban[i] === nilai)}>
+                  {nilai ? "Ya" : "Tidak"}
+                </button>
+              ))}
+            </div>
           </li>
         ))}
       </ol>
+      <p className="mt-4 text-kecil text-ungu-muda">Daftar ini draf dan sedang ditinjau dokter.</p>
       {galat && <div className="mt-4"><PesanGalat pesan={galat} /></div>}
-      <Tombol className="mt-6 sm:w-full" disabled={terjawab < 7} memuat={memuat} onClick={simpan}>Simpan jawaban</Tombol>
-      <p className="mt-3 text-kecil text-ungu-muda">Daftar ini draf dan sedang ditinjau dokter.</p>
+
+      <div className="fixed inset-x-0 bottom-0 bg-latar/95 px-4 py-3 shadow-lembar">
+        <div className="mx-auto max-w-[560px]">
+          <Tombol className="sm:w-full" disabled={terjawab < 7} memuat={memuat} onClick={simpan}>Simpan jawaban</Tombol>
+        </div>
+      </div>
     </main>
   );
 }
@@ -64,14 +78,17 @@ export function Skrining() {
 function TandaBahaya() {
   const pindah = useNavigate();
   return (
-    <main className={`${wadahKeluarga} pt-10`}>
-      <div className="flex flex-col gap-4 rounded-kartu border-2 border-jagung bg-jagung-muda p-6">
-        <span aria-hidden="true" className="inline-flex size-10 items-center justify-center rounded-full border-2 border-jagung-tua font-judul text-subjudul font-bold text-jagung-tua">i</span>
+    <main className={`${wadahKeluarga} flex flex-col gap-4 pt-10`}>
+      <section className="flex flex-col gap-4 rounded-bento bg-jagung-muda p-6">
+        <span aria-hidden="true" className="inline-flex size-12 items-center justify-center rounded-full bg-permukaan font-judul text-subjudul font-bold text-jagung-tua">i</span>
         <h1 className="font-judul text-judul font-bold text-jagung-tua">Sebaiknya periksa ke dokter dulu</h1>
         <p className="text-isi">Ada jawaban yang perlu dilihat dokter sebelum program makan dimulai.</p>
+      </section>
+      <section className={`${bento} flex flex-col gap-2`}>
+        <h2 className="font-judul text-isi font-bold">Langkah berikutnya</h2>
         <p className="text-isi">Setelah diperiksa, dokter bisa membuka program lewat link laporan dari aplikasi ini.</p>
-      </div>
-      <Tombol className="mt-6 sm:w-full" onClick={() => void pindah("/beranda")}>Ke beranda</Tombol>
+      </section>
+      <Tombol className="sm:w-full" onClick={() => void pindah("/beranda")}>Ke beranda</Tombol>
     </main>
   );
 }

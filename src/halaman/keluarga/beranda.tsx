@@ -2,16 +2,12 @@
 // kartu hero tahap + Mulai makan → angka minggu ini + cincin makanan baru → grafik pil 7 hari dengan stiker.
 import { Link, useSearchParams } from "react-router";
 import { cariMakanan } from "../../../bersama/konten/makanan.ts";
-import { CincinProgres, GrafikPil, KartuAngka, KartuHero } from "../../komponen/beranda.tsx";
+import { CincinProgres, GrafikPil, KartuAngka, KartuHero, Panah } from "../../komponen/beranda.tsx";
 import { Memuat, PesanGalat } from "../../komponen/dasar.tsx";
-import { bento, tombolIkon } from "../../gaya/gaya.ts";
+import { bento, tombolHero, tombolIkon } from "../../gaya/gaya.ts";
 import { HARI_SEN_MIN, kalimatTahap, NAMA_SAPAAN, namaDenganSapaan, tanggalLokal, tanggalMingguIni, totalPerHari, useMuat } from "./bantu.ts";
 import { api } from "./data.ts";
 import { Halaman, useSaya } from "./tata-letak.tsx";
-
-const tombolHero =
-  "inline-flex min-h-14 w-full items-center justify-between gap-3 rounded-full bg-jagung pl-6 pr-2 font-judul text-tombol font-bold text-ungu " +
-  "transition-transform duration-150 active:scale-[0.98] outline-none focus-visible:ring-4 focus-visible:ring-latar";
 
 export function Beranda() {
   const { saya } = useSaya();
@@ -100,14 +96,6 @@ function BarisPlan({ plan, sisa, terkunci }: { plan: string; sisa: number | null
       </span>
       {sisa <= 1 && <Link to="/langganan" className="text-kecil font-semibold underline underline-offset-4">Lihat program 30 hari</Link>}
     </div>
-  );
-}
-
-function Panah() {
-  return (
-    <span className="inline-flex size-10 items-center justify-center rounded-full bg-ungu text-latar" aria-hidden="true">
-      <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M7 17L17 7M9 7h8v8" /></svg>
-    </span>
   );
 }
 
