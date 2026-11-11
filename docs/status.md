@@ -86,3 +86,11 @@ Tulis bagianmu di akhir setiap titik integrasi: apa yang jadi, apa yang belum, k
 - C3.1: nama dokter berasal dari akun yang sedang aktif pada daftar dan detail pasien. Chrome menguji dua akun pada 390 px dan 1280 px, termasuk logout dan pengalihan kembali ke halaman masuk saat membuka detail tanpa sesi.
 - C2.3: keluaran LLM tiruan yang valid lolos skema dan nama anak diganti sebelum input diteruskan. Uji resep dan ringkasan dengan OpenAI asli menunggu kunci API. C4.3: `npx tsx uji/server/asap.ts <URL>` lolos di localhost untuk seluruh GET. Uji Vercel/Turso menunggu lingkungan preview dari Darryl.
 - Audit 11 Nov: klaim klinik tetap memerlukan skrining yang sudah diisi. Hasil resep di luar batas tidak dimasukkan ke cache. Ringkasan template mempertahankan sumber dan memakai label otomatis di detail pasien serta laporan bagikan. Pemeriksaan lulus dengan 92 tes dan uji label di Chrome.
+
+### Server admin (dikerjakan Satya) · 11 November 2026
+
+- Admin = operator Suapin yang mendaftarkan klinik dan dokter setelah kerja sama (jalur B2B2C); klinik tidak mendaftar sendiri. Akun admin dari env `ADMIN_EMAIL` (default `admin@demo.test`) + `ADMIN_SANDI` (kosong = login admin mati). Cookie `tm_admin` berlaku 1 hari.
+- **Kontrak baru di `bersama/kontrak/api.ts` (Darryl dan Adit tolong cek):** akses `admin`; `adminMasuk`, `adminKeluar`, `adminAkun`, `adminKlinikBuat` (klinik + dokter pertama), `adminDokterBuat`, `adminDokterStatus` (aktif/nonaktif), `adminDokterSandi` (reset). Sandi sementara 12 karakter tampil sekali, server simpan hash bcrypt. `demoMasuk` menerima `admin_demo`.
+- Migrasi `0002_dokter_aktif`: kolom `doctors.aktif`. Dokter nonaktif tidak bisa login dan cookie lamanya langsung 401.
+- Halaman `/admin` + tab Admin di `/masuk`. Tombol demo "Admin" sekarang masuk ke `/admin` (panel ambang tetap bisa dibuka dari kartu "Alat demo").
+- Tes `uji/server/admin.test.ts` (akses 401, daftar klinik, email ganda 409 + transaksi batal, nonaktif, reset sandi, demo admin). Diuji di browser 375 px dan desktop.

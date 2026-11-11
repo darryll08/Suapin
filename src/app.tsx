@@ -11,6 +11,7 @@ import { Landing, TidakAda } from "./halaman/keluarga/landing.tsx";
 const router = createBrowserRouter([
   { path: "/", Component: Landing },
   { path: "/mulai", lazy: async () => ({ Component: (await import("./halaman/keluarga/mulai.tsx")).Mulai }) },
+  { path: "/admin", lazy: async () => ({ Component: (await import("./halaman/admin/admin.tsx")).Admin }) },
   { path: "/masuk", lazy: async () => ({ Component: (await import("./halaman/keluarga/masuk.tsx")).Masuk }) },
   { path: "/contoh-gaya", lazy: async () => ({ Component: (await import("./halaman/keluarga/contoh-gaya.tsx")).ContohGaya }) },
   {

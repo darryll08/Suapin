@@ -11,6 +11,7 @@ export const doctors = sqliteTable("doctors", {
   nama: text().notNull(),
   email: text().notNull().unique(),
   sandi_hash: text().notNull(),
+  aktif: integer({ mode: "boolean" }).notNull().default(true),
 })
 export const children = sqliteTable("children", {
   id: id(),

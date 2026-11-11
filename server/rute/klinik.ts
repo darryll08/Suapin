@@ -12,7 +12,7 @@ import { cekNaikTahap } from "../logika/tahap"
 import { gagal, type Daftar } from "./daftar"
 
 // Nilai ini hanya untuk menyamakan biaya bcrypt ketika email tidak dikenal.
-const hashPalsu = "$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi."
+export const hashPalsu = "$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi."
 
 export function ruteKlinik(daftar: Daftar, db: Db, env: Env) {
   async function anakDariToken(token: string) {
@@ -27,7 +27,7 @@ export function ruteKlinik(daftar: Daftar, db: Db, env: Env) {
     const dokter = await db.select().from(doctors).where(eq(doctors.email, data.email.toLowerCase())).get()
     const panjangAman = Buffer.byteLength(data.kata_sandi) <= 72
     const benar = await compare(panjangAman ? data.kata_sandi : "", dokter?.sandi_hash ?? hashPalsu)
-    if (!dokter || !benar || !panjangAman) gagal(401, "Email atau kata sandi tidak sesuai")
+    if (!dokter || !benar || !panjangAman || !dokter.aktif) gagal(401, "Email atau kata sandi tidak sesuai")
     await pasangCookie(c, env, "dokter", dokter.id)
   })
   daftar("dokterKeluar", (c) => hapusCookie(c, env, "dokter"))

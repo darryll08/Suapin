@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 import type { Context, MiddlewareHandler } from "hono"
 import { deleteCookie, getSignedCookie, setSignedCookie } from "hono/cookie"
 import { HTTPException } from "hono/http-exception"
@@ -10,16 +10,18 @@ import type { API } from "../bersama/kontrak/api"
 export type SesiEnv = { Variables: {
   childId?: string
   dokter?: { id: string; clinic_id: string; nama: string }
+  admin?: string
 } }
 
 type C = Context<SesiEnv>
-type Peran = "keluarga" | "dokter"
+type Peran = "keluarga" | "dokter" | "admin"
+const umurHari: Record<Peran, number> = { keluarga: 180, dokter: 30, admin: 1 }
 const hari = 86400
 
 export async function pasangCookie(c: C, env: Env, peran: Peran, id: string) {
   await setSignedCookie(c, "tm_" + peran, id, env.SESI_RAHASIA, {
     httpOnly: true, sameSite: "Lax", secure: env.NODE_ENV === "production",
-    path: "/", maxAge: (peran === "keluarga" ? 180 : 30) * hari,
+    path: "/", maxAge: umurHari[peran] * hari,
   })
 }
 export function hapusCookie(c: C, env: Env, peran: Peran) {
@@ -29,7 +31,12 @@ export async function bacaDokter(c: C, db: Db, env: Env) {
   const id = await getSignedCookie(c, env.SESI_RAHASIA, "tm_dokter")
   if (!id) return undefined
   return db.select({ id: doctors.id, clinic_id: doctors.clinic_id, nama: doctors.nama }).from(doctors)
-    .where(eq(doctors.id, id)).get()
+    .where(and(eq(doctors.id, id), eq(doctors.aktif, true))).get()
+}
+// Cookie admin berisi email admin; mengganti ADMIN_EMAIL otomatis mengeluarkan sesi lama.
+export async function bacaAdmin(c: C, env: Env) {
+  const email = await getSignedCookie(c, env.SESI_RAHASIA, "tm_admin")
+  return email && email === env.ADMIN_EMAIL ? email : undefined
 }
 
 export function denganAkses(
@@ -48,7 +55,8 @@ export function denganAkses(
     if (akses === "dokter" || akses === "keluarga_atau_dokter") {
       c.set("dokter", await bacaDokter(c, db, env))
     }
-    if ((akses === "keluarga" && !c.var.childId) || (akses === "dokter" && !c.var.dokter) ||
+    if (akses === "admin") c.set("admin", await bacaAdmin(c, env))
+    if ((akses === "admin" && !c.var.admin) || (akses === "keluarga" && !c.var.childId) || (akses === "dokter" && !c.var.dokter) ||
       (akses === "keluarga_atau_dokter" && !c.var.childId && !c.var.dokter)) {
       throw new HTTPException(401, { message: "Silakan masuk terlebih dahulu" })
     }

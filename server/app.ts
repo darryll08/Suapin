@@ -8,6 +8,7 @@ import { buatLlm } from "./llm/klien"
 import { parseResep } from "./llm/resep"
 import { buatRingkasan } from "./llm/ringkasan"
 import { bacaAnak, mingguIni } from "./logika/data"
+import { ruteAdmin } from "./rute/admin"
 import { daftarRute, gagal } from "./rute/daftar"
 import { ruteDemo } from "./rute/demo"
 import { ruteKeluarga } from "./rute/keluarga"
@@ -27,6 +28,7 @@ export function buatApp(env: Env, db = buatDb(env), llm = buatLlm(env)) {
   ruteSesi(daftar, db)
   ruteKlinik(daftar, db, env)
   ruteDemo(daftar, db, env)
+  ruteAdmin(daftar, db, env)
   daftar("sehat", async () => {
     let dbAktif = true
     try { await db.run(sql`select 1`) } catch { dbAktif = false }

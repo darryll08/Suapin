@@ -4,7 +4,7 @@ import { expect, it } from "vitest";
 
 const KUNCI = [
   "DATABASE_URL", "TURSO_AUTH_TOKEN", "OPENAI_API_KEY", "OPENAI_MODEL", "SESI_RAHASIA",
-  "DEMO", "DEMO_DOKTER_SANDI", "ELEVENLABS_API_KEY", "ELEVENLABS_VOICE_ID", "VITE_PAKAI_CONTOH",
+  "DEMO", "DEMO_DOKTER_SANDI", "ADMIN_EMAIL", "ADMIN_SANDI", "ELEVENLABS_API_KEY", "ELEVENLABS_VOICE_ID", "VITE_PAKAI_CONTOH",
 ];
 
 it(".env.example memuat semua kunci tanpa nilai", () => {

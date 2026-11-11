@@ -7,7 +7,8 @@ import type { Llm } from "../../server/llm/klien"
 
 export async function bantu() {
   const env: Env = { DATABASE_URL: "file::memory:?cache=shared", SESI_RAHASIA: crypto.randomUUID(),
-    DEMO: "1", DEMO_DOKTER_SANDI: crypto.randomUUID(), OPENAI_MODEL: "model-uji" }
+    DEMO: "1", DEMO_DOKTER_SANDI: crypto.randomUUID(), OPENAI_MODEL: "model-uji",
+    ADMIN_EMAIL: "admin@demo.test", ADMIN_SANDI: crypto.randomUUID() }
   const jangkar = buatDb(env)
   const db = buatDb(env)
   const tutup = () => { db.$client.close(); jangkar.$client.close() }

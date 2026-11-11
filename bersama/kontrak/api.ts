@@ -23,11 +23,14 @@ const sesi = z.object({
 export const MingguSchema = z.string().regex(/^\d{4}-W(?:0[1-9]|[1-4][0-9]|5[0-3])$/)
 const sumberRingkasan = z.enum(["ai", "cache", "template"])
 const ringkasan = z.object({ keluarga: z.string(), dokter: z.string(), sumber: sumberRingkasan })
+const email = z.email().trim().toLowerCase().max(120)
+const sandiSementara = z.string().length(12)
+const dokterAdmin = z.object({ id, nama, email: z.email(), aktif: bool })
 const dataKeluarga = anak.extend({
   sapaan, nama_pengasuh: nama, plan, trial_until: waktu.nullable(),
 })
 
-type Akses = "publik" | "keluarga" | "dokter" | "token" | "demo" | "keluarga_atau_dokter"
+type Akses = "publik" | "keluarga" | "dokter" | "admin" | "token" | "demo" | "keluarga_atau_dokter"
 function endpoint<const M extends "GET" | "POST", const P extends string, R extends z.ZodType, S extends z.ZodType>(
   metode: M, path: P, akses: Akses, req: R, res: S,
   ...galat: number[]
@@ -96,9 +99,26 @@ export const API = {
   ringkasanBuat: endpoint("POST", "/api/summaries/:childId", "keluarga_atau_dokter",
     z.strictObject({ minggu: MingguSchema.optional() }).optional(), ringkasan, 400, 401, 404),
   demoMasuk: endpoint("POST", "/api/demo/masuk", "demo",
-    z.strictObject({ sebagai: z.enum(["keluarga_dika", "dokter_demo"]) }), kosong, 400, 404),
+    z.strictObject({ sebagai: z.enum(["keluarga_dika", "dokter_demo", "admin_demo"]) }), kosong, 400, 404),
   demoReset: endpoint("POST", "/api/demo/reset", "demo", kosong,
     z.object({ ok: z.literal(true), jumlah: z.record(z.string(), jumlah) }), 404),
+  // Admin = operator Suapin: mendaftarkan klinik dan akun dokter setelah ada kerja sama (B2B2C).
+  adminMasuk: endpoint("POST", "/api/admin/login", "publik",
+    z.strictObject({ email, kata_sandi: z.string().min(1).max(256) }), kosong, 400, 401),
+  adminKeluar: endpoint("POST", "/api/admin/logout", "admin", kosong, kosong, 401),
+  adminAkun: endpoint("GET", "/api/admin/accounts", "admin", kosong,
+    z.object({ admin_email: z.email(), klinik: z.array(z.object({ id, nama: z.string(), jumlah_pasien: jumlah,
+      dokter: z.array(dokterAdmin) })) }), 401),
+  adminKlinikBuat: endpoint("POST", "/api/admin/clinics", "admin",
+    z.strictObject({ nama_klinik: nama, dokter: z.strictObject({ nama, email }) }),
+    z.object({ clinic_id: id, doctor_id: id, sandi_sementara: sandiSementara }), 400, 401, 409),
+  adminDokterBuat: endpoint("POST", "/api/admin/doctors", "admin",
+    z.strictObject({ clinic_id: id, nama, email }),
+    z.object({ doctor_id: id, sandi_sementara: sandiSementara }), 400, 401, 404, 409),
+  adminDokterStatus: endpoint("POST", "/api/admin/doctors/:id/status", "admin",
+    z.strictObject({ aktif: bool }), kosong, 400, 401, 404),
+  adminDokterSandi: endpoint("POST", "/api/admin/doctors/:id/password", "admin", kosong,
+    z.object({ sandi_sementara: sandiSementara }), 401, 404),
   sehat: endpoint("GET", "/api/sehat", "publik", kosong,
     z.object({ db: bool, openai_key: bool, demo: bool })),
 } as const

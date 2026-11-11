@@ -1,0 +1,1 @@
+ALTER TABLE `doctors` ADD `aktif` integer DEFAULT true NOT NULL;

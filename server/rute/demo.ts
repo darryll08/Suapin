@@ -8,6 +8,11 @@ import { gagal, type Daftar } from "./daftar"
 
 export function ruteDemo(daftar: Daftar, db: Db, env: Env) {
   daftar("demoMasuk", async (c, { sebagai }) => {
+    if (sebagai === "admin_demo") {
+      hapusCookie(c, env, "keluarga")
+      hapusCookie(c, env, "dokter")
+      return pasangCookie(c, env, "admin", env.ADMIN_EMAIL)
+    }
     const keluarga = sebagai === "keluarga_dika"
     const akun = keluarga
       ? await db.select({ id: children.id }).from(children).where(eq(children.id, DIKA)).get()

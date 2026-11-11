@@ -7,6 +7,8 @@ const skema = z.object({
   SESI_RAHASIA: z.string().min(32),
   DEMO: z.enum(["0", "1"]).default("0"),
   DEMO_DOKTER_SANDI: opsional,
+  ADMIN_EMAIL: z.email().default("admin@demo.test"),
+  ADMIN_SANDI: opsional,
   OPENAI_API_KEY: opsional,
   OPENAI_MODEL: z.string().min(1).default("gpt-6-luna"),
   NODE_ENV: z.string().optional(),

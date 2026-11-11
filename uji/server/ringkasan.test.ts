@@ -29,6 +29,8 @@ it("memakai pola dari data sesi dan beralih ke template saat teks gagal validasi
   // Tambahkan sesi agar cache lama memiliki kunci agregat yang berbeda.
   const baru = new Date(+waktu + 1).toISOString()
   expect((await uji.sebagai(uji.dika)("/api/sessions", "POST", { ...data, mulai: baru, selesai: baru })).status).toBe(200)
+  // Tanpa OPENAI_API_KEY dan tanpa cache untuk data baru → template.
+  expect(await (await uji.sebagai(uji.dika)(url, "POST")).json()).toMatchObject({ sumber: "template" })
   expect(await (await uji.sebagai(uji.dika, gagal)(url, "POST")).json()).toMatchObject({ sumber: "template" })
   expect((await uji.sebagai(uji.dika)(url, "POST", { minggu: "2026-W00" })).status).toBe(400)
 })

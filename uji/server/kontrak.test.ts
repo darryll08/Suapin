@@ -8,7 +8,7 @@ import { buatDb } from "../../server/db/klien"
 
 it("semua endpoint kontrak terpasang", () => {
   const env = { DATABASE_URL: "file::memory:", SESI_RAHASIA: crypto.randomUUID(),
-    DEMO: "0", OPENAI_MODEL: "uji" } as const
+    DEMO: "0", OPENAI_MODEL: "uji", ADMIN_EMAIL: "admin@demo.test" } as const
   const db = buatDb(env)
   try {
     const rute = new Set(buatApp(env, db).routes.map(({ method, path }) => method + " " + path))
