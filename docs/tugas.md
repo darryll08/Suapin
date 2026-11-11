@@ -24,9 +24,9 @@ Centang hanya bila ada buktinya. Format: `- [x] A0.1 Kerangka proyek · 10 Nov �
 
 ## B (Satya): aplikasi keluarga, karakter, suara, video
 
-- [ ] B0.1 Siapkan laptop
+- [x] B0.1 Siapkan laptop · 11 Nov · 5e6fe6d · `npm ci` + `npm run periksa` hijau; `.env.local` dan db:seed menunggu C0.2
 - [ ] B0.2 Router dan kerangka
-- [ ] B0.3 Sistem tampilan
+- [x] B0.3 Sistem tampilan · 11 Nov · 5e6fe6d · komponen di `/contoh-gaya`; tanpa `red-`; belum dicek visual 390/1280 px
 - [ ] B0.4 Konten bersama dan contoh data
 - [ ] B1.1 Gambar karakter dan keputusan aset (≤ 11 Nov 12.00)
 - [ ] B1.2 Makanan dan stiker
