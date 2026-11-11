@@ -90,27 +90,33 @@ export function useSesiMakan(o: OpsiSesiMakan) {
       ambang: jenis ? ambang : { ...ambang, hasilDariKamera: false, kunyahDariKamera: false },
       getarDiam: GETAR_PALSU,
     };
-    let s: SumberSinyal | null = null;
-    if (jenis?.jenis === "kamera") {
-      if (!videoEl) throw new Error("Elemen video belum siap.");
-      kamera.current = sumberKamera({ video: videoEl, sisiPengasuh, ambang: () => konteks.current!.ambang });
-      s = kamera.current;
-    } else if (jenis?.jenis === "slider") s = slider;
-    else if (jenis?.jenis === "rekaman") s = sumberRekaman(DAFTAR_REKAMAN[jenis.nama]);
-    sumber.current = s;
+    const buka = async () => {
+      let s: SumberSinyal | null = null;
+      if (jenis?.jenis === "kamera") {
+        if (!videoEl) throw new Error("Elemen video belum siap.");
+        kamera.current = sumberKamera({ video: videoEl, sisiPengasuh, ambang: () => konteks.current!.ambang });
+        s = kamera.current;
+      } else if (jenis?.jenis === "slider") s = slider;
+      else if (jenis?.jenis === "rekaman") s = sumberRekaman(DAFTAR_REKAMAN[jenis.nama]);
+      sumber.current = s;
 
-    // Kamera dan model dimuat dulu, baru engine mulai, supaya kalibrasi 3 detik tidak habis saat model dimuat.
-    try {
-      await s?.mulai((sinyal) => kirim({ jenis: "sinyal", s: sinyal }));
-    } catch (e) {
-      // Kamera gagal: sesi tetap jalan dengan tombol pengasuh sebagai penentu hasil.
-      setGalat(e instanceof Error ? e.message : String(e));
-      sumber.current = null;
-      kamera.current = null;
-      konteks.current = { ...konteks.current, ambang: { ...konteks.current.ambang, hasilDariKamera: false, kunyahDariKamera: false } };
-    }
+      // Kamera dan model dimuat dulu, baru engine mulai, supaya kalibrasi 3 detik tidak habis saat model dimuat.
+      try {
+        await s?.mulai((sinyal) => kirim({ jenis: "sinyal", s: sinyal }));
+      } catch (e) {
+        // Kamera gagal: sesi tetap jalan dengan tombol pengasuh sebagai penentu hasil.
+        setGalat(e instanceof Error ? e.message : String(e));
+        sumber.current = null;
+        kamera.current = null;
+        konteks.current = { ...konteks.current!, ambang: { ...konteks.current!.ambang, hasilDariKamera: false, kunyahDariKamera: false } };
+      }
+      return s;
+    };
+    const s = await buka();
+    // StrictMode/HMR: cleanup sempat menghentikan sumber saat kamera dimuat, lalu komponen dipasang lagi. Buka ulang.
+    if (hidup.current && s && sumber.current === null && kamera.current === null && konteks.current.ambang.hasilDariKamera) await buka();
 
-    if (!hidup.current) { s?.berhenti(); return; } // halaman ditutup saat kamera dimuat
+    if (!hidup.current) { berhenti(); return; } // halaman ditutup saat kamera dimuat
     mulaiIso.current = new Date().toISOString();
     const awal = sesiAwal(performance.now());
     keadaan.current = awal.keadaan;
@@ -120,7 +126,7 @@ export function useSesiMakan(o: OpsiSesiMakan) {
       kirim({ jenis: "detik", t: performance.now() });
       if (kamera.current) setFps(kamera.current.fps());
     }, DETIK_MS);
-  }, [kirim, slider, terapkan]);
+  }, [berhenti, kirim, slider, terapkan]);
 
   useEffect(() => {
     hidup.current = true;

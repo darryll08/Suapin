@@ -17,7 +17,7 @@ Centang hanya bila ada buktinya. Format: `- [x] A0.1 Kerangka proyek · 10 Nov �
 - [x] A2.2 State machine sesi · 11 Nov · 89df866 · tes lolos, /dev/sesi teruji dengan slider dan tanpa kamera; kamera asli belum
 - [x] A2.3 Hook `useSesiMakan` · 11 Nov · 89df866 · tes lolos, /dev/sesi teruji dengan slider dan tanpa kamera; kamera asli belum
 - [x] A2.4 Saklar tahap · 11 Nov · 89df866 · tes lolos, /dev/sesi teruji dengan slider dan tanpa kamera; kamera asli belum
-- [ ] A3.1 Panel ambang
+- [x] A3.1 Panel ambang · 11 Nov · (commit ini) · batasBukaDetik 2 dari panel mengubah hasil sesi tanpa build ulang; reset demo mengembalikan data Dika (21 sesi)
 - [ ] A3.2 Tuning dan uji akurasi
 - [ ] A4.1 Vercel + Turso (bonus)
 - [ ] A5.1 Penutupan dan submit

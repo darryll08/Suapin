@@ -59,7 +59,8 @@ export function HalamanAmbang() {
         </p>
       </header>
 
-      {pesan && <p role="status" className="rounded-xl bg-ungu-tint p-3 text-kecil">{pesan}</p>}
+      {/* fixed: tombol Simpan ada di bawah halaman, pesan di atas tidak terlihat saat digulir */}
+      {pesan && <p role="status" className="fixed inset-x-4 bottom-4 z-10 mx-auto max-w-3xl rounded-xl bg-ungu p-3 text-kecil text-latar shadow-lg">{pesan}</p>}
 
       <section className="grid gap-2 rounded-2xl border border-ungu-muda/25 bg-permukaan p-4 text-kecil">
         <h2 className="font-bold">Server</h2>
