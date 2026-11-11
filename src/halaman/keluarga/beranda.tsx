@@ -2,7 +2,7 @@
 // kartu hero tahap + Mulai makan → angka minggu ini + cincin makanan baru → grafik pil 7 hari dengan stiker.
 import { Link, useSearchParams } from "react-router";
 import { cariMakanan } from "../../../bersama/konten/makanan.ts";
-import { CincinProgres, GrafikPil, KartuAngka, KartuHero, Panah } from "../../komponen/beranda.tsx";
+import { CincinProgres, GrafikPil, KartuAngka, KartuHero } from "../../komponen/beranda.tsx";
 import { Memuat, PesanGalat } from "../../komponen/dasar.tsx";
 import { bento, tombolHero, tombolIkon } from "../../gaya/gaya.ts";
 import { HARI_SEN_MIN, kalimatTahap, NAMA_SAPAAN, namaDenganSapaan, tanggalLokal, tanggalMingguIni, totalPerHari, useMuat } from "./bantu.ts";
@@ -31,14 +31,14 @@ export function Beranda() {
         <div className="flex flex-col gap-4">
           <KartuHero tahap={lap.tahap} kalimat={kalimatTahap(lap.tahap, c.panggilan, sapaan)}>
             {saya.alasan_terkunci === "trial_habis" ? (
-              <Link to="/langganan" className={tombolHero}>Lanjutkan program <Panah /></Link>
+              <Link to="/langganan" className={tombolHero}>Lanjutkan program</Link>
             ) : saya.alasan_terkunci === "tanda_bahaya" ? (
               <div className="rounded-kartu bg-jagung-muda p-4 text-ungu">
                 <p className="font-judul text-subjudul font-bold text-jagung-tua">Sebaiknya periksa ke dokter dulu</p>
                 <p className="text-isi">Setelah diperiksa, dokter bisa membuka program lewat link laporan.</p>
               </div>
             ) : (
-              <Link to="/sesi" className={tombolHero}>Mulai makan <Panah /></Link>
+              <Link to="/sesi" className={tombolHero}>Mulai makan</Link>
             )}
           </KartuHero>
 

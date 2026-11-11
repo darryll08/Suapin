@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router";
 import { DemoMeniru } from "../../karakter/demo-meniru.tsx";
 import { AngkaNaik, Muncul } from "../../komponen/muncul.tsx";
 import { bento, tombolHero, tombolUtama, wadahKeluarga } from "../../gaya/gaya.ts";
-import { Panah } from "../../komponen/beranda.tsx";
 import { kalimatTahap } from "./bantu.ts";
 import { api } from "./data.ts";
 
@@ -70,7 +69,6 @@ export function Landing() {
       <section className="flex flex-col gap-8">
         <div className="grid items-end gap-6 md:grid-cols-[1.3fr_1fr]">
           <Muncul dari="kiri" className="flex flex-col gap-4">
-            <p className="text-kecil font-bold tracking-wider text-jagung-tua uppercase">Masalahnya</p>
             <h2 className="font-judul text-judul font-bold md:text-[34px] md:leading-[42px]">Tanpa layar menolak, dengan layar tidak memperhatikan.</h2>
             <p className="text-isi text-ungu-muda">Dokter meminta makan tanpa layar, tapi di rumah tidak ada penggantinya.</p>
           </Muncul>
@@ -93,7 +91,6 @@ export function Landing() {
       {/* 3. Cara kerja */}
       <section className="flex flex-col gap-8">
         <Muncul className="mx-auto flex max-w-[640px] flex-col gap-3 text-center">
-          <p className="text-kecil font-bold tracking-wider text-jagung-tua uppercase">Cara kerja</p>
           <h2 className="font-judul text-judul font-bold md:text-[34px] md:leading-[42px]">Layar dipakai untuk makan bareng, bukan untuk ditonton.</h2>
         </Muncul>
         <ol className="grid gap-4 md:grid-cols-3">
@@ -118,7 +115,6 @@ export function Landing() {
                 alt="Ilustrasi: anak tertawa senang." className="block size-full translate-y-[4%]" />
             </div>
             <figcaption className="flex flex-col gap-2 sm:pr-4">
-              <p className="text-kecil font-bold tracking-wider text-jagung-tua uppercase">Tujuannya</p>
               <p className="font-judul text-subjudul font-bold text-balance md:text-judul">Makan jadi momen yang ditunggu, bukan drama setiap hari.</p>
               <p className="text-isi text-ungu-muda">Setiap suapan yang diterima dirayakan. Orang tua dan dokter melihat catatannya: diterima, ditolak, atau ngemut.</p>
             </figcaption>
@@ -132,13 +128,12 @@ export function Landing() {
       {/* 4. Lepas layar bertahap */}
       <section className="flex flex-col gap-8">
         <Muncul className="mx-auto flex max-w-[640px] flex-col gap-3 text-center">
-          <p className="text-kecil font-bold tracking-wider text-jagung-tua uppercase">Lepas layar bertahap</p>
           <h2 className="font-judul text-judul font-bold md:text-[34px] md:leading-[42px]">Tujuannya justru supaya layar tidak dibutuhkan lagi.</h2>
         </Muncul>
         <ol className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {[1, 2, 3, 4].map((t, i) => (
             <li key={t}>
-              <Muncul dari="skala" tunda={i * 120} className={`flex h-full flex-col gap-2 rounded-bento p-5 shadow-kartu ${t === 3 ? "bg-black text-latar" : t === 4 ? "bg-ungu-tint" : "bg-permukaan"}`}>
+              <Muncul dari="skala" tunda={i * 120} className={`flex h-full flex-col gap-2 rounded-bento border border-garis/50 p-5 ${t === 3 ? "bg-black text-latar" : t === 4 ? "bg-ungu-tint" : "bg-permukaan"}`}>
                 <span className={`font-judul text-[34px] leading-10 font-bold tabular-nums ${t === 3 ? "text-jagung" : "text-ungu"}`}>{t}</span>
                 <p className={`text-kecil ${t === 3 ? "text-latar/90" : "text-ungu-muda"}`}>{kalimatTahap(t, "anak", "Pengasuh")}</p>
               </Muncul>
@@ -152,14 +147,13 @@ export function Landing() {
 
       {/* 5. Untuk klinik + privasi */}
       <Muncul dari="skala">
-        <section className="grid gap-6 rounded-bento bg-ungu p-6 text-latar shadow-kartu md:grid-cols-[1.4fr_1fr] md:p-10">
+        <section className="grid gap-6 rounded-bento bg-ungu p-6 text-latar md:grid-cols-[1.4fr_1fr] md:p-10">
           <div className="flex flex-col gap-3">
-            <p className="text-kecil font-bold tracking-wider text-jagung uppercase">Untuk klinik</p>
             <h2 className="font-judul text-judul font-bold md:text-[34px] md:leading-[42px]">Dokter menulis aturan seperti biasa. Sesi di rumah langsung mengikuti.</h2>
             <p className="text-isi text-latar/90">AI mengubah teks dokter menjadi aturan sesi dalam rentang aman. Dokter memeriksa dan mengonfirmasi sebelum aturan dipakai.</p>
           </div>
           <div className="flex flex-col justify-end gap-3">
-            <Link to="/masuk?sebagai=klinik" className={tombolHero}>Masuk untuk klinik <Panah /></Link>
+            <Link to="/masuk?sebagai=klinik" className={tombolHero}>Masuk untuk klinik</Link>
             <p className="flex items-start gap-2 text-kecil text-latar/90">
               <span className="mt-0.5 shrink-0"><IkonKamera /></span>
               Video kamera tidak pernah keluar dari HP. Yang disimpan hanya hasil suapan: diterima, ditolak, atau ngemut.
@@ -188,7 +182,7 @@ function Adegan({ src, label, ikon, judul, alt, tunda, dari }: { src: string; la
       <figure className={`${bento} flex flex-col gap-3 p-3`}>
         <div className="relative">
           <img src={src} width={1200} height={800} loading="lazy" decoding="async" alt={alt} className="block h-auto w-full rounded-[20px]" />
-          <span className="absolute top-3 left-3 inline-flex min-h-10 items-center gap-2 rounded-full bg-permukaan px-4 text-kecil font-bold shadow-kartu">
+          <span className="absolute top-3 left-3 inline-flex min-h-10 items-center gap-2 rounded-full bg-permukaan px-4 text-kecil font-bold">
             {ikon} {label}
           </span>
         </div>
@@ -199,7 +193,7 @@ function Adegan({ src, label, ikon, judul, alt, tunda, dari }: { src: string; la
 }
 
 function Chip({ ikon, children }: { ikon: ReactNode; children: ReactNode }) {
-  return <li className="inline-flex min-h-10 items-center gap-2 rounded-full bg-permukaan px-4 shadow-kartu">{ikon}{children}</li>;
+  return <li className="inline-flex min-h-10 items-center gap-2 rounded-full border border-garis/70 bg-permukaan px-4">{ikon}{children}</li>;
 }
 
 function PanahJagung() {

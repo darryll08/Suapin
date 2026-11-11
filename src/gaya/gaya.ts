@@ -24,12 +24,12 @@ export const isian =
 
 export const kartu = "rounded-kartu border border-garis/60 bg-permukaan p-5 shadow-kartu";
 
-/** Kartu bento: radius besar, tanpa garis, bayangan lembut. */
-export const bento = "rounded-bento bg-permukaan p-5 shadow-kartu";
+/** Kartu bento: radius besar, garis tipis kerupuk, tanpa bayangan (bayangan hanya untuk elemen yang terangkat). */
+export const bento = "rounded-bento border border-garis/50 bg-permukaan p-5";
 
 /** Tombol pil jagung di atas kartu hero ungu (teks ungu di jagung 5,21:1). Isi kanan: <Panah />. */
 export const tombolHero =
-  "group inline-flex min-h-14 w-full items-center justify-between gap-3 rounded-full bg-jagung pl-5 pr-2 font-judul text-isi sm:text-tombol font-bold text-ungu whitespace-nowrap " +
+  "group inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-full bg-jagung px-6 font-judul text-isi sm:text-tombol font-bold text-ungu whitespace-nowrap " +
   "transition-[transform,box-shadow,filter] duration-200 ease-standar hover:-translate-y-0.5 hover:brightness-105 hover:shadow-[0_10px_24px_rgb(0_0_0/0.22)] active:translate-y-0 active:scale-[0.97] " +
   "motion-reduce:transform-none outline-none focus-visible:ring-4 focus-visible:ring-latar";
 

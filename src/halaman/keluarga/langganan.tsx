@@ -1,7 +1,6 @@
 // Pemilik: B (Satya). Paywall mock `/langganan` (B3.6, UI UX 10.12), gaya bento. Tanpa hitung mundur atau harga coret.
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Panah } from "../../komponen/beranda.tsx";
 import { KepalaHalaman, PesanGalat } from "../../komponen/dasar.tsx";
 import { bento, tombolHero, wadahKeluarga } from "../../gaya/gaya.ts";
 import { api } from "./data.ts";
@@ -45,7 +44,7 @@ export function Langganan() {
         ) : (
           <div className="flex flex-col gap-2">
             <button type="button" className={tombolHero} disabled={memuat} aria-busy={memuat || undefined} onClick={aktifkan}>
-              {memuat ? "Mengaktifkan…" : "Aktifkan program"} <Panah />
+              {memuat ? "Mengaktifkan…" : "Aktifkan program"}
             </button>
             <p className="text-kecil text-latar/80">Mode demo lomba: tanpa pembayaran.</p>
           </div>

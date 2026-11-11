@@ -3,7 +3,6 @@
 import { useState, type ReactNode } from "react";
 import { Link } from "react-router";
 import { MAKANAN } from "../../../../bersama/konten/makanan.ts";
-import { Panah } from "../../../komponen/beranda.tsx";
 import { KepalaHalaman } from "../../../komponen/dasar.tsx";
 import { bento, tombolHero, tombolSegmen, tombolUtama, wadahKeluarga, wadahSegmen } from "../../../gaya/gaya.ts";
 import { NAMA_SAPAAN } from "../bantu.ts";
@@ -102,7 +101,7 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
           <JudulLangkah n={3} gelap>Posisi HP</JudulLangkah>
           <p className="text-isi text-latar/90">Letakkan HP sedikit di samping depan anak, setinggi wajahnya. Wajah anak harus terlihat. Jauhkan HP dari jangkauan tangan anak.</p>
           <button type="button" className={tombolHero} disabled={memuat} aria-busy={memuat || undefined} onClick={tekanMulai}>
-            {memuat ? "Menyiapkan…" : "Mulai makan"} <Panah />
+            {memuat ? "Menyiapkan…" : "Mulai makan"}
           </button>
         </section>
       )}

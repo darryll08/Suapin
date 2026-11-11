@@ -7,7 +7,7 @@ import { bento } from "../gaya/gaya.ts";
 /** Kartu utama ubi ungu: tahap aktif + aksi. Teks nasi di atas ungu 11,9:1. */
 export function KartuHero({ tahap, kalimat, children }: { tahap: number; kalimat: string; children?: ReactNode }) {
   return (
-    <section className="flex flex-col gap-5 rounded-bento bg-ungu p-6 text-latar shadow-kartu">
+    <section className="flex flex-col gap-5 rounded-bento bg-ungu p-6 text-latar">
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
           <p className="text-kecil font-semibold text-latar/80">Program lepas layar</p>
@@ -122,14 +122,5 @@ export function LabelAI({ sumber }: { sumber: "ai" | "cache" | "template" }) {
       <span>{sumber === "template" ? "Ringkasan otomatis dari data sesi" : "Dibuat oleh AI dari data sesi"}</span>
       <span className="inline-flex h-6 items-center rounded-full border border-ungu-muda px-3">{lencana}</span>
     </p>
-  );
-}
-
-/** Panah dalam lingkaran ungu, ujung kanan tombol hero. */
-export function Panah() {
-  return (
-    <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-ungu text-latar transition-transform duration-200 ease-standar group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:rotate-12 motion-reduce:transform-none" aria-hidden="true">
-      <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M7 17L17 7M9 7h8v8" /></svg>
-    </span>
   );
 }

@@ -8,7 +8,7 @@ export function Anak({ mulut = 0, className = "" }: { mulut?: number; className?
   const buka = mulut >= AMBANG_BUKA;
   return (
     <div className={`relative aspect-square ${className}`}>
-      <img src="/aset/anak/anak-senyum.webp" alt="" width={512} height={512} draggable={false}
+      <img src="/aset/anak/anak-senyum.webp" alt="" width={512} height={512} draggable={false} fetchPriority="high"
         className="absolute inset-0 size-full" />
       <img src="/aset/anak/anak-buka.webp" alt="" width={512} height={512} draggable={false}
         className={`absolute inset-0 size-full transition-opacity duration-75 ${buka ? "opacity-100" : "opacity-0"}`} />
