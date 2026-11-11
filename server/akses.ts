@@ -9,7 +9,7 @@ import type { API } from "../bersama/kontrak/api"
 
 export type SesiEnv = { Variables: {
   childId?: string
-  dokter?: { id: string; clinic_id: string }
+  dokter?: { id: string; clinic_id: string; nama: string }
 } }
 
 type C = Context<SesiEnv>
@@ -28,7 +28,7 @@ export function hapusCookie(c: C, env: Env, peran: Peran) {
 export async function bacaDokter(c: C, db: Db, env: Env) {
   const id = await getSignedCookie(c, env.SESI_RAHASIA, "tm_dokter")
   if (!id) return undefined
-  return db.select({ id: doctors.id, clinic_id: doctors.clinic_id }).from(doctors)
+  return db.select({ id: doctors.id, clinic_id: doctors.clinic_id, nama: doctors.nama }).from(doctors)
     .where(eq(doctors.id, id)).get()
 }
 

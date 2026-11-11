@@ -1,6 +1,7 @@
 import { Link, Navigate } from "react-router"
 import { GalatApi, usePanggil } from "../../lib/panggil"
 import { usia } from "./format"
+import { TataLetakKlinik } from "./tata-letak"
 
 export function DaftarPasien() {
   const { data, galat, memuat, ulang } = usePanggil("pasienDaftar")
@@ -8,7 +9,7 @@ export function DaftarPasien() {
   const pasien = [...(data?.pasien ?? [])].sort((a, b) =>
     Number(b.siap_naik_tahap || b.saran_turun_tahap) - Number(a.siap_naik_tahap || a.saran_turun_tahap) ||
     a.panggilan.localeCompare(b.panggilan, "id"))
-  return <>
+  return <TataLetakKlinik dokter={data?.dokter_nama}>
     <h1>Pasien</h1>
     {memuat && <p role="status">Memuat daftar pasien…</p>}
     {galat && <p role="alert">{galat.message} <button type="button" onClick={ulang}>Coba lagi</button></p>}
@@ -26,5 +27,5 @@ export function DaftarPasien() {
         </span>
       </Link></li>)}
     </ul>}
-  </>
+  </TataLetakKlinik>
 }

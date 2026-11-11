@@ -52,7 +52,8 @@ export function ruteKlinik(daftar: Daftar, db: Db, env: Env) {
     return { child_id: anak.id }
   })
   daftar("pasienDaftar", async (c) => {
-    const clinicId = c.var.dokter!.clinic_id
+    const dokter = c.var.dokter!
+    const clinicId = dokter.clinic_id
     const [pasien, statistik] = await Promise.all([
       db.select().from(children).where(eq(children.clinic_id, clinicId)).orderBy(children.panggilan).all(),
       db.select({ id: sessions.child_id, n: sql<number>`count(*)`.mapWith(Number),
@@ -63,7 +64,7 @@ export function ruteKlinik(daftar: Daftar, db: Db, env: Env) {
         .groupBy(sessions.child_id).all(),
     ])
     const perAnak = new Map(statistik.map((row) => [row.id, row]))
-    return { pasien: await Promise.all(pasien.map(async (anak) => {
+    return { dokter_nama: dokter.nama, pasien: await Promise.all(pasien.map(async (anak) => {
       const [aktif, terakhir] = await Promise.all([
         bacaAturan(db, anak.id), sesiUntukTahap(db, anak.id, anak.stage),
       ])
@@ -89,7 +90,7 @@ export function ruteKlinik(daftar: Daftar, db: Db, env: Env) {
           eq(bites.hasil, "ngemut"), eq(bites.dikoreksi, true))).get(),
     ])
     const hasil = cekNaikTahap(terakhir, aturan_aktif.aturan)
-    return { child: { ...anak, usia_bulan: usiaBulan(anak.tanggal_lahir) }, aturan_aktif, riwayat_aturan,
+    return { dokter_nama: c.var.dokter!.nama, child: { ...anak, usia_bulan: usiaBulan(anak.tanggal_lahir) }, aturan_aktif, riwayat_aturan,
       sesi: sesi.map(tampilSesi), paparan, ngemut_dikonfirmasi: ngemut?.n ?? 0,
       siap_naik_tahap: hasil.siapNaik, saran_turun_tahap: hasil.saranTurun,
       ringkasan_dokter: ringkasan?.dokter ?? null }

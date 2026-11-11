@@ -56,7 +56,9 @@ it("bagikan, klaim, baca resep dari cache, konfirmasi, lalu keluarga mendapat at
   expect(anonim.child).toEqual({ panggilan: "Dika", usia_bulan: 50 })
   expect(anonim).not.toHaveProperty("pasien_saya")
   expect((await dokter("/api/clinic/claim/" + share.token, "POST")).status).toBe(200)
-  expect(await (await dokter("/api/clinic/patients")).json()).toMatchObject({ pasien: [{ id: DIKA }] })
+  expect(await (await dokter("/api/clinic/patients")).json()).toMatchObject({
+    dokter_nama: "dr. Demo", pasien: [{ id: DIKA }],
+  })
   const teks = contohResep[0]!.teks
   const mock: Llm = async (_nama, skema) => skema.parse({ ...contohResep[0]!.hasil, max_minutes: 60 })
   const invalid = await (await uji.sebagai(uji.dokter, mock)("/api/rules/parse", "POST", { teks: teks + " Uji." })).json()
@@ -64,6 +66,12 @@ it("bagikan, klaim, baca resep dari cache, konfirmasi, lalu keluarga mendapat at
   expect(invalid.kolom_bermasalah[0].kolom).toBe("max_minutes")
   const parsed = await (await dokter("/api/rules/parse", "POST", { teks })).json()
   expect(parsed).toMatchObject({ sumber: "cache", aturan: { max_minutes: 20 } })
+  const llmValid: Llm = async (_nama, skema, _instruksi, input) => {
+    expect(input).toBe("Untuk anak: " + teks)
+    return skema.parse(contohResep[0]!.hasil)
+  }
+  const resepValid = await uji.sebagai(uji.dokter, llmValid)("/api/rules/parse", "POST", { teks: "Untuk Dika: " + teks })
+  expect(await resepValid.json()).toMatchObject({ sumber: "ai", aturan: parsed.aturan, kolom_bermasalah: [] })
   expect((await dokter("/api/rules/confirm", "POST", { child_id: DIKA, aturan: parsed.aturan, source_text: teks })).status).toBe(200)
   expect(await (await keluarga("/api/children/" + DIKA + "/rules")).json()).toMatchObject({
     source: "dokter", aturan: { max_minutes: 20 },
@@ -71,7 +79,9 @@ it("bagikan, klaim, baca resep dari cache, konfirmasi, lalu keluarga mendapat at
   expect(await (await keluarga("/api/saya")).json()).toMatchObject({ child: { plan: "klinik" } })
   const detail = await dokter("/api/clinic/patients/" + DIKA)
   expect(detail.status).toBe(200)
-  expect(await detail.json()).toMatchObject({ riwayat_aturan: [{ source: "dokter" }, { source: "default" }] })
+  expect(await detail.json()).toMatchObject({
+    dokter_nama: "dr. Demo", riwayat_aturan: [{ source: "dokter" }, { source: "default" }],
+  })
   expect(await (await dokter("/api/summaries/" + DIKA, "POST")).json()).toMatchObject({ sumber: "template" })
 })
 

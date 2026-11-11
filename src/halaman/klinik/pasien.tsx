@@ -4,6 +4,7 @@ import { FormResep } from "../../komponen/klinik/form-resep"
 import { TabelSesi } from "../../komponen/klinik/tabel-sesi"
 import { GalatApi, panggil, usePanggil } from "../../lib/panggil"
 import { pesan, usia } from "./format"
+import { TataLetakKlinik } from "./tata-letak"
 
 export function Pasien() {
   const { id = "" } = useParams()
@@ -16,8 +17,10 @@ function DetailPasien({ id }: { id: string }) {
   const [galatAksi, setGalatAksi] = useState("")
   const [sukses, setSukses] = useState("")
   if (galat instanceof GalatApi && galat.status === 401) return <Navigate to="/klinik/masuk" replace />
-  if (!data) return memuat ? <p role="status">Memuat pasien…</p> :
-    <p role="alert">{galat?.message} <button type="button" onClick={ulang}>Coba lagi</button></p>
+  if (!data) return <TataLetakKlinik>
+    {memuat ? <p role="status">Memuat pasien…</p> :
+      <p role="alert">{galat?.message} <button type="button" onClick={ulang}>Coba lagi</button></p>}
+  </TataLetakKlinik>
 
   const aktif = data.aturan_aktif.aturan
   async function jalankan(jenis: NonNullable<typeof aksi>) {
@@ -37,7 +40,7 @@ function DetailPasien({ id }: { id: string }) {
     } catch (error) { setGalatAksi(pesan(error)) }
     finally { setAksi(null) }
   }
-  return <>
+  return <TataLetakKlinik dokter={data.dokter_nama}>
     <Link to="/klinik/pasien">Kembali ke pasien</Link>
     <div className="suapin-baris">
       <div><h1>{data.child.panggilan}</h1><p>{usia(data.child.usia_bulan)} · Tahap {data.child.stage}</p></div>
@@ -68,5 +71,5 @@ function DetailPasien({ id }: { id: string }) {
       </details>)}
     </section>
     <p><small>Yang diukur adalah perilaku menerima suapan. Porsi berasal dari catatan pengasuh.</small></p>
-  </>
+  </TataLetakKlinik>
 }
