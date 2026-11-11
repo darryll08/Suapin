@@ -44,6 +44,7 @@ export async function mulaiPelacak(
   video: HTMLVideoElement,
   onHasil: (hasil: FaceLandmarkerResult, t: number) => void,
   fpsMaks = 20,
+  dibatalkan: () => boolean = () => false,
 ): Promise<Pelacak> {
   if (!window.isSecureContext) {
     throw new Error("Kamera hanya bisa dibuka lewat localhost atau HTTPS. Alamat seperti http://192.168.x.x tidak didukung.");
@@ -66,6 +67,12 @@ export async function mulaiPelacak(
   } catch (e) {
     stream.getTracks().forEach((t) => t.stop());
     throw new Error("Model pembaca wajah gagal dimuat. Muat ulang halaman.", { cause: e });
+  }
+  // Pemanggil sudah berhenti selama kamera/model dimuat: jangan sentuh <video>, pemanggil baru mungkin sedang memakainya.
+  if (dibatalkan()) {
+    stream.getTracks().forEach((t) => t.stop());
+    landmarker.close();
+    throw new Error("dibatalkan");
   }
 
   video.srcObject = stream;
@@ -99,7 +106,7 @@ export async function mulaiPelacak(
       if (!jalan) return;
       jalan = false;
       stream.getTracks().forEach((t) => t.stop());
-      video.srcObject = null;
+      if (video.srcObject === stream) video.srcObject = null;
       landmarker.close();
     },
   };

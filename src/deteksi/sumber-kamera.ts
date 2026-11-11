@@ -39,9 +39,13 @@ export function sumberKamera(o: {
   let ketukan: { x: number; y: number } | null = null;
   let mentah: ReturnType<SumberKamera["mentah"]> = { wajah: 0, jawOpen: null, yaw: null };
 
+  let dihentikan = false;
+
   return {
     async mulai(onSinyal) {
-      pelacak = await mulaiPelacak(
+      let p: Pelacak;
+      try {
+        p = await mulaiPelacak(
         o.video,
         (hasil, t) => {
           const kotak = hasil.faceLandmarks.map(kotakDari);
@@ -68,9 +72,18 @@ export function sumberKamera(o: {
           onSinyal(s);
         },
         o.ambang().fpsMaks,
+        () => dihentikan,
       );
+      } catch (e) {
+        if (dihentikan) return;
+        throw e;
+      }
+      // berhenti() bisa dipanggil sebelum kamera siap (StrictMode, HMR, pindah halaman): jangan biarkan kamera menyala.
+      if (dihentikan) p.hentikan();
+      else pelacak = p;
     },
     berhenti() {
+      dihentikan = true;
       pelacak?.hentikan();
       pelacak = null;
     },

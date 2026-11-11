@@ -12,10 +12,9 @@ const DAGU = 152, HIDUNG = 1, DAHI = 10;
 
 /**
  * Tanda yaw mentah saat anak menoleh ke KANAN-nya sendiri (arah anak menghadap layar).
- * shortcut: nilai ini tebakan sampai diverifikasi di /dev/kamera saat gerbang; ubah ke -1 bila terbalik
- * dan catat di docs/gerbang.md.
+ * Diverifikasi di /dev/kamera: menoleh ke kanan sendiri → yaw mentah negatif. Lihat docs/gerbang.md.
  */
-export const TANDA_YAW_KANAN_ANAK: 1 | -1 = 1;
+export const TANDA_YAW_KANAN_ANAK: 1 | -1 = -1;
 
 export const skor = (kategori: Kategori[], nama: string) => kategori.find((c) => c.categoryName === nama)?.score ?? 0;
 

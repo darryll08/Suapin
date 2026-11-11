@@ -89,6 +89,19 @@ export function HalamanKamera() {
     }, 12_000);
   };
 
+  // Spasi = Suap, supaya satu orang bisa menguji sendiri (satu tangan sendok, satu tangan keyboard).
+  useEffect(() => {
+    const tekan = (e: KeyboardEvent) => {
+      if (e.code !== "Space" || status !== "jalan") return;
+      if ((e.target as HTMLElement).closest("input, select, textarea")) return;
+      e.preventDefault(); // tombol yang sedang fokus (mis. Rekam sinyal) tidak ikut terklik
+      (document.activeElement as HTMLElement | null)?.blur();
+      suap();
+    };
+    window.addEventListener("keydown", tekan);
+    return () => window.removeEventListener("keydown", tekan);
+  });
+
   const rekam = () => {
     if (!rekamRef.current) { rekamRef.current = []; setMerekam(true); return; }
     const isi: RekamanSinyal = {

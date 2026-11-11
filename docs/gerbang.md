@@ -27,7 +27,7 @@ Pemilik: A (Darryl). Batas: 11 Nov 2026 12.00 WIB. Kriteria dari `docs/produk/Su
 
 ## Tanda yaw
 
-_(menoleh ke kanan kamera = positif / negatif; pemetaan ke `sisiPengasuh`)_
+Anak menoleh ke kanannya sendiri → yaw mentah negatif (±−45°), ke kiri → positif, lurus → ±3°. Jadi `TANDA_YAW_KANAN_ANAK = -1`. Yaw olahan: positif = ke arah pengasuh, negatif = menjauh.
 
 ## Keputusan
 
