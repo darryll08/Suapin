@@ -125,7 +125,16 @@ _(diisi dari `docs/gerbang.md` dan `docs/hasil-uji.md`)_
 _(diisi)_
 
 ### Wayan Satya (B)
-_(diisi)_
+
+Aplikasi keluarga: landing, daftar dan kode akses, skrining tanda bahaya, beranda (tahap, stiker mingguan, pelacak makanan baru), laporan dan bagikan ke dokter, paywall uji coba, serta layar sesi makan (persiapan, pemanasan, loop giliran, catatan). Juga sistem tampilan (token warna tanpa merah, komponen dasar), karakter SVG dengan mulut parametrik, makanan dan stiker, pemutar suara, PWA, dan naskah video. Claude Code membantu menulis kode layar, karakter SVG, dan tes; keputusan desain dan pengujian di browser dicek sendiri.
+
+**Keputusan desain.**
+- **Karakter SVG flat, bukan ilustrasi berlapis.** Diputuskan di gerbang 11 Nov karena gambar berlapis belum siap. Mulut digambar dari satu angka `mulut` (0–1) dari mesin deteksi, jadi bukaannya mengikuti mulut anak tanpa gambar per frame (`src/karakter/mulut.tsx`).
+- **Perayaan hanya saat suapan diterima.** Saat menolak, karakter hanya berkedip, supaya penolakan tidak menjadi hadiah. Teks untuk pengasuh kecil di strip bawah dan tidak dibacakan.
+- **Tombol Suap di sisi pengasuh.** Sisi duduk dipilih dari arah anak menghadap layar. Suap (≥ 112 px) dan pratinjau kamera di sisi itu, Stop di sisi jauh supaya tidak tertekan.
+- **Lepas layar bertahap.** Tahap 2 karakter hanya muncul saat giliran, tahap 3 layar hitam dengan suara saja, tahap 4 pengasuh memimpin dan aplikasi hanya mencatat.
+- **PWA.** Model MediaPipe dan WASM ikut di-cache service worker, jadi aplikasi tetap terbuka walau server tidak terjangkau. API tidak di-cache.
+- **Suara.** Klip MP3 dibuat dengan `npm run klip` (ElevenLabs). Bila file belum ada, kalimat diucapkan oleh `speechSynthesis` browser sebagai cadangan.
 
 ### Adit (C)
 
@@ -144,7 +153,10 @@ Agen coding (Claude Code, Codex) dipakai sebagai alat bantu menulis kode. Produk
 | Model `public/mediapipe/face_landmarker.task` (float16, versi 1) | https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task | Apache 2.0 |
 | Runtime `@mediapipe/tasks-vision` 1.2.2 (WASM disalin ke `public/mediapipe/wasm/` saat `npm ci`) | npm | Apache 2.0 |
 
-_(diisi: Voice by ElevenLabs, aset gambar, dependency lain)_
+| Karakter, makanan, stiker (`src/karakter/`, `public/aset/`) dan ikon PWA | Dibuat tim (SVG), lihat `docs/aset.md` | Milik tim |
+| Klip suara karakter `public/klip/` | Voice by ElevenLabs (draf, lihat `docs/klip.md`) | Sesuai ketentuan ElevenLabs |
+
+_(diisi: dependency lain)_
 
 ## Batasan
 
