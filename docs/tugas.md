@@ -63,7 +63,7 @@ Centang hanya bila ada buktinya. Format: `- [x] A0.1 Kerangka proyek · 10 Nov �
 - [x] C2.2 Laporan bagikan dan klaim · 11 Nov · 66314d8 · bagikan laporan dan klaim pasien di Chrome
 - [ ] C2.3 Resep bahasa bebas → JSON
 - [x] C2.4 Konfirmasi aturan · 11 Nov · 66314d8 · aturan baru terbaca di layar sesi keluarga
-- [ ] C3.1 `/klinik/masuk` dan tata letak
+- [x] C3.1 `/klinik/masuk` dan tata letak · 11 Nov · 85371f6 · nama sesuai akun, login dan logout Chrome 390/1280 px
 - [x] C3.2 `/klinik/pasien` · 11 Nov · 66314d8 · Dika tampil setelah klaim di Chrome
 - [x] C3.3 `/klinik/pasien/:id` · 11 Nov · 66314d8 · alur resep dari cache di Chrome dan tangkapan layar 390/1280 px
 - [x] C3.4 `/r/:token` · 11 Nov · 66314d8 · laporan dibuka di konteks browser terpisah dan berhasil diklaim
