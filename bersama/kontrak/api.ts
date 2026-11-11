@@ -72,12 +72,12 @@ export const API = {
   pasienKlaim: endpoint("POST", "/api/clinic/claim/:token", "dokter", kosong,
     z.object({ child_id: id }), 401, 404, 409),
   pasienDaftar: endpoint("GET", "/api/clinic/patients", "dokter", kosong,
-    z.object({ pasien: z.array(anak.omit({ stage: true }).extend({
+    z.object({ dokter_nama: nama.optional(), pasien: z.array(anak.omit({ stage: true }).extend({
       tahap, sesi_7_hari: jumlah, diterima_7_hari: jumlah, ditolak_7_hari: jumlah,
       siap_naik_tahap: bool, saran_turun_tahap: bool, source_aturan: sumberAturan,
     })) }), 401),
   pasienDetail: endpoint("GET", "/api/clinic/patients/:id", "dokter", kosong,
-    z.object({ child: anak, aturan_aktif: aturanAktif,
+    z.object({ dokter_nama: nama.optional(), child: anak, aturan_aktif: aturanAktif,
       riwayat_aturan: z.array(z.object({ source: sumberAturan, source_text: z.string().nullable(),
         rules_json: AturanSchema, confirmed_at: waktu })),
       sesi: z.array(sesi.extend({ alasan_selesai: AlasanSelesai })), ngemut_dikonfirmasi: jumlah,

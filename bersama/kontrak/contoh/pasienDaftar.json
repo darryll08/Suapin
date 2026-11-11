@@ -1,1 +1,1 @@
-{"pasien":[{"id":"dika-contoh","panggilan":"Dika","usia_bulan":50,"tahap":1,"sesi_7_hari":9,"diterima_7_hari":54,"ditolak_7_hari":12,"siap_naik_tahap":true,"saran_turun_tahap":false,"source_aturan":"default"}]}
+{"dokter_nama":"dr. Demo","pasien":[{"id":"dika-contoh","panggilan":"Dika","usia_bulan":50,"tahap":1,"sesi_7_hari":9,"diterima_7_hari":54,"ditolak_7_hari":12,"siap_naik_tahap":true,"saran_turun_tahap":false,"source_aturan":"default"}]}
