@@ -54,20 +54,20 @@ Centang hanya bila ada buktinya. Format: `- [x] A0.1 Kerangka proyek · 10 Nov �
 - [x] C0.2 Database · 11 Nov · 66314d8 · migrasi dari nol dan seed idempoten
 - [x] C0.3 Kontrak API, aturan, dan `panggil()` · 11 Nov · c54247f · contoh lolos skema, review terpisah dilewati atas arahan pemilik pekerjaan
 - [x] C0.4 Tes penjaga · 11 Nov · 66314d8 · tes kontrak dan pembatasan akses
-- [ ] C0.5 Sesi login dan akses
+- [x] C0.5 Sesi login dan akses · 11 Nov · 7b74b30 · kode salah, respons login dokter seragam, dan cookie tidak valid
 - [x] C1.1 Anak, masuk, saya · 11 Nov · 66314d8 · daftar dan pemeriksaan sesi dibuka
 - [x] C1.2 Skrining dan aturan · 11 Nov · 66314d8 · skrining dan aturan default
 - [x] C1.3 Simpan sesi, naik tahap, paparan · 11 Nov · 66314d8 · penyimpanan SQLite, kenaikan tahap, dan uji browser tanpa kamera
-- [ ] C1.4 Catatan, laporan, bagikan, paket
-- [ ] C2.1 Login dokter, daftar pasien, detail
+- [x] C1.4 Catatan, laporan, bagikan, paket · 11 Nov · 7b74b30 · catatan parsial, laporan seed, token bagikan, dan aktivasi paket
+- [x] C2.1 Login dokter, daftar pasien, detail · 11 Nov · 66314d8 · login, daftar dan detail pasien, serta pembatasan akses dokter lain
 - [x] C2.2 Laporan bagikan dan klaim · 11 Nov · 66314d8 · bagikan laporan dan klaim pasien di Chrome
 - [ ] C2.3 Resep bahasa bebas → JSON
 - [x] C2.4 Konfirmasi aturan · 11 Nov · 66314d8 · aturan baru terbaca di layar sesi keluarga
 - [ ] C3.1 `/klinik/masuk` dan tata letak
-- [ ] C3.2 `/klinik/pasien`
-- [ ] C3.3 `/klinik/pasien/:id`
-- [ ] C3.4 `/r/:token`
+- [x] C3.2 `/klinik/pasien` · 11 Nov · 66314d8 · Dika tampil setelah klaim di Chrome
+- [x] C3.3 `/klinik/pasien/:id` · 11 Nov · 66314d8 · alur resep dari cache di Chrome dan tangkapan layar 390/1280 px
+- [x] C3.4 `/r/:token` · 11 Nov · 66314d8 · laporan dibuka di konteks browser terpisah dan berhasil diklaim
 - [ ] C4.1 Ringkasan mingguan
-- [ ] C4.2 Mode demo dan reset
+- [x] C4.2 Mode demo dan reset · 11 Nov · 7b74b30 · reset menghapus data latihan, memulihkan Dika, dan mempertahankan cache
 - [ ] C4.3 Uji Vercel + Turso (bonus)
-- [ ] C5.1 Kontribusi Adit di README
+- [x] C5.1 Kontribusi Adit di README · 11 Nov · 7b74b30 · kontribusi Adit, cara kerja AI, dan bantuan Codex di README
