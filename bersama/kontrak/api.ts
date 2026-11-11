@@ -21,7 +21,8 @@ const sesi = z.object({
 })
 
 export const MingguSchema = z.string().regex(/^\d{4}-W(?:0[1-9]|[1-4][0-9]|5[0-3])$/)
-const ringkasan = z.object({ keluarga: z.string(), dokter: z.string(), sumber: z.enum(["ai", "cache", "template"]) })
+const sumberRingkasan = z.enum(["ai", "cache", "template"])
+const ringkasan = z.object({ keluarga: z.string(), dokter: z.string(), sumber: sumberRingkasan })
 const dataKeluarga = anak.extend({
   sapaan, nama_pengasuh: nama, plan, trial_until: waktu.nullable(),
 })
@@ -65,7 +66,8 @@ export const API = {
     z.strictObject({ paket: z.literal("program_30") }), z.object({ plan: z.literal("program") }), 400, 401, 409),
   laporanToken: endpoint("GET", "/api/r/:token", "token", kosong,
     z.object({ child: anak.pick({ panggilan: true, usia_bulan: true }), tahap, sesi: z.array(sesi),
-      ringkasan_dokter: z.string().nullable(), sudah_pasien_klinik: bool, pasien_saya: bool.optional() }), 404),
+      ringkasan_dokter: z.string().nullable(), ringkasan_sumber: sumberRingkasan.optional(),
+      sudah_pasien_klinik: bool, pasien_saya: bool.optional() }), 404),
   dokterMasuk: endpoint("POST", "/api/clinic/login", "publik",
     z.strictObject({ email: z.email(), kata_sandi: z.string().min(1).max(256) }), kosong, 400, 401),
   dokterKeluar: endpoint("POST", "/api/clinic/logout", "dokter", kosong, kosong, 401),
@@ -82,7 +84,7 @@ export const API = {
         rules_json: AturanSchema, confirmed_at: waktu })),
       sesi: z.array(sesi.extend({ alasan_selesai: AlasanSelesai })), ngemut_dikonfirmasi: jumlah,
       paparan: z.array(paparan), siap_naik_tahap: bool, saran_turun_tahap: bool,
-      ringkasan_dokter: z.string().nullable() }), 401, 404),
+      ringkasan_dokter: z.string().nullable(), ringkasan_sumber: sumberRingkasan.optional() }), 401, 404),
   aturanParse: endpoint("POST", "/api/rules/parse", "dokter",
     z.strictObject({ teks: z.string().trim().min(1).max(1000) }),
     z.object({ aturan: AturanSchema.partial().extend({ advance_rule: AturanSchema.shape.advance_rule.partial().optional() }),
