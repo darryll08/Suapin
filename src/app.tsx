@@ -5,6 +5,7 @@ import { rutKlinik } from "./halaman/klinik/rute.tsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <p className="p-4 text-ungu">Suapin: kerangka repo. Halaman dibangun mulai I0.</p> },
+  { path: "/contoh-gaya", lazy: async () => ({ Component: (await import("./halaman/keluarga/contoh-gaya.tsx")).ContohGaya }) },
   ...rutKlinik,
   ...rutDev,
 ]);
