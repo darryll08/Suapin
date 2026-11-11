@@ -43,10 +43,10 @@ Centang hanya bila ada buktinya. Format: `- [x] A0.1 Kerangka proyek · 10 Nov �
 - [x] B3.4 `/beranda` · 11 Nov · a9bf415 · data contoh Dika tampil
 - [x] B3.5 `/laporan` · 11 Nov · a9bf415 · link bagikan menunggu /r/:token (C)
 - [x] B3.6 `/langganan` · 11 Nov · a9bf415 · data tiruan
-- [ ] B4.1 Manifest dan service worker
+- [x] B4.1 Manifest dan service worker · 11 Nov · a9bf415 · build+preview: SW aktif, model+WASM ter-cache, landing dan /dev/sesi?sumber=slider terbuka saat server mati; install di HP belum
 - [x] B5.1 Naskah video · 11 Nov · a9bf415 · docs/video.md, menunggu tinjauan A dan C
 - [ ] B5.2 Rekam dan edit
-- [ ] B6.1 Kontribusi Satya di README
+- [x] B6.1 Kontribusi Satya di README · 11 Nov · 9065635 · draf, Satya wajib membaca dan bisa menjelaskan
 
 ## C (Adit): server, database, AI, dashboard klinik
 
