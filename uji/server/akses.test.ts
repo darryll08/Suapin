@@ -39,3 +39,15 @@ it("demo tidak aktif saat dimatikan", async () => {
   const app = buatApp({ ...uji.env, DEMO: "0" }, uji.db)
   expect((await app.request("/api/demo/reset", { method: "POST" })).status).toBe(404)
 })
+
+it("menolak kode keluarga salah dan menyamakan galat login dokter", async () => {
+  const keluarga = await uji.req("/api/masuk", "POST", { kode_akses: "KODETIDAKADA" })
+  expect(keluarga.status).toBe(401)
+
+  const kata_sandi = crypto.randomUUID()
+  const login = (email: string) => uji.req("/api/clinic/login", "POST", { email, kata_sandi })
+  const [sandiSalah, emailSalah] = await Promise.all([login("dokter@demo.test"), login("tidak-ada@demo.test")])
+  expect(sandiSalah.status).toBe(401)
+  expect(emailSalah.status).toBe(401)
+  expect(await sandiSalah.json()).toEqual(await emailSalah.json())
+})

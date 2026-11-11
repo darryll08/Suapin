@@ -47,6 +47,9 @@ it("skrining membuka sesi, simpan dan retry tidak menggandakan paparan", async (
 it("bagikan, klaim, baca resep dari cache, konfirmasi, lalu keluarga mendapat aturan dokter", async () => {
   const keluarga = uji.sebagai(uji.dika)
   const dokter = uji.sebagai(uji.dokter)
+  const laporan = await keluarga("/api/children/" + DIKA + "/report")
+  expect(laporan.status).toBe(200)
+  expect(API.laporanKeluarga.res.parse(await laporan.json()).sesi.length).toBeGreaterThan(0)
   const share = API.laporanBagikan.res.parse(await (await keluarga("/api/reports/share", "POST")).json())
   expect(share.token).toMatch(/^[\w-]{43}$/)
   const anonim = await (await uji.req("/api" + share.url)).json()
@@ -72,12 +75,39 @@ it("bagikan, klaim, baca resep dari cache, konfirmasi, lalu keluarga mendapat at
   expect(await (await dokter("/api/summaries/" + DIKA, "POST")).json()).toMatchObject({ sumber: "template" })
 })
 
+it("aktivasi program tercatat di profil keluarga", async () => {
+  const keluarga = uji.sebagai(uji.nara)
+  const aktivasi = await keluarga("/api/plan/activate", "POST", { paket: "program_30" })
+  expect(aktivasi.status).toBe(200)
+  expect(await aktivasi.json()).toEqual({ plan: "program" })
+  expect(await (await keluarga("/api/saya")).json()).toMatchObject({ child: { plan: "program" } })
+})
+
+it("resep memakai cache saat LLM gagal dan menawarkan isian manual bila cache kosong", async () => {
+  const gagal: Llm = async () => { throw new Error("Timeout tiruan") }
+  const dokter = uji.sebagai(uji.dokter, gagal)
+  const tersedia = await dokter("/api/rules/parse", "POST", { teks: contohResep[0]!.teks })
+  expect(await tersedia.json()).toMatchObject({ sumber: "cache", aturan: { max_minutes: 20 } })
+  const kosong = await dokter("/api/rules/parse", "POST", { teks: "Aturan khusus tanpa contoh cache." })
+  expect(await kosong.json()).toMatchObject({ sumber: "gagal", kolom_bermasalah: expect.any(Array) })
+})
+
 it("seed idempoten, reset menghapus data latihan dan tetap menyediakan cache", async () => {
+  const anakLatihan = await uji.req("/api/children", "POST",
+    { panggilan: "Anak Latihan", tanggal_lahir: "2022-09-01", sapaan: "bu", nama_pengasuh: "Ibu Uji" })
+  expect(anakLatihan.status).toBe(200)
+  const cookieLatihan = anakLatihan.headers.getSetCookie()[0]!.split(";")[0]!
   const pertama = await jalankanSeed(uji.db, uji.env)
   expect((await jalankanSeed(uji.db, uji.env)).jumlah).toEqual(pertama.jumlah)
   const reset = await uji.req("/api/demo/reset", "POST")
   expect(reset.status).toBe(200)
   expect(await reset.json()).toMatchObject({ jumlah: { children: 3 }, ok: true })
+  expect((await uji.sebagai(cookieLatihan)("/api/saya")).status).toBe(401)
+  const dikaDemo = await uji.req("/api/demo/masuk", "POST", { sebagai: "keluarga_dika" })
+  expect(dikaDemo.status).toBe(204)
+  const cookieDika = dikaDemo.headers.getSetCookie().find((cookie) => cookie.startsWith("tm_keluarga="))!.split(";")[0]!
+  const sayaDika = await uji.sebagai(cookieDika)("/api/saya")
+  expect(await sayaDika.json()).toMatchObject({ child: { id: DIKA, plan: "trial", stage: 1 } })
   expect(await (await uji.sebagai(uji.dokter)("/api/rules/parse", "POST", { teks: contohResep[0]!.teks })).json())
     .toMatchObject({ sumber: "cache" })
   const demo = await uji.req("/api/demo/masuk", "POST", { sebagai: "dokter_demo" })

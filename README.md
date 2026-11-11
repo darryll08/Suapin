@@ -43,7 +43,7 @@ Butuh Node.js 24 (minimal 22) dan npm.
 
    `OPENAI_API_KEY` boleh kosong: resep dan ringkasan AI memakai cache atau template. `OPENAI_MODEL` bawaannya `gpt-6-luna`.
 
-4. Siapkan database lokal (file `local.db`, tidak di-commit), lalu jalankan. `db:migrasi` dan `db:seed` tersedia setelah server dan database C (kartu C0.2) masuk; sebelum itu cukup `npm run dev`.
+4. Siapkan database lokal `local.db`, lalu jalankan aplikasi.
 
    ```bash
    npm run db:migrasi
@@ -53,7 +53,7 @@ Butuh Node.js 24 (minimal 22) dan npm.
 
 - Web: http://localhost:5173 · API: http://127.0.0.1:8787 (Vite mem-proxy `/api`).
 - Akun dokter demo: `dokter@demo.test` dengan sandi dari `DEMO_DOKTER_SANDI`. Kode akses keluarga Dika dicetak di terminal saat seed.
-- Data demo kembali ke awal lewat `npm run db:seed` atau tombol Reset di `/dev/ambang`.
+- `npm run db:seed` mengisi ulang akun dan data contoh. Untuk menghapus semua data anak latihan dan mengembalikan seed di database demo, jalankan `npx tsx scripts/reset-demo.ts` dengan `DEMO=1`. Reset mempertahankan cache LLM.
 - Kamera hanya jalan di `localhost` atau HTTPS. Untuk HP Android: `adb reverse tcp:5173 tcp:5173`, lalu buka `localhost:5173` di HP. Alamat `http://192.168.x.x` tidak bisa membuka kamera.
 
 ### Pratinjau layar tanpa server
@@ -128,7 +128,10 @@ _(diisi)_
 _(diisi)_
 
 ### Adit (C)
-_(diisi)_
+
+API Hono dan kontrak Zod, autentikasi keluarga dan dokter, migrasi dan data demo SQLite, penyimpanan sesi, laporan bagikan, serta dasbor klinik. Codex membantu implementasi, penulisan tes, dan verifikasi integrasi.
+
+**Cara kerja fitur AI.** Teks aturan dokter dikirim ke model OpenAI sebagai structured output. Server memvalidasi kolom dan rentangnya, lalu dokter meninjau serta mengonfirmasi hasil sebelum aturan dipakai di sesi keluarga berikutnya. Ringkasan mingguan memakai statistik sesi. Cache resep dan template ringkasan mendukung demo tanpa kunci API. Akses ke data anak di luar akun keluarga atau klinik yang berwenang menghasilkan HTTP 404.
 
 ## AI Use Declaration
 
