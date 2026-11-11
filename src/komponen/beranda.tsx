@@ -128,7 +128,7 @@ export function LabelAI({ sumber }: { sumber: "ai" | "cache" | "template" }) {
 /** Panah dalam lingkaran ungu, ujung kanan tombol hero. */
 export function Panah() {
   return (
-    <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-ungu text-latar" aria-hidden="true">
+    <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-ungu text-latar transition-transform duration-200 ease-standar group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:rotate-12 motion-reduce:transform-none" aria-hidden="true">
       <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M7 17L17 7M9 7h8v8" /></svg>
     </span>
   );

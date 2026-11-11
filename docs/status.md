@@ -67,6 +67,12 @@ Tulis bagianmu di akhir setiap titik integrasi: apa yang jadi, apa yang belum, k
 - Mode demo sementara: tombol kecil "Mode demo: keluarga Dika" di footer landing (kode Dika `DKAX7QMP2RHT` hanya di data tiruan). Diganti `POST /api/demo/masuk` setelah C4.2.
 - Teruji di browser (Claude Browser, 375 dan 1280 px): landing, beranda Dika, persiapan, sesi `rekaman:contoh` (lewati pemanasan → Suap → diterima + perayaan → jeda redup → Stop → catatan → beranda), laporan. Tanpa scroll samping. **Belum:** kamera asli, HP Android, suara di HP, offline PWA, alur daftar baru di browser.
 
+**Landing + halaman masuk gabungan · 11 Nov 2026 malam**
+
+- Landing memakai ilustrasi AI (anak, karakter teman makan, adegan menolak/nonton, anak tertawa), lihat `docs/aset.md`. Animasi hanya saat scroll (`Muncul`) + mulut karakter meniru di hero.
+- `/masuk` sekarang halaman masuk gabungan: tab **Keluarga** (kode akses) dan **Klinik** (email + kata sandi, endpoint `dokterMasuk` yang sama dengan `/klinik/masuk`). `?sebagai=klinik` membuka tab klinik, `?kembali=/r/<token>` dipertahankan.
+- **Adit:** `/klinik/masuk` (milikmu) masih jalan dan dipakai link di `/r/:token`. Kalau setuju, arahkan saja ke `/masuk?sebagai=klinik&kembali=...` supaya cuma ada satu halaman masuk.
+
 ## C (Adit)
 
 ### Integrasi keluarga dan klinik · 11 November 2026

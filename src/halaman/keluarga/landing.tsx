@@ -3,21 +3,22 @@
 // Ketuk logo 5× dalam 3 detik → /dev/ambang (tanpa umpan balik).
 import { useRef, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router";
-import { AdeganNonton } from "../../karakter/adegan-nonton.tsx";
 import { DemoMeniru } from "../../karakter/demo-meniru.tsx";
-import { Muncul } from "../../komponen/muncul.tsx";
-import { bento, tombolHero, tombolTeks, tombolUtama, wadahKeluarga } from "../../gaya/gaya.ts";
+import { AngkaNaik, Muncul } from "../../komponen/muncul.tsx";
+import { bento, tombolHero, tombolUtama, wadahKeluarga } from "../../gaya/gaya.ts";
 import { Panah } from "../../komponen/beranda.tsx";
 import { kalimatTahap } from "./bantu.ts";
 import { api } from "./data.ts";
 
 const fokus = "outline-none focus-visible:ring-4 focus-visible:ring-jagung focus-visible:ring-offset-2 focus-visible:ring-offset-latar";
 const tombolPilUngu =
-  `inline-flex min-h-14 items-center justify-between gap-3 rounded-full bg-ungu pl-6 pr-2 font-judul text-isi font-bold whitespace-nowrap text-latar sm:text-tombol ` +
-  `transition-transform duration-150 active:scale-[0.98] ${fokus}`;
+  `group inline-flex min-h-14 items-center justify-between gap-3 rounded-full bg-ungu pl-6 pr-2 font-judul text-isi font-bold whitespace-nowrap text-latar sm:text-tombol ` +
+  `transition-[transform,box-shadow,background-color] duration-200 ease-standar hover:-translate-y-0.5 hover:bg-ungu-muda hover:shadow-[0_10px_24px_rgb(75_46_90/0.28)] ` +
+  `active:translate-y-0 active:scale-[0.97] motion-reduce:transform-none ${fokus}`;
 const tombolPilGaris =
-  `inline-flex min-h-14 items-center justify-center rounded-full border-2 border-ungu px-6 font-judul text-isi font-bold text-ungu sm:text-tombol ` +
-  `transition-[transform,background-color] duration-150 hover:bg-ungu-tint active:scale-[0.98] ${fokus}`;
+  `inline-flex min-h-14 items-center justify-center rounded-full border-2 border-ungu px-8 font-judul text-isi font-bold text-ungu sm:text-tombol ` +
+  `transition-[transform,box-shadow,background-color] duration-200 ease-standar hover:-translate-y-0.5 hover:bg-ungu-tint hover:shadow-[0_10px_24px_rgb(75_46_90/0.16)] ` +
+  `active:translate-y-0 active:scale-[0.97] motion-reduce:transform-none ${fokus}`;
 
 export function Landing() {
   const pindah = useNavigate();
@@ -29,20 +30,19 @@ export function Landing() {
   };
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-16 px-4 pb-6 md:gap-24">
+    <main className="mx-auto flex w-full max-w-5xl flex-col gap-16 overflow-x-clip px-4 pb-6 md:gap-24">
       <div className="flex flex-col">
         <header className="flex items-center justify-between pt-3">
           <button type="button" onClick={ketukLogo} className="inline-flex min-h-12 items-center gap-2 font-judul text-subjudul font-bold">
             <img src="/ikon/suapin-ikon-ungu-putih.svg" alt="" className="size-9 rounded-[10px]" />
             Suapin
           </button>
-          <span className="hidden sm:block"><Link to="/klinik/masuk" className={tombolTeks}>Untuk klinik →</Link></span>
         </header>
 
         {/* 1. Hook */}
         <section className="grid items-center gap-8 pt-6 md:grid-cols-[1.1fr_1fr] md:pt-12">
           <div className="flex flex-col gap-5">
-            <h1 className="font-judul text-[34px] leading-[42px] font-bold text-balance md:text-[52px] md:leading-[60px]">
+            <h1 className="masuk font-judul text-[34px] leading-[42px] font-bold text-balance md:text-[52px] md:leading-[60px]">
               Makan jadi giliran main,{" "}
               <span className="relative inline-block text-jagung-tua">
                 bukan tontonan.
@@ -51,37 +51,43 @@ export function Landing() {
                 </svg>
               </span>
             </h1>
-            <span className="h-1 w-12 rounded-full bg-ungu" aria-hidden="true" />
-            <p className="max-w-[460px] text-isi text-ungu-muda">Teman makan yang meniru mulut anak, lalu pelan-pelan pergi dari layar.</p>
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <span className="masuk h-1 w-12 rounded-full bg-ungu" style={{ animationDelay: "100ms" }} aria-hidden="true" />
+            <p className="masuk max-w-[460px] text-isi text-ungu-muda" style={{ animationDelay: "150ms" }}>Teman makan yang meniru mulut anak, lalu pelan-pelan pergi dari layar.</p>
+            <div className="masuk flex flex-col gap-3 sm:flex-row" style={{ animationDelay: "250ms" }}>
               <Link to="/mulai" className={tombolPilUngu}>Mulai gratis untuk keluarga <PanahJagung /></Link>
-              <Link to="/klinik/masuk" className={tombolPilGaris}>Untuk klinik</Link>
+              <Link to="/masuk" className={tombolPilGaris}>Masuk</Link>
             </div>
-            <Link to="/masuk" className={`${tombolTeks} -ml-3 self-start`}>Sudah punya kode? Masuk</Link>
-            <ul className="flex flex-wrap gap-2 text-kecil font-semibold">
+            <ul className="masuk flex flex-wrap gap-2 text-kecil font-semibold" style={{ animationDelay: "350ms" }}>
               <Chip ikon={<IkonKamera />}>Video tetap di HP</Chip>
               <Chip ikon={<IkonAnak />}>Untuk usia 3–5 tahun</Chip>
             </ul>
           </div>
-          <DemoMeniru className="mx-auto w-full max-w-[300px] md:max-w-[440px]" />
+          <DemoMeniru className="masuk-skala mx-auto w-full max-w-[300px] md:max-w-[440px]" />
         </section>
       </div>
 
-      {/* 2. Masalah */}
-      <section className="grid items-center gap-8 md:grid-cols-2">
-        <Muncul><AdeganNonton /></Muncul>
-        <Muncul tunda={100} className="flex flex-col gap-4">
-          <p className="text-kecil font-bold tracking-wider text-jagung-tua uppercase">Masalahnya</p>
-          <h2 className="font-judul text-judul font-bold md:text-[34px] md:leading-[42px]">Disuapi sambil nonton, makan bisa sampai satu jam.</h2>
-          <p className="text-isi text-ungu-muda">
-            Tanpa layar, anak menutup mulut. Dengan layar, anak makan tanpa memperhatikan makanannya. Dokter meminta makan tanpa layar, tapi di rumah tidak ada penggantinya.
-          </p>
-          <div className={`${bento} flex flex-col gap-1`}>
-            <p className="font-judul text-[34px] leading-10 font-bold tabular-nums">15–60%</p>
+      {/* 2. Masalah: dua sisi yang sama-sama tidak berhasil */}
+      <section className="flex flex-col gap-8">
+        <div className="grid items-end gap-6 md:grid-cols-[1.3fr_1fr]">
+          <Muncul dari="kiri" className="flex flex-col gap-4">
+            <p className="text-kecil font-bold tracking-wider text-jagung-tua uppercase">Masalahnya</p>
+            <h2 className="font-judul text-judul font-bold md:text-[34px] md:leading-[42px]">Tanpa layar menolak, dengan layar tidak memperhatikan.</h2>
+            <p className="text-isi text-ungu-muda">Dokter meminta makan tanpa layar, tapi di rumah tidak ada penggantinya.</p>
+          </Muncul>
+          <Muncul dari="kanan" tunda={150} className={`${bento} flex flex-col gap-1`}>
+            <p className="font-judul text-[34px] leading-10 font-bold tabular-nums">15–<AngkaNaik dari={15} ke={60} />%</p>
             <p className="text-isi">anak prasekolah mengalami kesulitan makan, menurut berbagai studi di Indonesia.</p>
             <p className="text-[13px] text-ungu-muda">Angka berbeda karena definisinya berbeda. Sumber: kajian pustaka, repositori UKWMS.</p>
-          </div>
-        </Muncul>
+          </Muncul>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Adegan src="/aset/anak/adegan-menolak.webp" label="Tanpa layar" ikon={<IkonTangan />} tunda={0} dari="kiri"
+            judul="Anak menutup mulut dan menoleh dari sendok."
+            alt="Ilustrasi: anak menutup mulut dengan kedua tangan dan menoleh dari sendok berisi nasi dan brokoli." />
+          <Adegan src="/aset/anak/adegan-nonton.webp" label="Dengan layar" ikon={<IkonJam />} tunda={150} dari="kanan"
+            judul="Mau makan, tapi matanya ke layar. Bisa sampai satu jam."
+            alt="Ilustrasi: anak menatap tablet di meja makan sementara sendok berisi nasi dan brokoli menunggu di samping." />
+        </div>
       </section>
 
       {/* 3. Cara kerja */}
@@ -97,7 +103,7 @@ export function Landing() {
             ["03", "Karakter meniru, lalu merayakan", "Mulut karakter mengikuti mulut anak. Perayaan hanya saat suapan diterima; saat menolak, karakter diam."],
           ].map(([n, judul, isi], i) => (
             <li key={n}>
-              <Muncul tunda={i * 100} className={`${bento} flex h-full flex-col gap-2`}>
+              <Muncul tunda={i * 150} className={`${bento} flex h-full flex-col gap-2`}>
                 <span className="font-judul text-[34px] leading-10 font-bold text-jagung-tua tabular-nums">{n}</span>
                 <h3 className="font-judul text-subjudul font-bold">{judul}</h3>
                 <p className="text-isi text-ungu-muda">{isi}</p>
@@ -105,6 +111,19 @@ export function Landing() {
             </li>
           ))}
         </ol>
+        <Muncul dari="skala">
+          <figure className={`${bento} grid items-center gap-5 p-4 sm:grid-cols-[220px_1fr] sm:p-5`}>
+            <div className="mx-auto aspect-square w-full max-w-[220px] overflow-hidden rounded-[20px] bg-jagung-muda">
+              <img src="/aset/anak/anak-tertawa.webp" width={512} height={512} loading="lazy" decoding="async"
+                alt="Ilustrasi: anak tertawa senang." className="block size-full translate-y-[4%]" />
+            </div>
+            <figcaption className="flex flex-col gap-2 sm:pr-4">
+              <p className="text-kecil font-bold tracking-wider text-jagung-tua uppercase">Tujuannya</p>
+              <p className="font-judul text-subjudul font-bold text-balance md:text-judul">Makan jadi momen yang ditunggu, bukan drama setiap hari.</p>
+              <p className="text-isi text-ungu-muda">Setiap suapan yang diterima dirayakan. Orang tua dan dokter melihat catatannya: diterima, ditolak, atau ngemut.</p>
+            </figcaption>
+          </figure>
+        </Muncul>
         <Muncul className="mx-auto max-w-[640px] text-center text-kecil text-ungu-muda">
           Makanan baru dihitung sampai 10 kali coba, karena penerimaan umumnya naik setelah 8–10 kali paparan (tinjauan USDA NESR).
         </Muncul>
@@ -119,7 +138,7 @@ export function Landing() {
         <ol className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {[1, 2, 3, 4].map((t, i) => (
             <li key={t}>
-              <Muncul tunda={i * 80} className={`flex h-full flex-col gap-2 rounded-bento p-5 shadow-kartu ${t === 3 ? "bg-black text-latar" : t === 4 ? "bg-ungu-tint" : "bg-permukaan"}`}>
+              <Muncul dari="skala" tunda={i * 120} className={`flex h-full flex-col gap-2 rounded-bento p-5 shadow-kartu ${t === 3 ? "bg-black text-latar" : t === 4 ? "bg-ungu-tint" : "bg-permukaan"}`}>
                 <span className={`font-judul text-[34px] leading-10 font-bold tabular-nums ${t === 3 ? "text-jagung" : "text-ungu"}`}>{t}</span>
                 <p className={`text-kecil ${t === 3 ? "text-latar/90" : "text-ungu-muda"}`}>{kalimatTahap(t, "anak", "Pengasuh")}</p>
               </Muncul>
@@ -132,7 +151,7 @@ export function Landing() {
       </section>
 
       {/* 5. Untuk klinik + privasi */}
-      <Muncul>
+      <Muncul dari="skala">
         <section className="grid gap-6 rounded-bento bg-ungu p-6 text-latar shadow-kartu md:grid-cols-[1.4fr_1fr] md:p-10">
           <div className="flex flex-col gap-3">
             <p className="text-kecil font-bold tracking-wider text-jagung uppercase">Untuk klinik</p>
@@ -140,7 +159,7 @@ export function Landing() {
             <p className="text-isi text-latar/90">AI mengubah teks dokter menjadi aturan sesi dalam rentang aman. Dokter memeriksa dan mengonfirmasi sebelum aturan dipakai.</p>
           </div>
           <div className="flex flex-col justify-end gap-3">
-            <Link to="/klinik/masuk" className={tombolHero}>Masuk untuk klinik <Panah /></Link>
+            <Link to="/masuk?sebagai=klinik" className={tombolHero}>Masuk untuk klinik <Panah /></Link>
             <p className="flex items-start gap-2 text-kecil text-latar/90">
               <span className="mt-0.5 shrink-0"><IkonKamera /></span>
               Video kamera tidak pernah keluar dari HP. Yang disimpan hanya hasil suapan: diterima, ditolak, atau ngemut.
@@ -163,13 +182,29 @@ export function Landing() {
   );
 }
 
+function Adegan({ src, label, ikon, judul, alt, tunda, dari }: { src: string; label: string; ikon: ReactNode; judul: string; alt: string; tunda: number; dari: "kiri" | "kanan" }) {
+  return (
+    <Muncul tunda={tunda} dari={dari}>
+      <figure className={`${bento} flex flex-col gap-3 p-3`}>
+        <div className="relative">
+          <img src={src} width={1200} height={800} loading="lazy" decoding="async" alt={alt} className="block h-auto w-full rounded-[20px]" />
+          <span className="absolute top-3 left-3 inline-flex min-h-10 items-center gap-2 rounded-full bg-permukaan px-4 text-kecil font-bold shadow-kartu">
+            {ikon} {label}
+          </span>
+        </div>
+        <figcaption className="px-2 pb-2 text-isi font-semibold">{judul}</figcaption>
+      </figure>
+    </Muncul>
+  );
+}
+
 function Chip({ ikon, children }: { ikon: ReactNode; children: ReactNode }) {
   return <li className="inline-flex min-h-10 items-center gap-2 rounded-full bg-permukaan px-4 shadow-kartu">{ikon}{children}</li>;
 }
 
 function PanahJagung() {
   return (
-    <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-jagung text-ungu" aria-hidden="true">
+    <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-jagung text-ungu transition-transform duration-200 ease-standar group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:rotate-12 motion-reduce:transform-none" aria-hidden="true">
       <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M7 17L17 7M9 7h8v8" /></svg>
     </span>
   );
@@ -178,6 +213,12 @@ function PanahJagung() {
 const garis = { fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" } as const;
 function IkonKamera() {
   return <svg viewBox="0 0 24 24" className="size-5" {...garis} aria-hidden="true"><rect x="2" y="6" width="14" height="12" rx="3" /><path d="M16 10l6-3v10l-6-3z" /></svg>;
+}
+function IkonTangan() {
+  return <svg viewBox="0 0 24 24" className="size-5" {...garis} aria-hidden="true"><path d="M8 13V6a1.5 1.5 0 0 1 3 0v6M11 11V4.5a1.5 1.5 0 0 1 3 0V11M14 11V6a1.5 1.5 0 0 1 3 0v7a6 6 0 0 1-6 6h-.5A5.5 5.5 0 0 1 5 13.5V11a1.5 1.5 0 0 1 3 0" /></svg>;
+}
+function IkonJam() {
+  return <svg viewBox="0 0 24 24" className="size-5" {...garis} aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>;
 }
 function IkonAnak() {
   return <svg viewBox="0 0 24 24" className="size-5" {...garis} aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M5 21a7 7 0 0 1 14 0" /></svg>;

@@ -1,10 +1,10 @@
-// Pemilik: B (Satya). Demo hero landing: wajah anak (ilustrasi) dan karakter Suapin bergerak dari rekaman sinyal
+// Pemilik: B (Satya). Demo hero landing: anak (ilustrasi AI + mulut SVG) dan karakter Suapin bergerak dari rekaman sinyal
 // yang sama (bersama/kontrak/contoh/rekaman-sinyal.json, rekaman buatan), jadi pengunjung melihat karakter meniru mulut.
 // Tidak memakai kamera atau MediaPipe. Animasi hanya berjalan saat terlihat di layar.
 import { useEffect, useRef, useState } from "react";
 import type { Pose } from "../../bersama/kontrak/sesi.ts";
-import { Karakter } from "./karakter.tsx";
-import { IsiMulut } from "./mulut.tsx";
+import { Teman } from "./teman.tsx";
+import { Anak } from "./anak.tsx";
 
 type Sampel = { t: number; mulut: number };
 const REKAMAN = import.meta.glob<{ sinyal: Sampel[] }>("../../bersama/kontrak/contoh/rekaman-sinyal.json", { import: "default" });
@@ -53,63 +53,35 @@ export function DemoMeniru({ className = "" }: { className?: string }) {
   return (
     <div ref={wadah} className={`relative aspect-square ${className}`}>
       {/* cincin orbit */}
-      <svg viewBox="0 0 400 400" className="orbit absolute inset-0 size-full" aria-hidden="true">
+      <svg viewBox="0 0 400 400" className="absolute inset-0 size-full" aria-hidden="true">
         <circle cx="200" cy="200" r="196" fill="none" stroke="var(--color-garis)" strokeWidth="1.5" />
         <circle cx="200" cy="200" r="160" fill="none" stroke="var(--color-garis)" strokeWidth="1.5" strokeDasharray="4 8" />
-        <circle cx="200" cy="4" r="7" fill="var(--color-jagung)" />
-        <circle cx="361" cy="230" r="5" fill="var(--color-ungu)" />
-        <circle cx="60" cy="300" r="6" fill="var(--color-ungu-muda)" />
       </svg>
-      <div className="absolute inset-[13%] rounded-full bg-jagung-muda" />
-      <div className="absolute inset-[11%]">
-        <Karakter pose={pose} mulut={mulut} makanan={null} layar="terang" latar={false} />
+      <div className="absolute inset-[12%] overflow-hidden rounded-full bg-jagung-muda">
+        <Teman mulut={mulut} merayakan={pose === "merayakan"} className="translate-y-[5%]" />
       </div>
 
       {/* wajah anak (ilustrasi) di orbit, mulutnya digerakkan sinyal yang sama */}
       <figure className="absolute bottom-[2%] left-[0%] flex w-[30%] flex-col items-center gap-1">
-        <div className="aspect-square w-full rounded-full border-4 border-permukaan bg-ungu-tint shadow-kartu">
-          <WajahAnak mulut={mulut} />
+        <div className="aspect-square w-full overflow-hidden rounded-full border-4 border-permukaan bg-ungu-tint shadow-kartu">
+          <Anak mulut={mulut} className="translate-y-[6%] scale-[1.12]" />
         </div>
         <figcaption className="rounded-full bg-permukaan px-3 py-1 text-[13px] font-semibold shadow-kartu">Anak</figcaption>
       </figure>
 
-      <Label className="top-[6%] right-[0%]" tunda="0s">Meniru mulut anak</Label>
-      <Label className="top-[40%] -left-[2%]" tunda="-1s">Giliran makan</Label>
-      <Label className="right-[2%] bottom-[16%]" tunda="-2s">Dirayakan saat diterima</Label>
+      <Label className="top-[6%] right-[0%]">Meniru mulut anak</Label>
+      <Label className="top-[40%] -left-[2%]">Giliran makan</Label>
+      <Label className="right-[2%] bottom-[16%]">Dirayakan saat diterima</Label>
       <p className="sr-only">Animasi: mulut karakter mengikuti buka-tutup mulut anak dari rekaman contoh, lalu karakter merayakan saat suapan diterima.</p>
     </div>
   );
 }
 
-function Label({ children, className, tunda }: { children: string; className: string; tunda: string }) {
+function Label({ children, className }: { children: string; className: string }) {
   return (
-    <span className={`melayang absolute rounded-full bg-permukaan px-3 py-2 text-[13px] font-semibold whitespace-nowrap text-ungu shadow-kartu sm:px-4 sm:text-kecil ${className}`}
-      style={{ animationDelay: tunda }} aria-hidden="true">
+    <span className={`absolute rounded-full bg-permukaan px-3 py-2 text-[13px] font-semibold whitespace-nowrap text-ungu shadow-kartu sm:px-4 sm:text-kecil ${className}`}
+      aria-hidden="true">
       {children}
     </span>
   );
-}
-
-/** Wajah anak ilustrasi (bukan foto). Rambut dikuncir, berbeda dari karakter. Koordinat 120×120. */
-export function IsiWajahAnak({ mulut = 0, menoleh = false }: { mulut?: number; menoleh?: boolean }) {
-  const geser = menoleh ? 10 : 0;
-  return (
-    <g>
-      <circle cx="26" cy="38" r="12" fill="#4B2E5A" />
-      <circle cx="94" cy="38" r="12" fill="#4B2E5A" />
-      <circle cx="60" cy="64" r="40" fill="#F2CDA8" />
-      <path d="M22,56 Q30,22 60,22 Q90,22 98,56 Q82,40 60,42 Q38,40 22,56 Z" fill="#4B2E5A" />
-      <ellipse cx="40" cy="78" rx="8" ry="5" fill="#EFB99A" />
-      <ellipse cx="80" cy="78" rx="8" ry="5" fill="#EFB99A" />
-      <ellipse cx={46 + geser} cy="64" rx="4.5" ry="5.5" fill="#2E1B38" />
-      <ellipse cx={74 + geser} cy="64" rx="4.5" ry="5.5" fill="#2E1B38" />
-      <g transform={`translate(${42 + geser / 2},76) scale(0.36)`}>
-        <IsiMulut buka={mulut} />
-      </g>
-    </g>
-  );
-}
-
-export function WajahAnak(p: { mulut?: number; menoleh?: boolean }) {
-  return <svg viewBox="0 0 120 120" className="size-full" aria-hidden="true"><IsiWajahAnak {...p} /></svg>;
 }

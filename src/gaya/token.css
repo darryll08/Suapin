@@ -54,16 +54,19 @@ body { background: var(--color-latar); color: var(--color-ungu); font-family: va
 /* Bento (inspo 12 Nov): arsiran untuk nilai kosong/ditolak di grafik pil. Garis ungu muda 6,4:1 di atas permukaan. */
 .arsir { background-image: repeating-linear-gradient(135deg, var(--color-ungu-muda) 0 2px, transparent 2px 7px); }
 
-/* Landing (motion hanya transform + opacity; mati di prefers-reduced-motion kecuali mulut meniru) */
-.orbit { animation: orbit 60s linear infinite; transform-origin: 50% 50%; }
-.melayang { animation: melayang 3s ease-in-out infinite; }
-.sendok-menunggu { animation: sendok-menunggu 2.4s ease-in-out infinite; transform-box: fill-box; }
-.muncul { opacity: 0; transform: translateY(16px); transition: opacity 400ms var(--ease-standar), transform 400ms var(--ease-standar); }
-.muncul.terlihat { opacity: 1; transform: none; }
-@keyframes orbit { to { transform: rotate(360deg); } }
-@keyframes melayang { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-@keyframes sendok-menunggu { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-6px); } }
+/* Landing: animasi muncul saat di-scroll (transform + opacity); mati di prefers-reduced-motion */
+.muncul { opacity: 0; transition: opacity 700ms var(--ease-standar), transform 700ms var(--ease-standar); will-change: opacity, transform; }
+.muncul-bawah { transform: translateY(48px); }
+.muncul-kiri { transform: translateX(-64px); }
+.muncul-kanan { transform: translateX(64px); }
+.muncul-skala { transform: scale(0.88); }
+.muncul.terlihat { opacity: 1; transform: none; will-change: auto; }
+/* Hero: muncul bertahap saat halaman dibuka */
+.masuk { animation: masuk 700ms var(--ease-standar) both; }
+.masuk-skala { animation: masuk-skala 900ms var(--ease-pop) both; }
+@keyframes masuk { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+@keyframes masuk-skala { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
-  .orbit, .melayang, .sendok-menunggu { animation: none; }
-  .muncul { opacity: 1; transform: none; transition: none; }
+  .muncul, .muncul-bawah, .muncul-kiri, .muncul-kanan, .muncul-skala { opacity: 1; transform: none; transition: none; }
+  .masuk, .masuk-skala { animation: none; }
 }

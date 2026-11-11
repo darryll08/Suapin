@@ -4,18 +4,19 @@ const fokus =
   "outline-none focus-visible:ring-4 focus-visible:ring-jagung focus-visible:ring-offset-2 focus-visible:ring-offset-latar";
 
 const dasarTombol =
-  `inline-flex items-center justify-center gap-2 rounded-tombol px-5 font-judul text-tombol font-bold ` +
-  `transition-[transform,background-color] duration-150 ease-standar active:scale-[0.98] ` +
+  `group inline-flex items-center justify-center gap-2 rounded-tombol px-5 font-judul text-tombol font-bold ` +
+  `transition-[transform,background-color,box-shadow] duration-200 ease-standar hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] ` +
+  `motion-reduce:transform-none disabled:hover:translate-y-0 disabled:hover:shadow-none ` +
   `disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 ${fokus}`;
 
 /** Aksi utama: ungu, tinggi ≥ 56 px, lebar penuh di HP. */
-export const tombolUtama = `${dasarTombol} min-h-14 w-full sm:w-auto bg-ungu text-permukaan hover:bg-ungu-muda`;
+export const tombolUtama = `${dasarTombol} min-h-14 w-full sm:w-auto bg-ungu text-permukaan hover:bg-ungu-muda hover:shadow-[0_10px_24px_rgb(75_46_90/0.28)]`;
 
 /** Aksi kedua: garis ungu di atas permukaan. */
-export const tombolKedua = `${dasarTombol} min-h-14 w-full sm:w-auto border-2 border-ungu bg-permukaan text-ungu hover:bg-ungu-tint`;
+export const tombolKedua = `${dasarTombol} min-h-14 w-full sm:w-auto border-2 border-ungu bg-permukaan text-ungu hover:bg-ungu-tint hover:shadow-[0_10px_24px_rgb(75_46_90/0.16)]`;
 
 /** Aksi teks: tetap ≥ 48 px supaya mudah disentuh. */
-export const tombolTeks = `${dasarTombol} min-h-12 px-3 text-ungu underline-offset-4 hover:underline`;
+export const tombolTeks = `${dasarTombol} min-h-12 px-3 text-ungu underline-offset-4 hover:translate-y-0 hover:underline hover:decoration-jagung hover:decoration-2`;
 
 export const isian =
   `block min-h-12 w-full rounded-isian border-2 border-garis bg-permukaan px-4 text-isi text-ungu ` +
@@ -28,23 +29,25 @@ export const bento = "rounded-bento bg-permukaan p-5 shadow-kartu";
 
 /** Tombol pil jagung di atas kartu hero ungu (teks ungu di jagung 5,21:1). Isi kanan: <Panah />. */
 export const tombolHero =
-  "inline-flex min-h-14 w-full items-center justify-between gap-3 rounded-full bg-jagung pl-5 pr-2 font-judul text-isi sm:text-tombol font-bold text-ungu whitespace-nowrap " +
-  "transition-transform duration-150 active:scale-[0.98] outline-none focus-visible:ring-4 focus-visible:ring-latar";
+  "group inline-flex min-h-14 w-full items-center justify-between gap-3 rounded-full bg-jagung pl-5 pr-2 font-judul text-isi sm:text-tombol font-bold text-ungu whitespace-nowrap " +
+  "transition-[transform,box-shadow,filter] duration-200 ease-standar hover:-translate-y-0.5 hover:brightness-105 hover:shadow-[0_10px_24px_rgb(0_0_0/0.22)] active:translate-y-0 active:scale-[0.97] " +
+  "motion-reduce:transform-none outline-none focus-visible:ring-4 focus-visible:ring-latar";
 
 /** Tombol garis nasi di atas kartu hero ungu (10,6:1). */
 export const tombolHeroKedua =
   "inline-flex min-h-14 w-full items-center justify-center rounded-full border-2 border-latar/70 px-6 font-judul text-tombol font-bold text-latar " +
-  "transition-[transform,background-color] duration-150 hover:bg-latar/10 active:scale-[0.98] outline-none focus-visible:ring-4 focus-visible:ring-jagung";
+  "transition-[transform,background-color] duration-200 ease-standar hover:-translate-y-0.5 hover:bg-latar/10 active:translate-y-0 active:scale-[0.97] motion-reduce:transform-none outline-none focus-visible:ring-4 focus-visible:ring-jagung";
 
 /** Pilihan pil bersegmen (Ya/Tidak, porsi, mood): wadah + tombol. */
 export const wadahSegmen = "grid gap-1 rounded-full bg-latar p-1";
 export const tombolSegmen = (aktif: boolean) =>
-  `min-h-12 rounded-full px-3 text-isi font-semibold transition-colors duration-150 ${fokus} ` +
+  `min-h-12 rounded-full px-3 text-isi font-semibold transition-[background-color,color,transform] duration-200 ease-standar active:scale-95 motion-reduce:transform-none ${fokus} ` +
   (aktif ? "bg-ungu text-permukaan shadow-kartu" : "text-ungu hover:bg-ungu-tint");
 
 /** Tombol ikon bulat 48 px (kepala halaman). */
 export const tombolIkon =
-  `inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-permukaan text-ungu shadow-kartu hover:bg-ungu-tint ${fokus}`;
+  `inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-permukaan text-ungu shadow-kartu ` +
+  `transition-[transform,background-color] duration-200 ease-standar hover:-translate-y-0.5 hover:bg-ungu-tint active:scale-95 motion-reduce:transform-none ${fokus}`;
 
 export const pil = "inline-flex min-h-8 items-center rounded-full px-3 text-kecil font-semibold";
 
