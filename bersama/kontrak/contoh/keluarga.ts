@@ -1,60 +1,25 @@
-// Pemilik: B (Satya). Contoh response endpoint keluarga (jobdesk 2.8, B0.4). Tipe di sini mengikuti tabel 2.5;
-// bila `bersama/kontrak/api.ts` (C) sudah ada, tipe ini diganti `z.infer` dari skema C.
+// Pemilik: B (Satya). Contoh respons endpoint keluarga diturunkan dari kontrak API.
 // Data: Dika (4 th 2 bln, Mbak Rini, tahap 1, trial sisa 3 hari) + keadaan sulit.
 
-export type Plan = "trial" | "program" | "klinik";
-export type AlasanTerkunci = "skrining_belum" | "tanda_bahaya" | "trial_habis" | null;
+import type { Keluaran, NamaEndpoint } from "../api.ts";
+import { ATURAN_DEFAULT } from "../aturan.ts";
 
-export type Saya = {
-  child: {
-    id: string; panggilan: string; usia_bulan: number; sapaan: "mbak" | "bu" | "oma" | "ayah";
-    nama_pengasuh: string; plan: Plan; trial_until: string | null; stage: number;
-  };
-  sesi_dibuka: boolean;
-  alasan_terkunci: AlasanTerkunci;
-};
+export type Saya = Keluaran<"saya">;
+export type Plan = Saya["child"]["plan"];
+export type AlasanTerkunci = Saya["alasan_terkunci"];
+export type Aturan = Keluaran<"aturanBaca">["aturan"];
+export type AturanAnak = Keluaran<"aturanBaca">;
+export type Laporan = Keluaran<"laporanKeluarga">;
+export type SesiLaporan = Laporan["sesi"][number];
+export type HasilSimpanSesi = Keluaran<"sesiSimpan">;
+export type Ringkasan = Keluaran<"ringkasanBuat">;
 
-export type Aturan = {
-  max_minutes: number; stage: number;
-  advance_rule: { sessions: number; min_accepted_bites: number };
-  end_after_refusal_minutes: number; ngemut_hint: string;
-};
-
-export type AturanAnak = { aturan: Aturan; source: "default" | "dokter"; confirmed_at: string | null };
-
-export type SesiLaporan = {
-  id: string; tanggal: string; jam: string; menu: string;
-  diterima: number; ditolak: number; ngemut: number; durasi: number; // durasi dalam menit
-};
-
-export type Laporan = {
-  tahap: number;
-  stiker_minggu_ini: boolean[]; // 7 hari, Senin..Minggu minggu ini
-  paparan: { makanan: string; jumlah: number; target: number }[];
-  sesi: SesiLaporan[];
-  ringkasan_keluarga: string | null;
-  plan: Plan;
-  trial_sisa_hari: number | null;
-};
-
-export type HasilSimpanSesi = {
-  session_id: string; naik_tahap: boolean; tahap_baru: number; saran_turun_tahap: boolean;
-  paparan: { makanan: string; jumlah: number } | null;
-};
-
-export type Ringkasan = { keluarga: string; dokter: string; sumber: "ai" | "cache" | "template" };
-
-export const ATURAN_DEFAULT_CONTOH: Aturan = {
-  max_minutes: 30, stage: 1,
-  advance_rule: { sessions: 5, min_accepted_bites: 5 },
-  end_after_refusal_minutes: 15,
-  ngemut_hint: "Tunggu sebentar, tawarkan minum sedikit, jangan dipaksa menelan",
-};
+export const ATURAN_DEFAULT_CONTOH: Aturan = ATURAN_DEFAULT;
 
 export const CONTOH_SAYA: Saya = {
   child: {
     id: "anak-dika", panggilan: "Dika", usia_bulan: 50, sapaan: "mbak", nama_pengasuh: "Rini",
-    plan: "trial", trial_until: "2026-11-14T23:59:00+07:00", stage: 1,
+    plan: "trial", trial_until: "2026-11-14T16:59:00.000Z", stage: 1,
   },
   sesi_dibuka: true,
   alasan_terkunci: null,
@@ -71,7 +36,7 @@ export const CONTOH_SAYA_TANDA_BAHAYA: Saya = {
 };
 
 export const CONTOH_SAYA_TRIAL_HABIS: Saya = {
-  child: { ...CONTOH_SAYA.child, trial_until: "2026-11-08T23:59:00+07:00" },
+  child: { ...CONTOH_SAYA.child, plan: "expired", trial_until: "2026-11-08T16:59:00.000Z" },
   sesi_dibuka: false,
   alasan_terkunci: "trial_habis",
 };
@@ -126,3 +91,17 @@ export const CONTOH_RINGKASAN: Ringkasan = {
     "14 hari terakhir: 21 sesi, rata-rata 4,6 suapan diterima per sesi. Penolakan terkonsentrasi di sesi malam (rata-rata 5 ditolak vs 1,5 pagi). Ngemut dikonfirmasi 3 kali.",
   sumber: "template",
 };
+
+const tokenContoh = "contoh-laporan-dika".padEnd(43, "_");
+
+export const CONTOH_API_KELUARGA = {
+  anakBuat: { child_id: CONTOH_SAYA_ANAK_BARU.child.id, kode_akses: "DKAX7QMP2RHT" },
+  saya: CONTOH_SAYA,
+  skriningSimpan: { ada_tanda_bahaya: false },
+  aturanBaca: CONTOH_ATURAN,
+  sesiSimpan: CONTOH_SIMPAN_SESI,
+  laporanKeluarga: CONTOH_LAPORAN,
+  laporanBagikan: { token: tokenContoh, url: "/r/" + tokenContoh },
+  paketAktifkan: { plan: "program" },
+  ringkasanBuat: CONTOH_RINGKASAN,
+} satisfies Partial<{ [N in NamaEndpoint]: Keluaran<N> }>;
