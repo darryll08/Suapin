@@ -59,4 +59,9 @@ Tulis bagianmu di akhir setiap titik integrasi: apa yang jadi, apa yang belum, k
 
 ## C (Adit)
 
-_(belum ada)_
+### Integrasi keluarga dan klinik · 11 November 2026
+
+- API Hono, SQLite, seed, dan rute klinik terintegrasi dengan kerangka tim di `2d790ea`. `POST /api/sessions` memakai skema sesi Darryl.
+- Sambungan data keluarga yang diserahkan Satya kini memakai `panggil()`. Catatan porsi dan mood dapat disimpan terpisah, laporan keluarga memakai menit, dan stiker disusun Senin–Minggu. Migrasi catatan mempertahankan data lama.
+- `npm run periksa` lulus dengan 88 tes dan build Vite/PWA. Chrome dengan SQLite lokal berhasil menyimpan sesi melalui mode tanpa kamera, mencatat porsi, membagikan laporan, mengklaim pasien, mengonfirmasi resep dari cache, dan membaca aturan 20 menit di layar sesi berikutnya.
+- Kontrak API, aturan, dan contoh respons menunggu review Darryl dan Satya. Kamera nyata, OpenAI asli, Vercel/Turso, dan mode offline belum diuji bersama.
