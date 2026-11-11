@@ -37,3 +37,15 @@
 
 :root { color-scheme: light; }
 body { background: var(--color-latar); color: var(--color-ungu); font-family: var(--font-isi); }
+
+/* Gerak bersama (UI UX 12.2) */
+.lembar-masuk { animation: lembar-masuk 400ms var(--ease-standar) 1 both; }
+.pop-sekali { animation: pop-sekali 600ms var(--ease-pop) 1 both; }
+.pudar-masuk { animation: pudar-masuk 400ms var(--ease-standar) 1 both; }
+@keyframes lembar-masuk { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes pop-sekali { 0% { transform: scale(0.6); opacity: 0; } 70% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); } }
+@keyframes pudar-masuk { from { opacity: 0; } to { opacity: 1; } }
+@keyframes suap-putar { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .lembar-masuk, .pop-sekali, .pudar-masuk { animation: none; }
+}

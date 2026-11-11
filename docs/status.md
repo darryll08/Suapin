@@ -45,7 +45,17 @@ Tulis bagianmu di akhir setiap titik integrasi: apa yang jadi, apa yang belum, k
 
 ## B (Satya)
 
-_(belum ada)_
+**Sesi keluarga utuh · 11 Nov 2026 siang**
+
+- **Keputusan aset (gerbang 11 Nov 12.00): SVG flat.** Karakter digambar SVG di `src/karakter/karakter.tsx` + mulut parametrik `mulut.tsx`; makanan dan stiker SVG di `public/aset/`. Detail di `docs/aset.md`. `MAKANAN` menunjuk `.svg`, bukan `.webp`.
+- **Setuju definisi `sisiPengasuh` dari arah anak menghadap layar** (Guidelines 10.7). Suap, Lanjut, dan pratinjau di sisi pengasuh; Stop di sisi jauh.
+- **Data sementara:** `panggil()` dan `api.ts` (C) belum ada, jadi semua layar keluarga memanggil `src/halaman/keluarga/data.ts`, server tiruan di localStorage (`tm_contoh_keluarga_v1`) yang mengikuti tabel endpoint 2.5. **Adit:** setelah `panggil()` siap, isi tiap fungsi `api.*` diganti `panggil(...)`; tanda tangan fungsi tetap. Contoh response keluarga di `bersama/kontrak/contoh/keluarga.ts` (TS, bukan JSON; tipe diganti `z.infer` dari skema C).
+- Router (B0.2): rute keluarga di bawah `ButuhKeluarga` (401 → `/`, `skrining_belum` → skrining, `trial_habis` → langganan kecuali beranda/laporan). `rutKlinik`/`rutDev` tetap disebar dari file pemiliknya.
+- `/sesi` memakai `useSesiMakan` A. Query `?sumber=kamera|slider|rekaman:contoh|tanpa` (default kamera). Pintasan Spasi/L/Esc, Wake Lock, konfirmasi Stop + Darurat 119, koreksi suapan terakhir, simpan gagal → coba lagi (`sessionStorage` `tm_sesi_tertunda`). Tahap 2 karakter hanya saat giliran/diterima; tahap 3 layar hitam; tahap 4 → catat saja.
+- Suara: `src/suara/pemutar.ts` (AudioContext dibuka di tombol Mulai makan, antrean 2). **MP3 belum ada** (butuh kunci ElevenLabs); cadangan `speechSynthesis` id-ID. Skrip `npm run klip` siap.
+- PWA: manifest + ikon PNG di `vite.config.ts` (blok PWA yang memang diserahkan ke B). Offline belum diuji.
+- Mode demo sementara: tombol kecil "Mode demo: keluarga Dika" di footer landing (kode Dika `DKAX7QMP2RHT` hanya di data tiruan). Diganti `POST /api/demo/masuk` setelah C4.2.
+- Teruji di browser (Claude Browser, 375 dan 1280 px): landing, beranda Dika, persiapan, sesi `rekaman:contoh` (lewati pemanasan → Suap → diterima + perayaan → jeda redup → Stop → catatan → beranda), laporan. Tanpa scroll samping. **Belum:** kamera asli, HP Android, suara di HP, offline PWA, alur daftar baru di browser.
 
 ## C (Adit)
 

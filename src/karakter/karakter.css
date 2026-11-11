@@ -1,0 +1,27 @@
+/* Pemilik: B (Satya). Gerak karakter (UI UX 12). Tanpa merah. */
+.karakter-badan { transform-box: fill-box; transform-origin: 50% 100%; }
+.karakter-goyang { animation: karakter-goyang 3s ease-in-out infinite; }
+.karakter-goyang-besar { animation: karakter-goyang-besar 3s ease-in-out infinite; }
+.karakter-condong { transform: rotate(2deg); transition: transform 400ms var(--ease-standar); }
+.karakter-lompat { animation: karakter-lompat 800ms var(--ease-pop) 1; }
+.karakter-masuk { animation: karakter-masuk 400ms var(--ease-standar) 1 both; }
+.karakter-percik { animation: karakter-percik 700ms var(--ease-standar) 1 forwards; }
+.karakter-redup { transition: opacity 400ms var(--ease-standar); }
+.mulut-rongga { transition: d 60ms linear; }
+
+@keyframes karakter-goyang { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2.5px); } }
+@keyframes karakter-goyang-besar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes karakter-lompat {
+  0%, 50%, 100% { transform: translateY(0); }
+  25%, 75% { transform: translateY(-16px); }
+}
+@keyframes karakter-masuk { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+@keyframes karakter-percik {
+  from { opacity: 1; transform: translate(0, 0) scale(1); }
+  to { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .karakter-goyang, .karakter-goyang-besar, .karakter-lompat, .karakter-masuk, .karakter-percik { animation: none; }
+  .karakter-percik { opacity: 0; }
+}

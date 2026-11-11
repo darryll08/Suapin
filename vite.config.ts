@@ -8,11 +8,31 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    // Manifest dan sisa konfigurasi PWA diisi B di kartu B4.1.
+    // PWA (B4.1, diisi B). API tidak di-cache; model + WASM MediaPipe ikut precache supaya sesi jalan offline.
     VitePWA({
       registerType: "autoUpdate",
-      // K19: file WASM MediaPipe ±14,6 MB; di bawah batas ini build PWA gagal.
-      workbox: { maximumFileSizeToCacheInBytes: 15 * 1024 * 1024 },
+      manifest: {
+        name: "Suapin",
+        short_name: "Suapin",
+        description: "Teman makan untuk balita yang sulit makan.",
+        lang: "id",
+        display: "standalone",
+        start_url: "/",
+        background_color: "#FAF6EE",
+        theme_color: "#4B2E5A",
+        icons: [
+          { src: "/ikon/ikon-192.png", sizes: "192x192", type: "image/png" },
+          { src: "/ikon/ikon-512.png", sizes: "512x512", type: "image/png" },
+          { src: "/ikon/ikon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+        ],
+      },
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,webp,svg,png,mp3,task,wasm,json}"],
+        // K19: file WASM MediaPipe ±14,6 MB; di bawah batas ini build PWA gagal.
+        maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
+        navigateFallbackDenylist: [/^\/api\//],
+        runtimeCaching: [],
+      },
     }),
   ],
   resolve: {

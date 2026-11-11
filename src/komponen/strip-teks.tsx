@@ -6,7 +6,9 @@ import { Tombol } from "./dasar.tsx";
 const LAMA_TAMPIL_MS = 8000;
 
 /** Hilang sendiri setelah 8 detik. Ganti `kunci` untuk menampilkan ulang teks yang sama. */
-export function StripTeks({ teks, kunci }: { teks: string | null; kunci?: string | number }) {
+export function StripTeks({ teks, kunci, gelap = false, className = "fixed inset-x-0 bottom-0 pb-4" }: {
+  teks: string | null; kunci?: string | number; gelap?: boolean; className?: string;
+}) {
   const id = `${teks ?? ""}|${kunci ?? ""}`;
   const [habis, setHabis] = useState<string | null>(null);
   const tampil = habis !== id;
@@ -18,9 +20,9 @@ export function StripTeks({ teks, kunci }: { teks: string | null; kunci?: string
   }, [teks, id]);
 
   return (
-    <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-0 flex justify-center px-4 pb-4">
+    <div aria-live="polite" className={`pointer-events-none flex justify-center px-4 ${className}`}>
       {teks && tampil && (
-        <p className="max-w-[560px] rounded-tombol bg-ungu/90 px-4 py-2 text-strip text-permukaan shadow-lembar">{teks}</p>
+        <p className={`max-w-[560px] rounded-tombol px-4 py-2 text-strip ${gelap ? "text-latar" : "bg-ungu/90 text-permukaan shadow-lembar"}`}>{teks}</p>
       )}
     </div>
   );
