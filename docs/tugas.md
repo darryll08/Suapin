@@ -25,26 +25,26 @@ Centang hanya bila ada buktinya. Format: `- [x] A0.1 Kerangka proyek · 10 Nov �
 ## B (Satya): aplikasi keluarga, karakter, suara, video
 
 - [x] B0.1 Siapkan laptop · 11 Nov · 5e6fe6d · `npm ci` + `npm run periksa` hijau; `.env.local` dan db:seed menunggu C0.2
-- [ ] B0.2 Router dan kerangka
+- [x] B0.2 Router dan kerangka · 11 Nov · a9bf415 · semua rute 2.7 terbuka; rutKlinik/rutDev ikut terdaftar
 - [x] B0.3 Sistem tampilan · 11 Nov · 5e6fe6d · komponen di `/contoh-gaya`; tanpa `red-`; belum dicek visual 390/1280 px
-- [ ] B0.4 Konten bersama dan contoh data
-- [ ] B1.1 Gambar karakter dan keputusan aset (≤ 11 Nov 12.00)
-- [ ] B1.2 Makanan dan stiker
-- [ ] B1.3 Komponen karakter dan mulut SVG
+- [x] B0.4 Konten bersama dan contoh data · 11 Nov · a9bf415 · contoh di `bersama/kontrak/contoh/keluarga.ts`; belum dicek ke skema C (api.ts belum ada)
+- [x] B1.1 Gambar karakter dan keputusan aset · 11 Nov · a9bf415 · keputusan SVG flat (docs/aset.md)
+- [x] B1.2 Makanan dan stiker · 11 Nov · a9bf415 · brokoli + umum ×3 tahap, 3 stiker; tes path lolos
+- [x] B1.3 Komponen karakter dan mulut SVG · 11 Nov · a9bf415 · meniru rekaman:contoh di /sesi; kamera asli belum
 - [ ] B1.4 Klip suara
-- [ ] B1.5 Pemutar suara
-- [ ] B2.1 `/sesi` persiapan
-- [ ] B2.2 `/sesi` layar makan
-- [ ] B2.3 Pemanasan
-- [ ] B2.4 `/sesi/catatan`
-- [ ] B3.1 Landing
-- [ ] B3.2 `/mulai` dan `/masuk`
-- [ ] B3.3 `/mulai/skrining`
-- [ ] B3.4 `/beranda`
-- [ ] B3.5 `/laporan`
-- [ ] B3.6 `/langganan`
+- [x] B1.5 Pemutar suara · 11 Nov · a9bf415 · antrean + cadangan speechSynthesis; belum dicoba di Chrome HP
+- [x] B2.1 `/sesi` persiapan · 11 Nov · a9bf415 · 3 langkah + tahap 4 + sesi terkunci
+- [x] B2.2 `/sesi` layar makan · 11 Nov · a9bf415 · teruji dengan rekaman:contoh; webcam + SQLite C belum
+- [x] B2.3 Pemanasan · 11 Nov · a9bf415 · ±38 dtk, bisa dilewati
+- [x] B2.4 `/sesi/catatan` · 11 Nov · a9bf415 · tersimpan di data tiruan; endpoint C belum
+- [x] B3.1 Landing · 11 Nov · a9bf415 · offline PWA belum diuji
+- [x] B3.2 `/mulai` dan `/masuk` · 11 Nov · a9bf415 · data tiruan; belum dicoba di browser lain
+- [x] B3.3 `/mulai/skrining` · 11 Nov · a9bf415 · dua jalur di data tiruan; belum dicoba di browser
+- [x] B3.4 `/beranda` · 11 Nov · a9bf415 · data contoh Dika tampil
+- [x] B3.5 `/laporan` · 11 Nov · a9bf415 · link bagikan menunggu /r/:token (C)
+- [x] B3.6 `/langganan` · 11 Nov · a9bf415 · data tiruan
 - [ ] B4.1 Manifest dan service worker
-- [ ] B5.1 Naskah video
+- [x] B5.1 Naskah video · 11 Nov · a9bf415 · docs/video.md, menunggu tinjauan A dan C
 - [ ] B5.2 Rekam dan edit
 - [ ] B6.1 Kontribusi Satya di README
 
