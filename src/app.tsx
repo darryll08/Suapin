@@ -4,10 +4,12 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import { rutDev } from "./dev/rute.tsx";
 import { rutKlinik } from "./halaman/klinik/rute.tsx";
 import { ButuhKeluarga } from "./halaman/keluarga/tata-letak.tsx";
+// Landing tidak lazy: halaman pertama, jadi judul tampil tanpa menunggu permintaan chunk tambahan (LCP).
+import { Landing, TidakAda } from "./halaman/keluarga/landing.tsx";
 
 
 const router = createBrowserRouter([
-  { path: "/", lazy: async () => ({ Component: (await import("./halaman/keluarga/landing.tsx")).Landing }) },
+  { path: "/", Component: Landing },
   { path: "/mulai", lazy: async () => ({ Component: (await import("./halaman/keluarga/mulai.tsx")).Mulai }) },
   { path: "/masuk", lazy: async () => ({ Component: (await import("./halaman/keluarga/masuk.tsx")).Masuk }) },
   { path: "/contoh-gaya", lazy: async () => ({ Component: (await import("./halaman/keluarga/contoh-gaya.tsx")).ContohGaya }) },
@@ -24,7 +26,7 @@ const router = createBrowserRouter([
   },
   ...rutKlinik,
   ...rutDev,
-  { path: "*", lazy: async () => ({ Component: (await import("./halaman/keluarga/landing.tsx")).TidakAda }) },
+  { path: "*", Component: TidakAda },
 ]);
 
 export default function App() {
