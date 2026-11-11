@@ -1,8 +1,8 @@
-// Pemilik: B (Satya). Daftar `/mulai` + tampilan kode akses sekali (B3.2, UI UX 10.2–10.3).
+// Pemilik: B (Satya). Daftar `/mulai` + tampilan kode akses sekali (B3.2, UI UX 10.2–10.3), gaya bento.
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";
 import { Isian, KepalaHalaman, PesanGalat, Tombol } from "../../komponen/dasar.tsx";
-import { kartu, tombolUtama, wadahKeluarga } from "../../gaya/gaya.ts";
+import { bento, tombolHeroKedua, tombolSegmen, tombolUtama, wadahKeluarga, wadahSegmen } from "../../gaya/gaya.ts";
 import { NAMA_SAPAAN } from "./bantu.ts";
 import { api, usiaBulan } from "./data.ts";
 
@@ -48,36 +48,40 @@ export function Mulai() {
   return (
     <main className={wadahKeluarga}>
       <KepalaHalaman judul="Kenalan dulu" sub="Sekitar 1 menit. Data ini hanya untuk menyapa di aplikasi." kembali="/" />
-      <form onSubmit={kirim} noValidate className="flex flex-col gap-5 pb-24">
-        <Isian label="Panggilan anak" bantuan="Nama yang biasa dipakai di rumah" value={panggilan} maxLength={40}
-          onChange={(e) => setPanggilan(e.target.value)} galat={galat.panggilan} autoComplete="off" />
-        <div className="flex flex-col gap-2">
-          <Isian label="Tanggal lahir" type="date" value={lahir} max={new Date().toISOString().slice(0, 10)}
-            onChange={(e) => setLahir(e.target.value)} galat={galat.lahir} />
-          {usia !== null && (usia < 36 || usia > 71) && !galat.lahir && (
-            <p className="flex items-start gap-2 text-kecil text-ungu-muda">
-              <span aria-hidden="true" className="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-ungu-muda text-[12px] font-bold">i</span>
-              Program dirancang untuk usia 3–5 tahun. Anda tetap bisa lanjut.
-            </p>
-          )}
-        </div>
-        <fieldset className="flex flex-col gap-2">
-          <legend className="mb-1.5 text-isi font-semibold">Siapa yang menyuapi?</legend>
-          <div className="flex flex-wrap gap-2">
-            {(Object.keys(NAMA_SAPAAN) as Sapaan[]).map((s) => (
-              <button key={s} type="button" aria-pressed={sapaan === s} onClick={() => setSapaan(s)}
-                className={`min-h-12 rounded-full border-2 px-5 text-isi font-semibold transition-colors ${sapaan === s ? "border-ungu bg-ungu text-permukaan" : "border-garis bg-permukaan text-ungu"}`}>
-                {NAMA_SAPAAN[s]}
-              </button>
-            ))}
+      <form onSubmit={kirim} noValidate className="flex flex-col gap-4 pb-24">
+        <section className={`${bento} flex flex-col gap-5`}>
+          <h2 className="font-judul text-subjudul font-bold">Tentang anak</h2>
+          <Isian label="Panggilan anak" bantuan="Nama yang biasa dipakai di rumah" value={panggilan} maxLength={40}
+            onChange={(e) => setPanggilan(e.target.value)} galat={galat.panggilan} autoComplete="off" />
+          <div className="flex flex-col gap-2">
+            <Isian label="Tanggal lahir" type="date" value={lahir} max={new Date().toISOString().slice(0, 10)}
+              onChange={(e) => setLahir(e.target.value)} galat={galat.lahir} />
+            {usia !== null && (usia < 36 || usia > 71) && !galat.lahir && (
+              <p className="flex items-start gap-2 rounded-kartu bg-ungu-tint p-3 text-kecil">
+                <span aria-hidden="true" className="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-ungu text-[12px] font-bold">i</span>
+                Program dirancang untuk usia 3–5 tahun. Anda tetap bisa lanjut.
+              </p>
+            )}
           </div>
-          {galat.sapaan && <p className="text-kecil text-jagung-tua">{galat.sapaan}</p>}
-          {sapaan && sapaan !== "mbak" && (
-            <p className="text-kecil text-ungu-muda">Suara karakter untuk sapaan ini menyusul. Sementara memakai sapaan Mbak.</p>
-          )}
-        </fieldset>
-        <Isian label="Nama pengasuh" value={pengasuh} maxLength={40} onChange={(e) => setPengasuh(e.target.value)}
-          galat={galat.pengasuh} autoComplete="off" />
+        </section>
+        <section className={`${bento} flex flex-col gap-5`}>
+          <fieldset className="flex flex-col gap-2">
+            <legend className="mb-3 font-judul text-subjudul font-bold">Siapa yang menyuapi?</legend>
+            <div className={`${wadahSegmen} grid-cols-4`}>
+              {(Object.keys(NAMA_SAPAAN) as Sapaan[]).map((s) => (
+                <button key={s} type="button" aria-pressed={sapaan === s} onClick={() => setSapaan(s)} className={tombolSegmen(sapaan === s)}>
+                  {NAMA_SAPAAN[s]}
+                </button>
+              ))}
+            </div>
+            {galat.sapaan && <p className="text-kecil text-jagung-tua">{galat.sapaan}</p>}
+            {sapaan && sapaan !== "mbak" && (
+              <p className="text-kecil text-ungu-muda">Suara karakter untuk sapaan ini menyusul. Sementara memakai sapaan Mbak.</p>
+            )}
+          </fieldset>
+          <Isian label="Nama pengasuh" value={pengasuh} maxLength={40} onChange={(e) => setPengasuh(e.target.value)}
+            galat={galat.pengasuh} autoComplete="off" />
+        </section>
         {galatServer && <PesanGalat pesan={galatServer} />}
         <div className="fixed inset-x-0 bottom-0 bg-latar/95 px-4 py-3 shadow-lembar">
           <div className="mx-auto max-w-[560px]">
@@ -99,19 +103,21 @@ function KodeAkses({ kode, lanjut }: { kode: string; lanjut: () => void }) {
     setTimeout(() => setTersalin(false), 2000);
   };
   return (
-    <main className={wadahKeluarga}>
-      <KepalaHalaman judul="Simpan kode ini" />
-      <div className={`${kartu} flex flex-col items-center gap-4`}>
-        <p className="font-mono text-tampilan font-bold tracking-wider break-all text-center" aria-label={`Kode akses ${kode.split("").join(" ")}`}>{tampil}</p>
-        <Tombol varian="kedua" onClick={salin}>{tersalin ? "✓ Tersalin" : "Salin kode"}</Tombol>
-      </div>
-      <p className="mt-4 text-isi">Pakai kode ini untuk membuka Suapin di HP lain.</p>
-      <p className="text-kecil text-ungu-muda">Kode hanya tampil sekali.</p>
-      <label className="mt-6 flex min-h-12 items-center gap-3 text-isi font-semibold">
-        <input type="checkbox" className="size-6 accent-ungu" checked={disimpan} onChange={(e) => setDisimpan(e.target.checked)} />
-        Sudah saya simpan
-      </label>
-      <button type="button" className={`${tombolUtama} mt-4 sm:w-full`} disabled={!disimpan} onClick={lanjut}>Lanjut ke skrining</button>
+    <main className={`${wadahKeluarga} flex flex-col gap-4`}>
+      <KepalaHalaman judul="Simpan kode ini" sub="Pakai kode ini untuk membuka Suapin di HP lain." />
+      <section className="flex flex-col items-center gap-5 rounded-bento bg-ungu p-6 text-latar shadow-kartu">
+        <p className="text-kecil font-semibold text-latar/80">Kode akses</p>
+        <p className="font-mono text-[30px] leading-10 font-bold tracking-wider text-center sm:text-tampilan" aria-label={`Kode akses ${kode.split("").join(" ")}`}>{tampil}</p>
+        <button type="button" className={tombolHeroKedua} onClick={salin}>{tersalin ? "✓ Tersalin" : "Salin kode"}</button>
+      </section>
+      <section className={`${bento} flex flex-col gap-2`}>
+        <p className="text-isi font-semibold">Kode hanya tampil sekali.</p>
+        <label className="flex min-h-12 items-center gap-3 text-isi">
+          <input type="checkbox" className="size-6 accent-ungu" checked={disimpan} onChange={(e) => setDisimpan(e.target.checked)} />
+          Sudah saya simpan
+        </label>
+      </section>
+      <button type="button" className={`${tombolUtama} sm:w-full`} disabled={!disimpan} onClick={lanjut}>Lanjut ke skrining</button>
     </main>
   );
 }

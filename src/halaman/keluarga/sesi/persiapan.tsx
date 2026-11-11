@@ -1,10 +1,11 @@
-// Pemilik: B (Satya). Persiapan sesi `/sesi` (B2.1, UI UX 10.7). Tiga langkah dalam satu halaman.
+// Pemilik: B (Satya). Persiapan sesi `/sesi` (B2.1, UI UX 10.7), gaya bento. Tiga langkah dalam satu halaman.
 // `sisiPengasuh` = dilihat dari arah anak menghadap layar (disepakati A+B, docs/status.md).
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Link } from "react-router";
 import { MAKANAN } from "../../../../bersama/konten/makanan.ts";
-import { KepalaHalaman, Tombol } from "../../../komponen/dasar.tsx";
-import { tombolUtama, wadahKeluarga } from "../../../gaya/gaya.ts";
+import { Panah } from "../../../komponen/beranda.tsx";
+import { KepalaHalaman } from "../../../komponen/dasar.tsx";
+import { bento, tombolHero, tombolSegmen, tombolUtama, wadahKeluarga, wadahSegmen } from "../../../gaya/gaya.ts";
 import { NAMA_SAPAAN } from "../bantu.ts";
 import type { Saya } from "../data.ts";
 
@@ -43,7 +44,7 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
     return (
       <main className={wadahKeluarga}>
         <KepalaHalaman judul="Siapkan makan" kembali="/beranda" />
-        <div className="rounded-kartu bg-ungu-tint p-5 text-isi">
+        <div className={`${bento} text-isi`}>
           Hari ini {sapaan} yang memimpin. Lakukan ritual makan seperti biasa, lalu catat hasilnya.
         </div>
         <Link to="/sesi/catatan?catat=1" className={`${tombolUtama} mt-6`}>Catat hasil makan</Link>
@@ -59,20 +60,20 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
   };
 
   return (
-    <main className={wadahKeluarga}>
+    <main className={`${wadahKeluarga} flex flex-col gap-4`}>
       <KepalaHalaman judul="Siapkan makan" kembali="/beranda" />
-      <section className="flex flex-col gap-3">
-        <h2 className="font-judul text-subjudul font-bold">1 Menu hari ini</h2>
+      <section className={`${bento} flex flex-col gap-4`}>
+        <JudulLangkah n={1}>Menu hari ini</JudulLangkah>
         <div className="grid grid-cols-2 gap-3">
           {MAKANAN.map((m) => (
             <button key={m.id} type="button" aria-pressed={menu === m.id} onClick={() => setMenu(m.id)}
-              className={`flex flex-col items-center gap-2 rounded-kartu border-2 bg-permukaan p-3 text-isi font-semibold transition-colors ${menu === m.id ? "border-ungu bg-ungu-tint" : "border-garis"}`}>
+              className={`flex flex-col items-center gap-2 rounded-kartu p-3 text-isi font-semibold transition-colors outline-none focus-visible:ring-4 focus-visible:ring-jagung ${menu === m.id ? "bg-ungu-tint ring-2 ring-ungu" : "bg-latar hover:bg-ungu-tint"}`}>
               <img src={m.gambar[0]} alt="" className="size-24" />
               {m.nama}
             </button>
           ))}
         </div>
-        <label className="flex min-h-12 items-start gap-3">
+        <label className="flex min-h-12 items-start gap-3 rounded-kartu bg-latar p-3">
           <input type="checkbox" className="mt-1 size-6 shrink-0 accent-ungu" checked={baru} onChange={(e) => setBaru(e.target.checked)} />
           <span>
             <span className="block text-isi font-semibold">Makanan baru?</span>
@@ -82,13 +83,12 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
       </section>
 
       {menu && (
-        <section className="pudar-masuk mt-6 flex flex-col gap-3">
-          <h2 className="font-judul text-subjudul font-bold">2 {sapaan} duduk di sebelah mana anak?</h2>
+        <section className={`${bento} pudar-masuk flex flex-col gap-4`}>
+          <JudulLangkah n={2}>{sapaan} duduk di sebelah mana anak?</JudulLangkah>
           <IlustrasiDuduk sisi={sisi} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className={`${wadahSegmen} grid-cols-2`}>
             {(["kiri", "kanan"] as const).map((s) => (
-              <button key={s} type="button" aria-pressed={sisi === s} onClick={() => setSisi(s)}
-                className={`min-h-14 rounded-tombol border-2 text-tombol font-bold transition-colors ${sisi === s ? "border-ungu bg-ungu text-permukaan" : "border-garis bg-permukaan text-ungu"}`}>
+              <button key={s} type="button" aria-pressed={sisi === s} onClick={() => setSisi(s)} className={tombolSegmen(sisi === s)}>
                 {s === "kiri" ? "Kiri anak" : "Kanan anak"}
               </button>
             ))}
@@ -98,13 +98,24 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
       )}
 
       {menu && sisi && (
-        <section className="pudar-masuk mt-6 flex flex-col gap-3 pb-6">
-          <h2 className="font-judul text-subjudul font-bold">3 Posisi HP</h2>
-          <p className="text-isi">Letakkan HP sedikit di samping depan anak, setinggi wajahnya. Wajah anak harus terlihat. Jauhkan HP dari jangkauan tangan anak.</p>
-          <Tombol className="mt-2 sm:w-full" memuat={memuat} onClick={tekanMulai}>{memuat ? "Menyiapkan…" : "Mulai makan"}</Tombol>
+        <section className="pudar-masuk flex flex-col gap-4 rounded-bento bg-ungu p-6 text-latar shadow-kartu">
+          <JudulLangkah n={3} gelap>Posisi HP</JudulLangkah>
+          <p className="text-isi text-latar/90">Letakkan HP sedikit di samping depan anak, setinggi wajahnya. Wajah anak harus terlihat. Jauhkan HP dari jangkauan tangan anak.</p>
+          <button type="button" className={tombolHero} disabled={memuat} aria-busy={memuat || undefined} onClick={tekanMulai}>
+            {memuat ? "Menyiapkan…" : "Mulai makan"} <Panah />
+          </button>
         </section>
       )}
     </main>
+  );
+}
+
+function JudulLangkah({ n, gelap = false, children }: { n: number; gelap?: boolean; children: ReactNode }) {
+  return (
+    <h2 className="flex items-center gap-3 font-judul text-subjudul font-bold">
+      <span className={`inline-flex size-8 shrink-0 items-center justify-center rounded-full text-kecil tabular-nums ${gelap ? "bg-jagung text-ungu" : "bg-ungu-tint text-ungu"}`}>{n}</span>
+      {children}
+    </h2>
   );
 }
 

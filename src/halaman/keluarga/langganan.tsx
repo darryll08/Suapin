@@ -1,8 +1,9 @@
-// Pemilik: B (Satya). Paywall mock `/langganan` (B3.6, UI UX 10.12). Tanpa hitung mundur atau harga coret.
+// Pemilik: B (Satya). Paywall mock `/langganan` (B3.6, UI UX 10.12), gaya bento. Tanpa hitung mundur atau harga coret.
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Kartu, KepalaHalaman, PesanGalat, Pil, Tombol } from "../../komponen/dasar.tsx";
-import { wadahKeluarga } from "../../gaya/gaya.ts";
+import { Panah } from "../../komponen/beranda.tsx";
+import { KepalaHalaman, PesanGalat } from "../../komponen/dasar.tsx";
+import { bento, tombolHero, wadahKeluarga } from "../../gaya/gaya.ts";
 import { api } from "./data.ts";
 import { useSaya } from "./tata-letak.tsx";
 
@@ -13,6 +14,7 @@ export function Langganan() {
   const pindah = useNavigate();
   const [memuat, setMemuat] = useState(false);
   const [galat, setGalat] = useState("");
+  const aktif = saya.child.plan === "program";
 
   const aktifkan = async () => {
     setMemuat(true); setGalat("");
@@ -28,35 +30,40 @@ export function Langganan() {
   };
 
   return (
-    <main className={wadahKeluarga}>
-      {saya.alasan_terkunci === "trial_habis" && (
-        <p className="pt-6 text-isi text-ungu-muda">Trial 5 hari sudah selesai. Data {saya.child.panggilan} tetap aman.</p>
-      )}
-      <KepalaHalaman judul="Program 30 Hari" kembali="/beranda" />
-      <Kartu className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-baseline gap-3">
-          <span className="font-judul text-tampilan font-bold tabular-nums">Rp 49.000</span>
-          <span className="text-isi text-ungu-muda">sekali bayar</span>
-          <Pil nada="jagung">Harga uji coba</Pil>
+    <main className={`${wadahKeluarga} flex flex-col gap-4`}>
+      <KepalaHalaman judul="Program 30 Hari" kembali="/beranda"
+        sub={saya.alasan_terkunci === "trial_habis" ? `Trial 5 hari sudah selesai. Data ${saya.child.panggilan} tetap aman.` : undefined} />
+
+      <section className="flex flex-col gap-5 rounded-bento bg-ungu p-6 text-latar shadow-kartu">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-kecil font-semibold text-latar/80">Sekali bayar</p>
+          <span className="rounded-full bg-jagung-muda px-3 py-1 text-kecil font-semibold text-jagung-tua">Harga uji coba</span>
         </div>
-        <ul className="flex flex-col gap-2">
+        <p className="font-judul text-[44px] leading-[52px] font-bold tabular-nums">Rp 49.000</p>
+        {aktif ? (
+          <p className="rounded-full bg-latar/15 px-5 py-3 text-isi font-semibold">Program sudah aktif.</p>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <button type="button" className={tombolHero} disabled={memuat} aria-busy={memuat || undefined} onClick={aktifkan}>
+              {memuat ? "Mengaktifkan…" : "Aktifkan program"} <Panah />
+            </button>
+            <p className="text-kecil text-latar/80">Mode demo lomba: tanpa pembayaran.</p>
+          </div>
+        )}
+      </section>
+
+      <section className={`${bento} flex flex-col gap-3`}>
+        <h2 className="font-judul text-subjudul font-bold">Isi program</h2>
+        <ul className="flex flex-col gap-3">
           {ISI.map((x) => (
-            <li key={x} className="flex items-start gap-3 text-isi">
-              <span aria-hidden="true" className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-ungu text-[12px] text-permukaan">✓</span>
+            <li key={x} className="flex items-center gap-3 text-isi">
+              <span aria-hidden="true" className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-ungu-tint text-kecil font-bold">✓</span>
               {x}
             </li>
           ))}
         </ul>
-      </Kartu>
-      {galat && <div className="mt-4"><PesanGalat pesan={galat} /></div>}
-      {saya.child.plan === "program" ? (
-        <p className="mt-6 text-isi font-semibold">Program sudah aktif.</p>
-      ) : (
-        <>
-          <Tombol className="mt-6 sm:w-full" memuat={memuat} onClick={aktifkan}>Aktifkan program</Tombol>
-          <p className="mt-2 text-kecil text-ungu-muda">Mode demo lomba: tanpa pembayaran.</p>
-        </>
-      )}
+      </section>
+      {galat && <PesanGalat pesan={galat} />}
     </main>
   );
 }

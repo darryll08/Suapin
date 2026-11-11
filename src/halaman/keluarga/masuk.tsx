@@ -2,7 +2,7 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { Isian, KepalaHalaman, PesanGalat, Tombol } from "../../komponen/dasar.tsx";
-import { tombolTeks, wadahKeluarga } from "../../gaya/gaya.ts";
+import { bento, tombolTeks, wadahKeluarga } from "../../gaya/gaya.ts";
 import { api } from "./data.ts";
 
 export function Masuk() {
@@ -29,8 +29,8 @@ export function Masuk() {
 
   return (
     <main className={wadahKeluarga}>
-      <KepalaHalaman judul="Masuk dengan kode" kembali="/" />
-      <form onSubmit={kirim} noValidate className="flex flex-col gap-5">
+      <KepalaHalaman judul="Masuk dengan kode" sub="12 huruf dan angka dari saat mendaftar." kembali="/" />
+      <form onSubmit={kirim} noValidate className={`${bento} flex flex-col gap-5`}>
         <Isian label="Kode akses" value={kode} onChange={(e) => setKode(e.target.value.toUpperCase())}
           autoComplete="off" autoCapitalize="characters" spellCheck={false} placeholder="K7QM 2XPA 9RHT"
           className="[&_input]:font-mono [&_input]:tracking-wider" />
