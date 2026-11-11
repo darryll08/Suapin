@@ -1,64 +1,117 @@
-// Pemilik: B (Satya). Komponen beranda (UI UX 9.12): KartuTahap, StikerMinggu, JalurPaparan, LabelAI (9.13).
+// Pemilik: B (Satya). Komponen beranda dan laporan, gaya bento (inspo 11 Nov):
+// KartuHero, KartuAngka, GrafikPil, CincinProgres, LabelAI. Tanpa merah; nilai kosong/ditolak memakai arsiran.
+import type { ReactNode } from "react";
 import { STIKER } from "../../bersama/konten/makanan.ts";
-import { HARI_SEN_MIN } from "../halaman/keluarga/bantu.ts";
-import { Kartu } from "./dasar.tsx";
+import { bento } from "../gaya/gaya.ts";
 
-export function KartuTahap({ tahap, kalimat }: { tahap: number; kalimat: string }) {
+/** Kartu utama ubi ungu: tahap aktif + aksi. Teks nasi di atas ungu 11,9:1. */
+export function KartuHero({ tahap, kalimat, children }: { tahap: number; kalimat: string; children?: ReactNode }) {
   return (
-    <Kartu className="flex flex-col gap-3">
-      <div className="flex items-start gap-4">
-        <span className="font-judul text-[40px] leading-none font-bold tabular-nums">{tahap}</span>
-        <div>
-          <h2 className="font-judul text-subjudul font-bold">Tahap {tahap}</h2>
-          <p className="text-isi text-ungu-muda">{kalimat}</p>
+    <section className="flex flex-col gap-5 rounded-bento bg-ungu p-6 text-latar shadow-kartu">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <p className="text-kecil font-semibold text-latar/80">Program lepas layar</p>
+          <h2 className="font-judul text-judul font-bold">Tahap {tahap}</h2>
+          <p className="text-isi text-latar/90">{kalimat}</p>
         </div>
+        <span className="font-judul text-[56px] leading-none font-bold tabular-nums text-jagung" aria-hidden="true">{tahap}</span>
       </div>
-      <div className="flex gap-2" aria-label={`Tahap ${tahap} dari 4`}>
+      <div className="flex gap-1.5" aria-label={`Tahap ${tahap} dari 4`}>
         {[1, 2, 3, 4].map((t) => (
-          <span key={t} className={`size-3 rounded-full ${t <= tahap ? "bg-ungu" : "border-2 border-ungu-muda"}`} />
+          <span key={t} className={`h-2 flex-1 rounded-full ${t <= tahap ? "bg-jagung" : "bg-latar/25"}`} />
         ))}
       </div>
-    </Kartu>
-  );
-}
-
-export function StikerMinggu({ terisi }: { terisi: boolean[] }) {
-  const hariIni = (new Date().getDay() + 6) % 7;
-  return (
-    <section aria-label="Stiker minggu ini">
-      <h2 className="mb-2 text-isi font-semibold">Stiker minggu ini</h2>
-      <ol className="flex justify-between gap-1 sm:justify-start sm:gap-2">
-        {HARI_SEN_MIN.map((h, i) => (
-          <li key={h} className="flex flex-col items-center gap-1">
-            {terisi[i] ? (
-              <img src={STIKER[i % STIKER.length]} alt={`${h}: dapat stiker`} className="size-10" />
-            ) : (
-              <span className="size-10 rounded-full border-2 border-dashed border-ungu-muda" aria-label={`${h}: belum`} />
-            )}
-            <span className="text-[13px] text-ungu-muda">{h}</span>
-            <span className={`size-1.5 rounded-full ${i === hariIni ? "bg-jagung" : "bg-transparent"}`} />
-          </li>
-        ))}
-      </ol>
+      {children}
     </section>
   );
 }
 
-export function JalurPaparan({ nama, jumlah, target = 10 }: { nama: string; jumlah: number; target?: number }) {
+/** Angka besar + label kecil. */
+export function KartuAngka({ label, angka, satuan, ket }: { label: string; angka: string | number; satuan?: string; ket?: string }) {
   return (
-    <Kartu className="flex flex-col gap-3">
-      <p className="text-isi font-semibold">
-        {nama} <span className="tabular-nums">{Math.min(jumlah, target)}/{target}</span>
+    <section className={`${bento} flex flex-col gap-1`}>
+      <p className="text-kecil font-semibold text-ungu-muda">{label}</p>
+      <p className="font-judul text-[40px] leading-[48px] font-bold tabular-nums">
+        {angka}{satuan && <span className="ml-1 text-isi font-semibold text-ungu-muda">{satuan}</span>}
       </p>
-      <ol className="flex items-center" aria-label={`${nama} dicoba ${jumlah} dari ${target} kali`}>
-        {Array.from({ length: target }, (_, i) => (
-          <li key={i} className="flex flex-1 items-center last:flex-none">
-            <span className={`size-6 shrink-0 rounded-full border-2 ${i < jumlah ? "border-ungu bg-ungu" : i === jumlah ? "border-ungu" : "border-ungu-muda/60"}`} />
-            {i < target - 1 && <span className={`h-0.5 flex-1 ${i < jumlah - 1 ? "bg-ungu" : "bg-ungu-muda/40"}`} />}
-          </li>
+      {ket && <p className="text-kecil text-ungu-muda">{ket}</p>}
+    </section>
+  );
+}
+
+export type BatangPil = { label: string; diterima: number; ditolak: number; ada: boolean; sorot?: boolean; stiker?: boolean };
+
+/**
+ * Grafik bar berbentuk pil. Bagian bawah ubi ungu = diterima, bagian atas arsiran = ditolak,
+ * pil putus-putus pendek = hari tanpa sesi. Warna bukan satu-satunya pembeda (arsiran + legenda).
+ */
+export function GrafikPil({ batang, judul, tampilDitolak = true, tinggi = 140 }: {
+  batang: BatangPil[]; judul: string; tampilDitolak?: boolean; tinggi?: number;
+}) {
+  const maks = Math.max(1, ...batang.map((b) => b.diterima + (tampilDitolak ? b.ditolak : 0)));
+  const ringkas = batang.map((b) => `${b.label}: ${b.ada ? `${b.diterima} diterima${tampilDitolak ? `, ${b.ditolak} ditolak` : ""}` : "tanpa sesi"}`).join("; ");
+  const rapat = batang.length > 7;
+  return (
+    <figure className="flex flex-col gap-3">
+      <figcaption className="sr-only">{judul}. {ringkas}</figcaption>
+      <div className={`flex items-end justify-between ${rapat ? "gap-1" : "gap-2"}`} style={{ height: tinggi }} aria-hidden="true">
+        {batang.map((b, i) => {
+          const total = b.diterima + (tampilDitolak ? b.ditolak : 0);
+          const h = b.ada ? Math.max(24, (total / maks) * tinggi) : 24;
+          const hTerima = b.ada && total > 0 ? (b.diterima / total) * h : 0;
+          return (
+            <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
+              {b.sorot && b.ada && <span className="text-[13px] font-bold tabular-nums">{b.diterima}</span>}
+              <div className={`flex w-full ${b.ada ? "max-w-9" : "max-w-6"} flex-col overflow-hidden rounded-full ${b.ada ? (tampilDitolak && b.ditolak ? "arsir border border-ungu-muda" : "") : "border-2 border-dashed border-ungu-muda"} ${b.sorot ? "ring-2 ring-jagung-tua ring-offset-2 ring-offset-permukaan" : ""}`}
+                style={{ height: h }}>
+                <span className="mt-auto block w-full rounded-full bg-ungu" style={{ height: hTerima }} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className={`flex justify-between ${rapat ? "gap-1" : "gap-2"}`} aria-hidden="true">
+        {batang.map((b, i) => (
+          <div key={i} className="flex flex-1 flex-col items-center gap-1">
+            {b.stiker !== undefined && (
+              b.stiker
+                ? <img src={STIKER[i % STIKER.length]} alt="" className="size-7" />
+                : <span className="size-7 rounded-full border-2 border-dashed border-ungu-muda" />
+            )}
+            <span className={`text-[13px] ${b.sorot ? "font-bold text-ungu" : "text-ungu-muda"}`}>{b.label}</span>
+          </div>
         ))}
-      </ol>
-    </Kartu>
+      </div>
+      {tampilDitolak && (
+        <div className="flex flex-wrap gap-4 text-kecil text-ungu-muda" aria-hidden="true">
+          <span className="inline-flex items-center gap-2"><span className="size-3 rounded-full bg-ungu" />Diterima</span>
+          <span className="inline-flex items-center gap-2"><span className="arsir size-3 rounded-full border border-ungu-muda" />Ditolak</span>
+          <span className="inline-flex items-center gap-2"><span className="size-3 rounded-full border-2 border-dashed border-ungu-muda" />Tanpa sesi</span>
+        </div>
+      )}
+    </figure>
+  );
+}
+
+/** Cincin progres (mis. makanan baru dicoba 4/10). */
+export function CincinProgres({ nilai, target, label }: { nilai: number; target: number; label: string }) {
+  const r = 34, k = 2 * Math.PI * r;
+  const isi = Math.min(1, nilai / target);
+  return (
+    <section className={`${bento} flex flex-col gap-2`}>
+      <p className="text-kecil font-semibold text-ungu-muda">{label}</p>
+      <div className="flex items-center gap-3">
+        <svg viewBox="0 0 84 84" className="size-21 shrink-0 -rotate-90" role="img" aria-label={`${label}: ${nilai} dari ${target} kali`}>
+          <circle cx="42" cy="42" r={r} fill="none" stroke="var(--color-ungu-tint)" strokeWidth="10" />
+          <circle cx="42" cy="42" r={r} fill="none" stroke="var(--color-ungu)" strokeWidth="10" strokeLinecap="round"
+            strokeDasharray={`${k * isi} ${k}`} />
+        </svg>
+        <p className="font-judul text-[32px] leading-none font-bold tabular-nums">
+          {Math.min(nilai, target)}<span className="text-isi text-ungu-muda">/{target}</span>
+        </p>
+      </div>
+      <p className="text-kecil text-ungu-muda">kali dicoba</p>
+    </section>
   );
 }
 

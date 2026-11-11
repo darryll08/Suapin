@@ -1,11 +1,12 @@
-// Pemilik: B (Satya). Laporan `/laporan` (B3.5, UI UX 10.11): ringkasan AI → bagikan → sesi 14 hari.
+// Pemilik: B (Satya). Laporan `/laporan` (B3.5, UI UX 10.11), gaya bento: angka 14 hari + grafik pil →
+// ringkasan AI → bagikan → daftar sesi.
 import { useState } from "react";
 import { cariMakanan } from "../../../bersama/konten/makanan.ts";
-import { LabelAI } from "../../komponen/beranda.tsx";
-import { Kartu, KepalaHalaman, Memuat, PesanGalat, Tombol } from "../../komponen/dasar.tsx";
+import { GrafikPil, KartuAngka, LabelAI } from "../../komponen/beranda.tsx";
+import { KepalaHalaman, Memuat, PesanGalat, Tombol } from "../../komponen/dasar.tsx";
 import { LembarBawah } from "../../komponen/lembar.tsx";
-import { wadahKeluarga } from "../../gaya/gaya.ts";
-import { formatTanggal, useMuat } from "./bantu.ts";
+import { bento, wadahKeluarga } from "../../gaya/gaya.ts";
+import { formatTanggal, tanggalLokal, tanggalTerakhir, totalPerHari, useMuat } from "./bantu.ts";
 import { api, type Ringkasan, type SesiLaporan } from "./data.ts";
 import { useSaya } from "./tata-letak.tsx";
 
@@ -39,8 +40,10 @@ export function Laporan() {
     <main className={wadahKeluarga}>
       <KepalaHalaman judul={`Laporan makan ${c.panggilan}`} kembali="/beranda" />
       {memuat && !lap ? <Memuat /> : galat ? <PesanGalat pesan={galat} ulangi={ulangi} /> : lap && (
-        <div className="flex flex-col gap-5">
-          <Kartu className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4">
+          {lap.sesi.length > 0 && <Angka14 sesi={lap.sesi} panggilan={c.panggilan} />}
+
+          <section className={`${bento} flex flex-col gap-3`}>
             <h2 className="font-judul text-subjudul font-bold">Ringkasan minggu ini</h2>
             {memuatR ? <Memuat teks="Menyusun ringkasan…" /> : teksRingkasan ? (
               <>
@@ -51,14 +54,14 @@ export function Laporan() {
               <Tombol varian="kedua" onClick={buatRingkasan}>Buat ringkasan minggu ini</Tombol>
             )}
             {galatR && <PesanGalat pesan={galatR} ulangi={buatRingkasan} />}
-          </Kartu>
+          </section>
 
           <Tombol memuat={memuatB} onClick={bagikan} className="sm:w-full">Bagikan ke dokter</Tombol>
           {galatB && <PesanGalat pesan={galatB} />}
 
-          <section className="flex flex-col gap-4">
+          <section className={`${bento} flex flex-col gap-4`}>
             <h2 className="font-judul text-subjudul font-bold">Sesi 14 hari terakhir</h2>
-            {lap.sesi.length === 0 ? <p className="text-isi text-ungu-muda">Belum ada sesi.</p> : <DaftarSesi sesi={lap.sesi} />}
+            {lap.sesi.length === 0 ? <p className="text-isi text-ungu-muda">Belum ada sesi. Setelah sesi pertama, grafik dan daftar sesi muncul di sini.</p> : <DaftarSesi sesi={lap.sesi} />}
           </section>
         </div>
       )}
@@ -79,9 +82,12 @@ function DaftarSesi({ sesi }: { sesi: SesiLaporan[] }) {
           <h3 className="text-kecil font-semibold text-ungu-muda">{formatTanggal(tgl)}</h3>
           <ul>
             {daftar.map((s) => (
-              <li key={s.id} className="border-b border-garis/50 py-2 text-isi tabular-nums">
-                {s.jam} · {cariMakanan(s.menu).nama === "Lainnya" ? "Menu lain" : cariMakanan(s.menu).nama} · {s.diterima} diterima · {s.ditolak} ditolak
-                {s.ngemut > 0 && ` · ${s.ngemut} ngemut`} · {s.durasi} mnt
+              <li key={s.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-garis/50 py-3 text-isi tabular-nums last:border-0">
+                <span className="rounded-full bg-ungu-tint px-3 py-1 text-kecil font-bold">{s.jam.replace(":", ".")}</span>
+                <span className="font-semibold">{cariMakanan(s.menu).nama === "Lainnya" ? "Menu lain" : cariMakanan(s.menu).nama}</span>
+                <span className="basis-full text-kecil text-ungu-muda sm:basis-auto">
+                  {s.diterima} diterima · {s.ditolak} ditolak{s.ngemut > 0 && ` · ${s.ngemut} ngemut`} · {s.durasi} mnt
+                </span>
               </li>
             ))}
           </ul>
@@ -115,5 +121,25 @@ function LembarBagikan({ link, panggilan, tutup }: { link: string; panggilan: st
       </div>
       <p className="text-kecil text-ungu-muda">Siapa pun yang punya link ini bisa melihat laporan. Kirim hanya ke dokter Anda.</p>
     </LembarBawah>
+  );
+}
+
+function Angka14({ sesi, panggilan }: { sesi: SesiLaporan[]; panggilan: string }) {
+  const hari = totalPerHari(sesi, tanggalTerakhir(14));
+  const hariIni = tanggalLokal(new Date());
+  const diterima = sesi.reduce((a, x) => a + x.diterima, 0);
+  const rata = diterima / Math.max(1, sesi.length);
+  return (
+    <>
+      <div className="grid grid-cols-2 gap-4">
+        <KartuAngka label="Sesi makan" angka={sesi.length} ket="14 hari terakhir" />
+        <KartuAngka label="Rata-rata diterima" angka={rata.toFixed(1).replace(".", ",")} ket="suapan per sesi" />
+      </div>
+      <section className={`${bento} flex flex-col gap-3`}>
+        <h2 className="font-judul text-subjudul font-bold">Suapan per hari</h2>
+        <GrafikPil judul={`Suapan ${panggilan} per hari, 14 hari terakhir`}
+          batang={hari.map((h) => ({ label: String(Number(h.tanggal.slice(8, 10))), diterima: h.diterima, ditolak: h.ditolak, ada: h.ada, sorot: h.tanggal === hariIni }))} />
+      </section>
+    </>
   );
 }

@@ -55,3 +55,34 @@ export const PERTANYAAN_SKRINING = [
   "Ada keterlambatan perkembangan lain?",
   "Punya penyakit kronis atau alergi makanan berat?",
 ];
+
+/** "Mbak" + "Mbak Rina" → "Mbak Rina" (seed menyimpan sapaan di nama pengasuh). */
+export function namaDenganSapaan(sapaan: string, nama: string): string {
+  return nama.toLowerCase().startsWith(`${sapaan.toLowerCase()} `) ? nama : `${sapaan} ${nama}`;
+}
+
+export function tanggalLokal(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+type SesiHari = { tanggal: string; diterima: number; ditolak: number };
+
+/** Jumlah per tanggal (YYYY-MM-DD). */
+export function totalPerHari(sesi: SesiHari[], tanggal: string[]) {
+  return tanggal.map((t) => {
+    const s = sesi.filter((x) => x.tanggal.slice(0, 10) === t);
+    return { tanggal: t, ada: s.length > 0, diterima: s.reduce((a, x) => a + x.diterima, 0), ditolak: s.reduce((a, x) => a + x.ditolak, 0) };
+  });
+}
+
+/** Senin..Minggu minggu ini. */
+export function tanggalMingguIni(kini = new Date()): string[] {
+  const senin = new Date(kini);
+  senin.setDate(kini.getDate() - ((kini.getDay() + 6) % 7));
+  return Array.from({ length: 7 }, (_, i) => { const d = new Date(senin); d.setDate(senin.getDate() + i); return tanggalLokal(d); });
+}
+
+/** n hari terakhir sampai hari ini. */
+export function tanggalTerakhir(n: number, kini = new Date()): string[] {
+  return Array.from({ length: n }, (_, i) => { const d = new Date(kini); d.setDate(kini.getDate() - (n - 1 - i)); return tanggalLokal(d); });
+}

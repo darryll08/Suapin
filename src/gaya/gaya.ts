@@ -23,6 +23,13 @@ export const isian =
 
 export const kartu = "rounded-kartu border border-garis/60 bg-permukaan p-5 shadow-kartu";
 
+/** Kartu bento: radius besar, tanpa garis, bayangan lembut. */
+export const bento = "rounded-bento bg-permukaan p-5 shadow-kartu";
+
+/** Tombol ikon bulat 48 px (kepala halaman). */
+export const tombolIkon =
+  `inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-permukaan text-ungu shadow-kartu hover:bg-ungu-tint ${fokus}`;
+
 export const pil = "inline-flex min-h-8 items-center rounded-full px-3 text-kecil font-semibold";
 
 export const nadaPil = {

@@ -24,6 +24,7 @@
   --text-tombol: 1.125rem;    --text-tombol--line-height: 1.5rem;
 
   --radius-kartu: 20px;
+  --radius-bento: 28px;
   --radius-tombol: 16px;
   --radius-isian: 12px;
 
@@ -49,3 +50,6 @@ body { background: var(--color-latar); color: var(--color-ungu); font-family: va
 @media (prefers-reduced-motion: reduce) {
   .lembar-masuk, .pop-sekali, .pudar-masuk { animation: none; }
 }
+
+/* Bento (inspo 12 Nov): arsiran untuk nilai kosong/ditolak di grafik pil. Garis ungu muda 6,4:1 di atas permukaan. */
+.arsir { background-image: repeating-linear-gradient(135deg, var(--color-ungu-muda) 0 2px, transparent 2px 7px); }
