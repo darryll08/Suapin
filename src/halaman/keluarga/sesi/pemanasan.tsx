@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { Pose } from "../../../../bersama/kontrak/sesi.ts";
 import { Karakter } from "../../../karakter/karakter.tsx";
+import type { IdTokoh } from "../../../karakter/tokoh.tsx";
 import { putarKlip } from "../../../suara/pemutar.ts";
 
 type Babak = { sampai: number; pose: Pose; pegang: boolean; tahap: 0 | 1; klip?: "kenalan_makanan" | "karakter_enak" | "ajak_makan_bareng"; nama?: boolean };
@@ -18,8 +19,8 @@ const BABAK: Babak[] = [
 ];
 export const LAMA_PEMANASAN_DETIK = BABAK[BABAK.length - 1].sampai;
 
-export function Pemanasan({ makanan, panggilan, suara, onSelesai }: {
-  makanan: string; panggilan: string; suara: boolean; onSelesai: () => void;
+export function Pemanasan({ makanan, tokoh, panggilan, suara, onSelesai }: {
+  makanan: string; tokoh?: IdTokoh; panggilan: string; suara: boolean; onSelesai: () => void;
 }) {
   const [detik, setDetik] = useState(0);
   useEffect(() => {
@@ -43,7 +44,7 @@ export function Pemanasan({ makanan, panggilan, suara, onSelesai }: {
         <p className="pudar-masuk absolute inset-x-0 -top-2 z-10 text-center font-judul text-tampilan font-bold sm:text-[44px]">{panggilan}</p>
       )}
       <Karakter pose={babak.pose} mulut={babak.pose === "enak" ? 0.15 : 0} makanan={{ id: makanan, tahap: babak.tahap }}
-        pegang={babak.pegang} layar="terang" />
+        pegang={babak.pegang} layar="terang" tokoh={tokoh} />
     </div>
   );
 }

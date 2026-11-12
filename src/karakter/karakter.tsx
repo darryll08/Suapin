@@ -5,6 +5,7 @@ import { useEffect, useState, type CSSProperties } from "react";
 import type { ModeLayar, Pose } from "../../bersama/kontrak/sesi.ts";
 import { cariMakanan, type TahapMakanan } from "../../bersama/konten/makanan.ts";
 import { IsiMulut } from "./mulut.tsx";
+import { GambarTokoh, type IdTokoh } from "./tokoh.tsx";
 import "./karakter.css";
 
 export type PropsKarakter = {
@@ -16,6 +17,8 @@ export type PropsKarakter = {
   latar?: boolean;
   /** Karakter memegang makanan di depan badan tanpa menggigit (pemanasan). */
   pegang?: boolean;
+  /** Teman makan pilihan keluarga; tanpa ini tampil karakter bawaan. */
+  tokoh?: IdTokoh;
   className?: string;
 };
 
@@ -124,7 +127,7 @@ const PERCIK = [
   { x: 330, y: 170, dx: 56, dy: -8, r: 9, w: "#E0A526" },
 ];
 
-export function Karakter({ pose, mulut, makanan, layar, latar = true, pegang = false, className = "" }: PropsKarakter) {
+export function Karakter({ pose, mulut, makanan, layar, latar = true, pegang = false, tokoh, className = "" }: PropsKarakter) {
   const kedip = useKedip(pose);
   const msGigit = useWaktuGigit(pose);
   const gigit = pose === "menggigit" ? urutanGigit(msGigit) : null;
@@ -148,6 +151,13 @@ export function Karakter({ pose, mulut, makanan, layar, latar = true, pegang = f
       aria-label="Teman makan" data-pose={pose}>
       {latar && <circle cx="200" cy="215" r="172" fill="#FBEFD2" />}
       <g key={pose === "merayakan" ? "rayakan" : "biasa"} className={`karakter-badan ${kelasBadan}`}>
+        {tokoh ? (
+          <g transform="translate(20,10) scale(1.5)">
+            <g className={pose === "menunggu" ? "karakter-condong" : ""} style={{ transformBox: "fill-box", transformOrigin: "50% 100%" }}>
+              <GambarTokoh id={tokoh} mulut={pose === "merayakan" ? 0.5 : bukaMulut} />
+            </g>
+          </g>
+        ) : (
         <g className={pose === "menunggu" ? "karakter-condong" : ""} style={{ transformBox: "fill-box", transformOrigin: "50% 100%" }}>
           {/* badan */}
           <ellipse cx="200" cy="350" rx="112" ry="60" fill={BAJU} />
@@ -165,6 +175,7 @@ export function Karakter({ pose, mulut, makanan, layar, latar = true, pegang = f
             <IsiMulut buka={bukaMulut} senyum={pose === "merayakan"} />
           </g>
         </g>
+        )}
       </g>
 
       {(gigit || pegang) && gambarMakanan && (

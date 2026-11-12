@@ -6,9 +6,10 @@ import { MAKANAN, NAMA_KELOMPOK, type KelompokMakanan } from "../../../../bersam
 import { KepalaHalaman } from "../../../komponen/dasar.tsx";
 import { bento, tombolHero, tombolSegmen, tombolUtama, wadahKeluarga, wadahSegmen } from "../../../gaya/gaya.ts";
 import { NAMA_SAPAAN } from "../bantu.ts";
+import { GambarTokoh, simpanTokoh, TOKOH, tokohTersimpan, type IdTokoh } from "../../../karakter/tokoh.tsx";
 import type { Saya } from "../data.ts";
 
-export type PilihanSesi = { menu: string; makananBaru: boolean; sisi: "kiri" | "kanan" };
+export type PilihanSesi = { menu: string; makananBaru: boolean; sisi: "kiri" | "kanan"; tokoh: IdTokoh };
 
 const KUNCI_SISI = "tm_sisi_pengasuh";
 function sisiTersimpan(): "kiri" | "kanan" | null {
@@ -21,6 +22,7 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
   const [baru, setBaru] = useState(false);
   const [sisi, setSisi] = useState<"kiri" | "kanan" | null>(sisiTersimpan);
   const [memuat, setMemuat] = useState(false);
+  const [tokoh, setTokoh] = useState<IdTokoh>(tokohTersimpan);
 
   if (!saya.sesi_dibuka) {
     const kunci = saya.alasan_terkunci;
@@ -55,14 +57,28 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
     if (!menu || !sisi) return;
     setMemuat(true);
     try { localStorage.setItem(KUNCI_SISI, sisi); } catch { /* abaikan */ }
-    await mulai({ menu, makananBaru: baru, sisi });
+    simpanTokoh(tokoh);
+    await mulai({ menu, makananBaru: baru, sisi, tokoh });
   };
 
   return (
     <main className={`${wadahKeluarga} flex flex-col gap-4`}>
       <KepalaHalaman judul="Siapkan makan" kembali="/beranda" />
       <section className={`${bento} flex flex-col gap-4`}>
-        <JudulLangkah n={1}>Menu hari ini</JudulLangkah>
+        <JudulLangkah n={1}>Pilih teman makan</JudulLangkah>
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+          {TOKOH.map((t) => (
+            <button key={t.id} type="button" aria-pressed={tokoh === t.id} onClick={() => setTokoh(t.id)}
+              className={`flex min-h-12 flex-col items-center gap-1 rounded-kartu p-2 text-kecil font-semibold transition-colors outline-none focus-visible:ring-4 focus-visible:ring-jagung ${tokoh === t.id ? "bg-ungu-tint ring-2 ring-ungu" : "bg-latar hover:bg-ungu-tint"}`}>
+              <svg viewBox="0 0 240 260" className="h-20 w-auto" aria-hidden="true"><GambarTokoh id={t.id} mulut={0} /></svg>
+              {t.nama}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className={`${bento} flex flex-col gap-4`}>
+        <JudulLangkah n={2}>Menu hari ini</JudulLangkah>
         {(Object.keys(NAMA_KELOMPOK) as KelompokMakanan[]).map((k) => (
           <div key={k} className="flex flex-col gap-2">
             <h3 className="text-kecil font-semibold text-ungu-muda">{NAMA_KELOMPOK[k]}</h3>
@@ -88,7 +104,7 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
 
       {menu && (
         <section className={`${bento} pudar-masuk flex flex-col gap-4`}>
-          <JudulLangkah n={2}>{sapaan} duduk di sebelah mana anak?</JudulLangkah>
+          <JudulLangkah n={3}>{sapaan} duduk di sebelah mana anak?</JudulLangkah>
           <IlustrasiDuduk sisi={sisi} />
           <div className={`${wadahSegmen} grid-cols-2`}>
             {(["kiri", "kanan"] as const).map((s) => (
@@ -103,7 +119,7 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
 
       {menu && sisi && (
         <section className="pudar-masuk flex flex-col gap-4 rounded-bento bg-ungu p-6 text-latar shadow-kartu">
-          <JudulLangkah n={3} gelap>Posisi HP</JudulLangkah>
+          <JudulLangkah n={4} gelap>Posisi HP</JudulLangkah>
           <p className="text-isi text-latar/90">Letakkan HP sedikit di samping depan anak, setinggi wajahnya. Wajah anak harus terlihat. Jauhkan HP dari jangkauan tangan anak.</p>
           <button type="button" className={tombolHero} disabled={memuat} aria-busy={memuat || undefined} onClick={tekanMulai}>
             {memuat ? "Menyiapkan…" : "Mulai makan"}

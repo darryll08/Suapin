@@ -111,7 +111,7 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
       <main className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-latar px-4 text-center">
         {menyimpan || !galatSimpan ? <Memuat teks="Menyimpan hasil makan…" /> : (
           <>
-            <div className="size-40"><Karakter pose="netral" mulut={0} makanan={null} layar="terang" /></div>
+            <div className="size-40"><Karakter pose="netral" mulut={0} makanan={null} layar="terang" tokoh={pilihan.tokoh} /></div>
             <p className="font-judul text-judul font-bold">Hasil makan belum tersimpan.</p>
             <p className="text-kecil text-jagung-tua">{galatSimpan}</p>
             <Tombol onClick={() => void simpan(sesi.hasil!)}>Coba simpan lagi</Tombol>
@@ -140,9 +140,9 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
         <div className="aspect-square h-[min(70cqh,92cqw)] max-h-full">
           {!v ? <Memuat teks="Menyiapkan teman makan…" />
             : status === "PEMANASAN" ? (
-              <Pemanasan makanan={pilihan.menu} panggilan={saya.child.panggilan} suara={saklar.suara} onSelesai={sesi.selesaiPemanasan} />
+              <Pemanasan makanan={pilihan.menu} tokoh={pilihan.tokoh} panggilan={saya.child.panggilan} suara={saklar.suara} onSelesai={sesi.selesaiPemanasan} />
             ) : tampilKarakter ? (
-              <Karakter pose={v.pose} mulut={v.mulutKarakter} layar="terang"
+              <Karakter pose={v.pose} mulut={v.mulutKarakter} layar="terang" tokoh={pilihan.tokoh}
                 makanan={{ id: pilihan.menu, tahap: v.makananTahap }} />
             ) : !hitam && <div className="size-full rounded-full bg-jagung-muda/70" style={{ transform: "scale(0.86)" }} />}
         </div>

@@ -8,6 +8,10 @@
 .karakter-percik { animation: karakter-percik 700ms var(--ease-standar) 1 forwards; }
 .karakter-redup { transition: opacity 400ms var(--ease-standar); }
 .mulut-rongga { transition: d 60ms linear; }
+.tokoh-g { stroke: #3A2346; stroke-width: 5; stroke-linejoin: round; stroke-linecap: round; }
+.tokoh-tipis { stroke: #3A2346; stroke-width: 3.5; stroke-linecap: round; fill: none; }
+.tokoh-mata { animation: tokoh-kedip 4.2s infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes tokoh-kedip { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.1); } }
 
 @keyframes karakter-goyang { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2.5px); } }
 @keyframes karakter-goyang-besar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
@@ -22,6 +26,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .karakter-goyang, .karakter-goyang-besar, .karakter-lompat, .karakter-masuk, .karakter-percik { animation: none; }
+  .karakter-goyang, .karakter-goyang-besar, .karakter-lompat, .karakter-masuk, .karakter-percik, .tokoh-mata { animation: none; }
   .karakter-percik { opacity: 0; }
 }
