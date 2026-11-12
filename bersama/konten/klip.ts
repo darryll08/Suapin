@@ -21,17 +21,20 @@ export type IdKlip = z.infer<typeof IdKlip>;
 
 export type Sapaan = "mbak" | "bu" | "oma" | "ayah";
 
+// 12 Nov: kalimat dibuat lebih natural untuk balita (yuk, nyam, yeay) dan diberi variasi supaya tidak diulang persis.
+// Klip `mbak_gigit_duluan` dan `tos_mbak` sengaja tanpa sapaan, jadi cocok untuk Mbak, Bu, Oma, atau Ayah.
+// `nanti_lagi` sengaja satu kalimat datar tanpa variasi (penolakan tidak dijadikan hadiah).
 export const KLIP: Record<IdKlip, { kalimat: string; variasi: string[]; sapaan?: Sapaan }> = {
-  sapa_awal: { kalimat: "Halo! Lihat aku dulu ya!", variasi: [] },
-  kenalan_makanan: { kalimat: "Ini brokoli. Wanginya segar!", variasi: [] },
-  ajak_makan_bareng: { kalimat: "Nanti kita makan bareng ya!", variasi: [] },
-  karakter_enak: { kalimat: "Hmm, enak!", variasi: [] },
-  giliranmu: { kalimat: "Sekarang giliranmu!", variasi: [] },
-  mbak_gigit_duluan: { kalimat: "Mbak, gigit duluan ya, biar dia lihat!", variasi: [], sapaan: "mbak" },
-  hore: { kalimat: "Hore, hebat!", variasi: [] },
-  tos_mbak: { kalimat: "Tos dulu sama Mbak!", variasi: [], sapaan: "mbak" },
-  masih_ngunyah: { kalimat: "Kita tunggu ya, masih ngunyah.", variasi: [] },
-  nanti_lagi: { kalimat: "Nanti lagi ya.", variasi: [] },
-  waktunya_selesai: { kalimat: "Waktunya selesai. Terima kasih sudah makan bareng!", variasi: [] },
-  penutup: { kalimat: "Kamu dapat stiker!", variasi: [] },
+  sapa_awal: { kalimat: "Hai! Lihat aku, yuk!", variasi: ["Halo! Aku di sini, lho!"] },
+  kenalan_makanan: { kalimat: "Wah, ini makanan kita hari ini!", variasi: [] },
+  ajak_makan_bareng: { kalimat: "Yuk, nanti kita makan sama-sama!", variasi: [] },
+  karakter_enak: { kalimat: "Nyam, nyam… enak!", variasi: ["Hmm, enak banget!", "Nyam! Lembut, lho."] },
+  giliranmu: { kalimat: "Sekarang giliranmu!", variasi: ["Ayo, kamu juga!", "Giliranmu, yuk!"] },
+  mbak_gigit_duluan: { kalimat: "Yuk, semuanya ikut gigit!", variasi: ["Ayo, kita gigit bareng!"] },
+  hore: { kalimat: "Yeay, hebat!", variasi: ["Wah, pintar!", "Mantap!"] },
+  tos_mbak: { kalimat: "Tos dulu, yuk!", variasi: ["Ayo, tos!"] },
+  masih_ngunyah: { kalimat: "Kunyah dulu, ya. Nyam, nyam.", variasi: ["Pelan-pelan aja, ya."] },
+  nanti_lagi: { kalimat: "Oke. Nanti lagi.", variasi: [] },
+  waktunya_selesai: { kalimat: "Udah selesai. Makasih udah makan bareng aku!", variasi: [] },
+  penutup: { kalimat: "Yeay, kamu dapat stiker!", variasi: ["Lihat, ada stiker buat kamu!"] },
 };

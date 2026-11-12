@@ -31,7 +31,7 @@ Centang hanya bila ada buktinya. Format: `- [x] A0.1 Kerangka proyek · 10 Nov �
 - [x] B1.1 Gambar karakter dan keputusan aset · 11 Nov · a9bf415 · keputusan SVG flat (docs/aset.md)
 - [x] B1.2 Makanan dan stiker · 11 Nov · a9bf415 · brokoli + umum ×3 tahap, 3 stiker; tes path lolos
 - [x] B1.3 Komponen karakter dan mulut SVG · 11 Nov · a9bf415 · meniru rekaman:contoh di /sesi; kamera asli belum
-- [ ] B1.4 Klip suara
+- [x] B1.4 Klip suara · 12 Nov · 23 klip ElevenLabs (12 id + variasi) 368 KB, loudnorm, terbaca pemutar (bukan speechSynthesis); kalimat masih draf
 - [x] B1.5 Pemutar suara · 11 Nov · a9bf415 · antrean + cadangan speechSynthesis; belum dicoba di Chrome HP
 - [x] B2.1 `/sesi` persiapan · 11 Nov · a9bf415 · 3 langkah + tahap 4 + sesi terkunci
 - [x] B2.2 `/sesi` layar makan · 11 Nov · a9bf415 · teruji dengan rekaman:contoh; webcam + SQLite C belum

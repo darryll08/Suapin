@@ -1,5 +1,5 @@
 // Pemilik: B (Satya). B1.4: buat klip suara karakter dari bersama/konten/klip.ts lewat ElevenLabs.
-// Pakai: `npm run klip` (hanya file yang belum ada) atau `npm run klip -- --paksa <id>`.
+// Pakai: `npm run klip` (hanya file yang belum ada), `npm run klip -- --paksa <id>`, atau `npm run klip -- --semua`.
 // Butuh ELEVENLABS_API_KEY dan ELEVENLABS_VOICE_ID di .env.local. Kunci tidak pernah ditulis ke repo.
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -26,6 +26,12 @@ if (!kunci || !suara) {
 
 const iPaksa = process.argv.indexOf("--paksa");
 const paksa = iPaksa >= 0 ? process.argv[iPaksa + 1] : null;
+const semuaUlang = process.argv.includes("--semua");
+
+// Stability rendah + sedikit style = intonasi lebih hidup untuk ajakan main.
+// `nanti_lagi` (anak menolak) dibuat stabil dan tanpa style supaya terdengar datar (UI UX 13).
+const SUARA_HIDUP = { stability: 0.35, similarity_boost: 0.75, style: 0.35, use_speaker_boost: true };
+const SUARA_DATAR = { stability: 0.8, similarity_boost: 0.75, style: 0, use_speaker_boost: true };
 const MODEL = env.ELEVENLABS_MODEL || "eleven_multilingual_v2";
 
 let adaFfmpeg = true;
@@ -37,11 +43,12 @@ for (const id of Object.keys(KLIP) as IdKlip[]) {
   const semua = [KLIP[id].kalimat, ...KLIP[id].variasi];
   for (let i = 0; i < semua.length; i++) {
     const file = i === 0 ? `public/klip/${id}.mp3` : `public/klip/${id}__${i + 1}.mp3`;
-    if (existsSync(file) && paksa !== id) continue;
+    if (existsSync(file) && paksa !== id && !semuaUlang) continue;
     const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${suara}`, {
       method: "POST",
       headers: { "xi-api-key": kunci, "content-type": "application/json", accept: "audio/mpeg" },
-      body: JSON.stringify({ text: semua[i], model_id: MODEL }),
+      body: JSON.stringify({ text: semua[i], model_id: MODEL,
+        voice_settings: id === "nanti_lagi" ? SUARA_DATAR : SUARA_HIDUP }),
     });
     if (!r.ok) {
       console.error(`Gagal ${id} (${r.status}): ${await r.text()}`);
