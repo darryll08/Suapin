@@ -36,6 +36,7 @@ export function Landing() {
             <img src="/ikon/suapin-ikon-ungu-putih.svg" alt="" className="size-9 rounded-[10px]" />
             Suapin
           </button>
+          <Link to="/masuk" className="inline-flex min-h-12 items-center rounded-full px-4 text-isi font-semibold text-ungu underline-offset-4 hover:underline hover:decoration-jagung hover:decoration-2">Masuk</Link>
         </header>
 
         {/* 1. Hook */}
@@ -96,7 +97,7 @@ export function Landing() {
         <ol className="grid gap-4 md:grid-cols-3">
           {[
             ["01", "Karakter menggigit duluan", "Anak melihat teman makannya menikmati makanan yang sama."],
-            ["02", "Pengasuh menekan Suap", "Satu tombol besar di sisi pengasuh. Tidak perlu membaca layar."],
+            ["02", "Pengasuh menekan Suap", "Satu tombol besar di bawah layar. Tidak perlu membaca layar."],
             ["03", "Karakter meniru, lalu merayakan", "Mulut karakter mengikuti mulut anak. Perayaan hanya saat suapan diterima; saat menolak, karakter diam."],
           ].map(([n, judul, isi], i) => (
             <li key={n}>

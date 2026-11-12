@@ -8,6 +8,7 @@ import { Isian, Memuat, PesanGalat, Pil, Tombol } from "../../komponen/dasar.tsx
 import { bento, tombolTeks } from "../../gaya/gaya.ts";
 import { GalatApi, panggil, usePanggil } from "../../lib/panggil.ts";
 import { Logo } from "../keluarga/tata-letak.tsx";
+import { Angka, Avatar, Ikon, panel, ubin } from "../klinik/tata-letak.tsx";
 
 type Klinik = Keluaran<"adminAkun">["klinik"][number];
 type Dokter = Klinik["dokter"][number];
@@ -34,21 +35,32 @@ export function Admin() {
   const totalDokter = data?.klinik.reduce((n, k) => n + k.dokter.length, 0) ?? 0;
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 pb-12">
-      <header className="flex flex-wrap items-center justify-between gap-3 pt-3">
+    <main className="mx-auto flex w-full max-w-5xl flex-col gap-5 px-4 pb-12">
+      <header className="flex items-center justify-between gap-3 pt-3">
         <div className="flex items-center gap-3"><Logo ke="/admin" /><Pil nada="jagung">Admin</Pil></div>
-        <div className="flex flex-wrap items-center gap-2">
-          {data && <span className="hidden text-kecil text-ungu-muda break-all sm:inline">{data.admin_email}</span>}
-          <Tombol varian="kedua" memuat={keluar} onClick={() => void keluarAdmin()} className="min-h-12 sm:w-auto">Keluar</Tombol>
+        <div className="flex min-w-0 items-center gap-2">
+          {data && <span className="hidden min-w-0 items-center gap-2 rounded-full border border-garis/60 bg-permukaan py-1 pr-4 pl-1 sm:flex">
+            <Avatar nama="Admin" kecil /><span className="truncate text-kecil font-bold">{data.admin_email}</span>
+          </span>}
+          <button type="button" disabled={keluar} onClick={() => void keluarAdmin()} title="Keluar" className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-full border border-garis/60 bg-permukaan px-4 text-kecil font-bold text-ungu transition-colors hover:bg-ungu-tint disabled:opacity-50 outline-none focus-visible:ring-4 focus-visible:ring-jagung">
+            <Ikon nama="keluar" className="size-4" />{keluar ? "Keluar…" : "Keluar"}
+          </button>
         </div>
       </header>
 
-      <div className="flex flex-col gap-1">
-        <h1 className="font-judul text-judul font-bold">Akun klinik</h1>
-        <p className="text-isi text-ungu-muda">
-          Daftarkan klinik setelah kerja sama disepakati. Klinik dan dokter masuk dengan email + sandi sementara dari sini.
-        </p>
-      </div>
+      <section className="flex flex-col gap-4 rounded-[28px] bg-ungu p-5 text-permukaan sm:p-6">
+        <div className="flex flex-col gap-1">
+          <h1 className="font-judul text-judul font-bold">Akun klinik</h1>
+          <p className="text-isi text-latar/85">
+            Daftarkan klinik setelah kerja sama disepakati. Klinik dan dokter masuk dengan email + sandi sementara dari sini.
+          </p>
+        </div>
+      </section>
+      {data && <div className="grid grid-cols-3 gap-3 sm:gap-4">
+        <Angka ikon="map" label="Klinik" nilai={data.klinik.length} />
+        <Angka ikon="stetoskop" label="Dokter" nilai={totalDokter} />
+        <Angka ikon="anak" label="Pasien" nilai={data.klinik.reduce((n, k) => n + k.jumlah_pasien, 0)} />
+      </div>}
 
       {rahasia && <KotakRahasia data={rahasia} tutup={() => setRahasia(null)} />}
 
@@ -142,20 +154,24 @@ function KartuKlinik({ klinik, selesai, ulang }: { klinik: Klinik; selesai: (s: 
     } catch (e) { setGalat(pesan(e)); } finally { setSibuk(false); }
   };
   return (
-    <article className={`${bento} flex flex-col gap-3`}>
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div className="flex min-w-0 flex-col">
+    <article className={`${panel} flex flex-col gap-3`}>
+      <div className="flex items-center gap-3">
+        <Avatar nama={klinik.nama} />
+        <div className="flex min-w-0 flex-1 flex-col">
           <h3 className="text-isi font-bold">{klinik.nama}</h3>
-          <span className="text-kecil break-all text-ungu-muda">{[klinik.kota, klinik.email ?? "Belum punya akun klinik"].filter(Boolean).join(" · ")}</span>
+          <span className="text-kecil [overflow-wrap:anywhere] text-ungu-muda">{[klinik.kota, klinik.email ?? "Belum punya akun klinik"].filter(Boolean).join(" · ")}</span>
         </div>
-        <span className="text-kecil text-ungu-muda">{klinik.dokter.length} dokter · {klinik.jumlah_pasien} pasien</span>
+        <span className="flex shrink-0 gap-1.5">
+          <span className="flex flex-col items-center rounded-[14px] bg-latar px-3 py-1.5 leading-tight"><span className="font-judul text-subjudul font-bold tabular-nums">{klinik.dokter.length}</span><span className="text-[12px] text-ungu-muda">dokter</span></span>
+          <span className="flex flex-col items-center rounded-[14px] bg-latar px-3 py-1.5 leading-tight"><span className="font-judul text-subjudul font-bold tabular-nums">{klinik.jumlah_pasien}</span><span className="text-[12px] text-ungu-muda">pasien</span></span>
+        </span>
       </div>
       {klinik.email && <button type="button" disabled={sibuk} onClick={() => void sandiKlinik()} className={`${tombolTeks} -ml-3 self-start`}>
         {sibuk ? "Membuat…" : "Sandi klinik baru"}</button>}
       {galat && <PesanGalat pesan={galat} />}
-      <ul className="flex flex-col divide-y divide-garis/50">
+      {!!klinik.dokter.length && <ul className={`${ubin} flex flex-col divide-y divide-garis/50 py-1`}>
         {klinik.dokter.map((d) => <BarisDokter key={d.id} dokter={d} selesai={selesai} ulang={ulang} />)}
-      </ul>
+      </ul>}
       {tambah
         ? <FormDokterBaru clinicId={klinik.id} batal={() => setTambah(false)} selesai={(s) => { setTambah(false); selesai(s); }} />
         : <button type="button" onClick={() => setTambah(true)} className={`${tombolTeks} -ml-3 self-start`}>Tambah dokter</button>}
@@ -181,15 +197,18 @@ function BarisDokter({ dokter, selesai, ulang }: { dokter: Dokter; selesai: (s: 
   };
   return (
     <li className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-w-0 items-start gap-3">
+      <Avatar nama={dokter.nama} kecil />
       <div className="flex min-w-0 flex-col">
         <span className="flex flex-wrap items-center gap-2 font-semibold">
           {dokter.nama}
           {!dokter.aktif && <Pil nada="jagung">Nonaktif</Pil>}
         </span>
-        <span className="text-kecil break-all text-ungu-muda">{dokter.email ?? "Belum punya email"} · {dokter.spesialis ?? "Tenaga kesehatan"} · {dokter.jumlah_pasien} pasien</span>
+        <span className="text-kecil [overflow-wrap:anywhere] text-ungu-muda">{dokter.email ?? "Belum punya email"} · {dokter.spesialis ?? "Tenaga kesehatan"} · {dokter.jumlah_pasien} pasien</span>
         {galat && <PesanGalat pesan={galat} />}
       </div>
-      <div className="-ml-3 flex shrink-0 flex-wrap gap-1 sm:ml-0">
+      </div>
+      <div className="flex shrink-0 flex-wrap gap-1 pl-9 sm:pl-0">
         <button type="button" disabled={sibuk !== null} onClick={() => void jalankan("sandi")} className={tombolTeks}>
           {sibuk === "sandi" ? "Membuat…" : "Sandi baru"}
         </button>

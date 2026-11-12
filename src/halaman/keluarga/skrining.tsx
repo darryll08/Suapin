@@ -6,7 +6,7 @@ import { KepalaHalaman, PesanGalat, Tombol } from "../../komponen/dasar.tsx";
 import { bento, tombolSegmen, wadahKeluarga, wadahSegmen } from "../../gaya/gaya.ts";
 import { PERTANYAAN_SKRINING } from "./bantu.ts";
 import { api } from "./data.ts";
-import { useSaya } from "./tata-letak.tsx";
+import { Logo, useSaya } from "./tata-letak.tsx";
 
 export function Skrining() {
   const { saya, muatUlang } = useSaya();
@@ -35,6 +35,7 @@ export function Skrining() {
 
   return (
     <main className={`${wadahKeluarga} pb-28`}>
+      <div className="pt-3"><Logo /></div>
       <KepalaHalaman judul="Sebelum mulai" sub="Jawab 7 pertanyaan ini supaya program aman untuk anak." />
 
       <section className={`${bento} mb-4 flex flex-col gap-3`}>
@@ -66,7 +67,7 @@ export function Skrining() {
       <p className="mt-4 text-kecil text-ungu-muda">Daftar ini draf dan sedang ditinjau dokter.</p>
       {galat && <div className="mt-4"><PesanGalat pesan={galat} /></div>}
 
-      <div className="fixed inset-x-0 bottom-0 bg-latar/95 px-4 py-3 shadow-lembar">
+      <div className="fixed inset-x-0 bottom-0 border-t border-garis/40 bg-latar/80 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md">
         <div className="mx-auto max-w-[560px]">
           <Tombol className="sm:w-full" disabled={terjawab < 7} memuat={memuat} onClick={simpan}>Simpan jawaban</Tombol>
         </div>

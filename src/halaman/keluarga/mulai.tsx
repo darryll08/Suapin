@@ -103,7 +103,7 @@ export function Mulai() {
           </div>
         </section>
         {galatServer && <PesanGalat pesan={galatServer} />}
-        <div className="fixed inset-x-0 bottom-0 bg-latar/95 px-4 py-3 shadow-lembar">
+        <div className="fixed inset-x-0 bottom-0 border-t border-garis/40 bg-latar/80 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md">
           <div className="mx-auto max-w-[560px]">
             <Tombol type="submit" memuat={memuat} className="sm:w-full">Lanjut ke skrining</Tombol>
           </div>

@@ -1,15 +1,17 @@
-// Overview satu anak untuk dokter (/dokter/pasien/:id): ringkasan, tren 14 hari, jadwal, aturan, resep, riwayat sesi.
-import { useState } from "react"
+// Overview satu anak untuk dokter (/dokter/pasien/:id), gaya "kartu pasien":
+// kepala dengan tombol kembali bulat → info anak → angka utama → progres + grafik pil 14 hari →
+// ringkasan, resep, riwayat sesi; kolom kanan: jadwal dan "map pasien" (aturan, paparan, skrining, riwayat).
+import { useState, type ReactNode } from "react"
 import { Navigate, useParams } from "react-router"
 import { cariMakanan } from "../../../bersama/konten/makanan"
 import type { Keluaran } from "../../../bersama/kontrak/api"
+import { GrafikPil, type BatangPil } from "../../komponen/beranda"
 import { FormResep } from "../../komponen/klinik/form-resep"
 import { TabelSesi } from "../../komponen/klinik/tabel-sesi"
 import { Memuat, PesanGalat, Pil, Tombol } from "../../komponen/dasar"
-import { bento } from "../../gaya/gaya"
 import { GalatApi, panggil, usePanggil } from "../../lib/panggil"
-import { hariRelatif, jam, LABEL_JADWAL, LABEL_STATUS, labelRingkasan, persen, pesan, tanggal, usia } from "./format"
-import { Angka, Avatar, BilahTerima, TataLetakPanel, TautanKembali } from "./tata-letak"
+import { bagianTanggal, hariRelatif, jam, LABEL_JADWAL, LABEL_STATUS, labelRingkasan, persen, pesan, tanggal, usia } from "./format"
+import { Angka, Avatar, BilahTerima, Ikon, KepalaDetail, LencanaTanggal, panel, TataLetakPanel, ubin, type NamaIkon } from "./tata-letak"
 
 type Detail = Keluaran<"pasienDetail">
 const NAMA_TAHAP = ["Karakter memandu", "Pengasuh jadi contoh", "Layar hitam", "Tanpa layar"]
@@ -27,7 +29,7 @@ function DetailPasien({ id }: { id: string }) {
   const [sukses, setSukses] = useState("")
   if (galat instanceof GalatApi && galat.status === 401) return <Navigate to="/masuk" replace />
   if (!data) return <TataLetakPanel peran="dokter">
-    <TautanKembali ke="/dokter">Semua pasien</TautanKembali>
+    <KepalaDetail kembali="/dokter" labelKembali="Kembali ke semua pasien" judul="Kartu pasien" />
     {memuat ? <Memuat teks="Memuat pasien…" /> : <PesanGalat pesan={galat instanceof GalatApi && galat.status === 404
       ? "Pasien tidak ditemukan atau bukan pasien Anda." : galat?.message ?? "Gagal memuat"} ulangi={ulang} />}
   </TataLetakPanel>
@@ -55,15 +57,15 @@ function DetailPasien({ id }: { id: string }) {
   const lewat = data.jadwal.filter((j) => !mendatang.includes(j))
 
   return <TataLetakPanel peran="dokter" nama={data.dokter_nama}>
-    <TautanKembali ke="/dokter">Semua pasien</TautanKembali>
+    <KepalaDetail kembali="/dokter" labelKembali="Kembali ke semua pasien" judul="Kartu pasien" />
 
-    <section className={`${bento} flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between`}>
-      <div className="flex items-center gap-4">
+    <section className={`${panel} flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between`} aria-label="Informasi anak">
+      <div className="flex min-w-0 items-center gap-4">
         <Avatar nama={data.child.panggilan} besar />
-        <div className="flex min-w-0 flex-col gap-1">
-          <h1 className="font-judul text-judul font-bold">{data.child.panggilan}</h1>
-          <p className="text-isi text-ungu-muda">{usia(data.child.usia_bulan)} · Pengasuh {SAPAAN[data.pengasuh.sapaan]} {data.pengasuh.nama.replace(/^(Mbak|Bu|Oma|Ayah)\s+/i, "")}</p>
-          <div className="flex flex-wrap gap-2">
+        <div className="flex min-w-0 flex-col gap-1.5">
+          <h2 className="font-judul text-judul leading-tight font-bold">{data.child.panggilan}</h2>
+          <p className="text-kecil text-ungu-muda">{usia(data.child.usia_bulan)} · Pengasuh {SAPAAN[data.pengasuh.sapaan]} {data.pengasuh.nama.replace(/^(Mbak|Bu|Oma|Ayah)\s+/i, "")}</p>
+          <div className="flex flex-wrap gap-1.5">
             <Pil>Tahap {data.child.stage} · {NAMA_TAHAP[data.child.stage - 1]}</Pil>
             {data.siap_naik_tahap && <Pil>Siap naik tahap</Pil>}
             {data.saran_turun_tahap && <Pil nada="jagung">Saran turun tahap</Pil>}
@@ -73,31 +75,42 @@ function DetailPasien({ id }: { id: string }) {
       {data.siap_naik_tahap && aktif.stage < 4 &&
         <Tombol memuat={aksi === "tahap"} disabled={!!aksi} onClick={() => void jalankan("tahap")}>Naikkan ke tahap {aktif.stage + 1}</Tombol>}
     </section>
-    {sukses && <p className={`${bento} border-ungu bg-ungu-tint font-semibold`} role="status">{sukses}</p>}
+    {sukses && <p className={`${panel} border-ungu bg-ungu-tint font-semibold`} role="status">{sukses}</p>}
     {galatAksi && <PesanGalat pesan={galatAksi} />}
 
-    <section className="grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Angka utama">
-      <Angka label="Sesi 28 hari" nilai={data.sesi.length} />
-      <Angka label="Diterima 7 hari" nilai={persen(masuk7, tolak7) + "%"} ket={`${masuk7} dari ${masuk7 + tolak7} suapan`} />
-      <Angka label="Ngemut dikonfirmasi" nilai={data.ngemut_dikonfirmasi} ket="28 hari" />
-      <Angka label="Kontrol berikutnya" nilai={mendatang[0] ? hariRelatif(mendatang[0].waktu) : "—"}
+    <section className="grid grid-cols-2 gap-4 lg:grid-cols-4" aria-label="Angka utama">
+      <Angka ikon="sesi" label="Sesi 28 hari" nilai={data.sesi.length} />
+      <Angka ikon="cek" label="Diterima 7 hari" nilai={persen(masuk7, tolak7) + "%"} ket={`${masuk7} dari ${masuk7 + tolak7} suapan`} />
+      <Angka ikon="daun" label="Ngemut dikonfirmasi" nilai={data.ngemut_dikonfirmasi} ket="28 hari" />
+      <Angka ikon="kalender" label="Kontrol berikutnya" nilai={mendatang[0] ? hariRelatif(mendatang[0].waktu) : "–"}
         ket={mendatang[0] ? `${jam(mendatang[0].waktu)} · ${LABEL_JADWAL[mendatang[0].jenis]}` : "belum dijadwalkan"} />
     </section>
 
-    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-      <div className="flex min-w-0 flex-col gap-6">
-        <Tren sesi={data.sesi} />
-        <section className={`${bento} flex flex-col gap-3`}>
+    <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+      <div className="flex min-w-0 flex-col gap-4">
+        <section className={`${panel} flex flex-col gap-4`} aria-labelledby="judul-tren">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h2 id="judul-tren" className="font-judul text-subjudul font-bold">Suapan diterima</h2>
+              <p className="text-kecil text-ungu-muda">7 hari terakhir</p>
+            </div>
+            <span className="font-judul text-tampilan leading-none font-bold tabular-nums">{persen(masuk7, tolak7)}%</span>
+          </div>
+          <BilahTerima diterima={masuk7} ditolak={tolak7} />
+          <div className={ubin}><Tren sesi={data.sesi} /></div>
+        </section>
+
+        <section className={`${panel} flex flex-col gap-3`}>
           <h2 className="font-judul text-subjudul font-bold">Ringkasan minggu ini</h2>
           {data.ringkasan_dokter ? <>
-            <Pil nada="netral">{labelRingkasan(data.ringkasan_sumber)}</Pil>
-            <p className="text-isi">{data.ringkasan_dokter}</p>
+            <span className="self-start"><Pil nada="netral">{labelRingkasan(data.ringkasan_sumber)}</Pil></span>
+            <p className={`${ubin} text-isi`}>{data.ringkasan_dokter}</p>
           </> : <>
             <p className="text-ungu-muda">Belum ada ringkasan untuk minggu ini.</p>
             <Tombol varian="kedua" memuat={aksi === "ringkasan"} disabled={!!aksi} onClick={() => void jalankan("ringkasan")} className="self-start">Buat ringkasan</Tombol>
           </>}
         </section>
-        <div className="suapin-klinik flex flex-col gap-6">
+        <div className="suapin-klinik flex flex-col gap-4">
           <FormResep id={id} aktif={aktif} selesai={() => { setSukses("Aturan baru berlaku di sesi berikutnya."); ulang() }} />
           <section className="suapin-kartu">
             <h2>Riwayat sesi 28 hari</h2>
@@ -106,89 +119,86 @@ function DetailPasien({ id }: { id: string }) {
         </div>
       </div>
 
-      <aside className="flex min-w-0 flex-col gap-6">
-        <section className={`${bento} flex flex-col gap-3`} aria-labelledby="judul-jadwal-anak">
-          <h2 id="judul-jadwal-anak" className="font-judul text-subjudul font-bold">Jadwal</h2>
+      <aside className="flex min-w-0 flex-col gap-4">
+        <section className={`${panel} flex flex-col gap-3`} aria-labelledby="judul-jadwal-anak">
+          <div className="flex items-center justify-between gap-2">
+            <h2 id="judul-jadwal-anak" className="font-judul text-subjudul font-bold">Jadwal</h2>
+            <span className="inline-flex size-10 items-center justify-center rounded-full bg-ungu-tint text-ungu" aria-hidden="true"><Ikon nama="kalender" className="size-5" /></span>
+          </div>
           {!data.jadwal.length && <p className="text-ungu-muda">Belum ada jadwal.</p>}
-          <ol className="flex flex-col divide-y divide-garis/50">
-            {[...mendatang, ...lewat].map((j) => <li key={j.id} className="flex flex-col gap-1 py-3">
-              <span className="flex flex-wrap items-center gap-2">
-                <span className="font-semibold">{tanggal(j.waktu)}, {jam(j.waktu)}</span>
-                <Pil nada={j.status === "terjadwal" ? "ungu" : j.status === "batal" ? "jagung" : "netral"}>{LABEL_STATUS[j.status]}</Pil>
-              </span>
-              <span className="text-kecil text-ungu-muda">{LABEL_JADWAL[j.jenis]}{j.catatan ? " · " + j.catatan : ""}</span>
-            </li>)}
+          <ol className="flex flex-col gap-2">
+            {[...mendatang, ...lewat].map((j, i) => {
+              const t = bagianTanggal(j.waktu)
+              return <li key={j.id} className="flex items-center gap-3">
+                <LencanaTanggal hari={t.hari} tanggal={t.tgl} aktif={i === 0 && j.status === "terjadwal"} />
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <span className="flex flex-wrap items-center gap-x-2 font-semibold">{LABEL_JADWAL[j.jenis]}
+                    <span className="text-kecil font-normal text-ungu-muda">{t.bln} · {jam(j.waktu)}</span></span>
+                  <span className="text-kecil text-ungu-muda">{LABEL_STATUS[j.status]}{j.catatan ? " · " + j.catatan : ""}</span>
+                </span>
+              </li>
+            })}
           </ol>
         </section>
 
-        <section className={`${bento} flex flex-col gap-3`}>
-          <h2 className="font-judul text-subjudul font-bold">Aturan aktif</h2>
-          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-isi">
-            <dt className="text-ungu-muda">Sumber</dt><dd>{data.aturan_aktif.source === "dokter" ? "Dokter" : "Default program"}</dd>
-            <dt className="text-ungu-muda">Lama sesi</dt><dd>maks {aktif.max_minutes} menit</dd>
-            <dt className="text-ungu-muda">Naik tahap</dt><dd>{aktif.advance_rule.sessions} sesi × min {aktif.advance_rule.min_accepted_bites} suapan</dd>
-            <dt className="text-ungu-muda">Akhiri bila</dt><dd>menolak {aktif.end_after_refusal_minutes} menit</dd>
-            <dt className="text-ungu-muda">Saat ngemut</dt><dd>{aktif.ngemut_hint}</dd>
-          </dl>
-          {data.riwayat_aturan.length > 1 && <details className="text-isi">
-            <summary className="min-h-12 cursor-pointer py-3 font-semibold">Riwayat aturan ({data.riwayat_aturan.length})</summary>
+        <section className={`${panel} flex flex-col gap-2`} aria-labelledby="judul-map">
+          <h2 id="judul-map" className="pb-1 font-judul text-subjudul font-bold">Map pasien</h2>
+          <Map ikon="aturan" judul="Aturan aktif" ket={data.aturan_aktif.source === "dokter" ? "Dari dokter" : "Default program"} buka>
+            <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-kecil">
+              <dt className="text-ungu-muda">Lama sesi</dt><dd>maks {aktif.max_minutes} menit</dd>
+              <dt className="text-ungu-muda">Naik tahap</dt><dd>{aktif.advance_rule.sessions} sesi × min {aktif.advance_rule.min_accepted_bites} suapan</dd>
+              <dt className="text-ungu-muda">Akhiri bila</dt><dd>menolak {aktif.end_after_refusal_minutes} menit</dd>
+              <dt className="text-ungu-muda">Saat ngemut</dt><dd>{aktif.ngemut_hint}</dd>
+            </dl>
+          </Map>
+          <Map ikon="daun" judul="Paparan makanan" ket={`${data.paparan.length} makanan baru`}>
+            {!data.paparan.length && <p className="text-kecil text-ungu-muda">Belum ada makanan baru yang dicoba.</p>}
+            {data.paparan.map((p) => <div key={p.makanan} className="flex flex-col gap-1">
+              <span className="flex justify-between text-kecil"><span>{cariMakanan(p.makanan).nama}</span><span className="tabular-nums">{p.jumlah}/{p.target}</span></span>
+              <div className="arsir h-2.5 overflow-hidden rounded-full border border-ungu-muda/60"><div className="h-full rounded-full bg-ungu" style={{ width: Math.min(100, p.jumlah / p.target * 100) + "%" }} /></div>
+            </div>)}
+          </Map>
+          {data.skrining_terakhir && <Map ikon="perisai" judul="Skrining" ket={data.skrining_terakhir.ada_tanda_bahaya ? "Ada tanda bahaya" : "Tidak ada tanda bahaya"}>
+            <p className="text-kecil text-ungu-muda">Terakhir diisi {tanggal(data.skrining_terakhir.tanggal)}</p>
+          </Map>}
+          <Map ikon="map" judul="Riwayat aturan" ket={`${data.riwayat_aturan.length} perubahan`}>
             <ol className="flex flex-col gap-2">
-              {data.riwayat_aturan.map((r, i) => <li key={r.confirmed_at + i} className="rounded-kartu bg-latar p-3">
+              {data.riwayat_aturan.map((r, i) => <li key={r.confirmed_at + i} className="flex flex-col">
                 <span className="text-kecil font-semibold">{tanggal(r.confirmed_at)} · {r.source === "dokter" ? "Dokter" : "Default"}</span>
-                <p className="text-kecil text-ungu-muda">{r.source_text || "Aturan program default"}</p>
+                <span className="text-kecil text-ungu-muda">{r.source_text || "Aturan program default"}</span>
               </li>)}
             </ol>
-          </details>}
+          </Map>
         </section>
-
-        <section className={`${bento} flex flex-col gap-3`}>
-          <h2 className="font-judul text-subjudul font-bold">Paparan makanan</h2>
-          {!data.paparan.length && <p className="text-ungu-muda">Belum ada makanan baru yang dicoba.</p>}
-          {data.paparan.map((p) => <div key={p.makanan} className="flex flex-col gap-1">
-            <span className="flex justify-between text-isi"><span>{cariMakanan(p.makanan).nama}</span><span className="tabular-nums">{p.jumlah}/{p.target}</span></span>
-            <div className="h-2 overflow-hidden rounded-full bg-garis/40"><div className="h-full rounded-full bg-jagung" style={{ width: Math.min(100, p.jumlah / p.target * 100) + "%" }} /></div>
-          </div>)}
-          <p className="text-kecil text-ungu-muda">Target 10 kali paparan per makanan baru.</p>
-        </section>
-
-        {data.skrining_terakhir && <section className={`${bento} flex flex-col gap-2`}>
-          <h2 className="font-judul text-subjudul font-bold">Skrining</h2>
-          <p className="text-isi">{data.skrining_terakhir.ada_tanda_bahaya ? "Ada tanda bahaya yang perlu diperiksa." : "Tidak ada tanda bahaya."}</p>
-          <p className="text-kecil text-ungu-muda">Terakhir diisi {tanggal(data.skrining_terakhir.tanggal)}</p>
-        </section>}
       </aside>
     </div>
     <p className="text-kecil text-ungu-muda">Yang diukur adalah perilaku menerima suapan. Porsi berasal dari catatan pengasuh.</p>
   </TataLetakPanel>
 }
 
-/** Bilah harian 14 hari: tinggi = jumlah suapan, ungu = diterima, kerupuk = ditolak. Tanpa animasi. */
+/** Baris map yang bisa dibuka: ikon dalam lingkaran, judul + keterangan, panah. */
+function Map({ ikon, judul, ket, buka = false, children }: { ikon: NamaIkon; judul: string; ket: string; buka?: boolean; children: ReactNode }) {
+  return <details open={buka} className="group/map rounded-[20px] bg-latar">
+    <summary className="flex min-h-14 cursor-pointer list-none items-center gap-3 rounded-[20px] p-2 pr-3 outline-none focus-visible:ring-4 focus-visible:ring-jagung [&::-webkit-details-marker]:hidden">
+      <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-permukaan text-ungu" aria-hidden="true"><Ikon nama={ikon} className="size-5" /></span>
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="font-semibold">{judul}</span>
+        <span className="truncate text-kecil text-ungu-muda">{ket}</span>
+      </span>
+      <span aria-hidden="true" className="text-ungu-muda transition-transform group-open/map:rotate-90"><Ikon nama="panah" className="size-4" /></span>
+    </summary>
+    <div className="flex flex-col gap-2 px-4 pt-1 pb-4">{children}</div>
+  </details>
+}
+
+/** Grafik pil 14 hari (komponen sama dengan beranda/laporan keluarga). */
 function Tren({ sesi }: { sesi: Detail["sesi"] }) {
-  const hari = Array.from({ length: 14 }, (_, i) => {
+  const hariIni = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10)
+  const batang: BatangPil[] = Array.from({ length: 14 }, (_, i) => {
     const d = new Date(Date.now() + 7 * 3600000 - (13 - i) * 86400000).toISOString().slice(0, 10)
     const isi = sesi.filter((s) => s.tanggal === d)
-    return { d, masuk: isi.reduce((n, s) => n + s.diterima, 0), tolak: isi.reduce((n, s) => n + s.ditolak, 0) }
+    return { label: String(Number(d.slice(8, 10))), diterima: isi.reduce((n, s) => n + s.diterima, 0),
+      ditolak: isi.reduce((n, s) => n + s.ditolak, 0), ada: isi.length > 0, sorot: d === hariIni }
   })
-  const maks = Math.max(1, ...hari.map((h) => h.masuk + h.tolak))
-  const total = hari.reduce((t, h) => ({ masuk: t.masuk + h.masuk, tolak: t.tolak + h.tolak }), { masuk: 0, tolak: 0 })
-  return <section className={`${bento} flex flex-col gap-4`} aria-labelledby="judul-tren">
-    <div className="flex flex-wrap items-baseline justify-between gap-2">
-      <h2 id="judul-tren" className="font-judul text-subjudul font-bold">Suapan 14 hari</h2>
-      <span className="flex gap-3 text-kecil text-ungu-muda">
-        <span className="inline-flex items-center gap-1"><span className="size-3 rounded-sm bg-ungu" />Diterima</span>
-        <span className="inline-flex items-center gap-1"><span className="size-3 rounded-sm bg-garis" />Ditolak</span>
-      </span>
-    </div>
-    <ol className="grid h-40 grid-cols-14 items-end gap-1 sm:gap-2" aria-label="Jumlah suapan per hari">
-      {hari.map((h) => <li key={h.d} className="flex h-full flex-col justify-end gap-px" title={`${tanggal(h.d + "T00:00:00+07:00")}: ${h.masuk} diterima, ${h.tolak} ditolak`}>
-        <span className="sr-only">{tanggal(h.d + "T00:00:00+07:00")}: {h.masuk} diterima, {h.tolak} ditolak</span>
-        <span className="rounded-t-sm bg-garis" style={{ height: h.tolak / maks * 100 + "%" }} />
-        <span className={`bg-ungu ${h.tolak ? "" : "rounded-t-sm"}`} style={{ height: h.masuk / maks * 100 + "%" }} />
-      </li>)}
-    </ol>
-    <div className="flex justify-between text-kecil text-ungu-muda" aria-hidden="true">
-      <span>{tanggal(hari[0]!.d + "T00:00:00+07:00")}</span><span>Hari ini</span>
-    </div>
-    <BilahTerima diterima={total.masuk} ditolak={total.tolak} />
-  </section>
+  return <GrafikPil batang={batang} judul="Suapan per hari, 14 hari terakhir" tinggi={150} />
 }

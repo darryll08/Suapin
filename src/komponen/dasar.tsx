@@ -56,12 +56,17 @@ export function Pil({ children, nada = "ungu" }: { children: ReactNode; nada?: k
   return <span className={`${pil} ${nadaPil[nada]}`}>{children}</span>;
 }
 
+// Label tombol kembali menyebut tujuannya (lebih jelas daripada "Kembali").
+const TUJUAN_KEMBALI: Record<string, string> = { "/": "Halaman awal", "/beranda": "Beranda", "/laporan": "Laporan" };
+
+/** Kepala halaman keluarga. Baris kembali berada di posisi yang sama dengan baris logo beranda (pt-3, tinggi 48 px),
+ *  jadi isi halaman tidak meloncat saat berpindah halaman. */
 export function KepalaHalaman({ judul, sub, kembali }: { judul: string; sub?: string; kembali?: string }) {
   return (
-    <header className="flex flex-col gap-1 pt-6 pb-4">
+    <header className={`flex flex-col gap-1 pb-4 ${kembali ? "pt-3" : "pt-6"}`}>
       {kembali && (
-        <Link to={kembali} className={`${tombolTeks} -ml-3 self-start`}>
-          <span aria-hidden="true">‹</span> Kembali
+        <Link to={kembali} className={`${tombolTeks} -ml-3 mb-2 self-start`}>
+          <span aria-hidden="true">‹</span> {TUJUAN_KEMBALI[kembali] ?? "Kembali"}
         </Link>
       )}
       <h1 className="font-judul text-judul font-bold">{judul}</h1>

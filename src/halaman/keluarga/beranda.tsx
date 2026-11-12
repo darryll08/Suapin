@@ -22,6 +22,7 @@ export function Beranda() {
       <header className="pt-4 pb-5">
         <p className="truncate text-isi text-ungu-muda">Halo {namaDenganSapaan(sapaan, c.nama_pengasuh)},</p>
         <h1 className="font-judul text-judul font-bold">Siap makan bareng {c.panggilan}?</h1>
+        {lap && <div className="pt-3"><BarisPlan plan={c.plan} sisa={lap.trial_sisa_hari} terkunci={saya.alasan_terkunci === "trial_habis"} /></div>}
       </header>
 
       {param.get("baru") === "1" && saya.sesi_dibuka && (
@@ -51,7 +52,6 @@ export function Beranda() {
             <Ringkas sesi={lap.sesi} stiker={lap.stiker_minggu_ini} paparan={lap.paparan} panggilan={c.panggilan} />
           )}
 
-          <BarisPlan plan={c.plan} sisa={lap.trial_sisa_hari} terkunci={saya.alasan_terkunci === "trial_habis"} />
         </div>
       )}
     </Halaman>
@@ -88,15 +88,14 @@ function Ringkas({ sesi, stiker, paparan, panggilan }: {
 }
 
 function BarisPlan({ plan, sisa, terkunci }: { plan: string; sisa: number | null; terkunci: boolean }) {
-  if (plan === "klinik") return <p className="self-start rounded-full bg-ungu-tint px-4 py-2 text-kecil font-semibold">Program dari dokter</p>;
+  if (plan === "klinik") return <p className="inline-flex rounded-full bg-ungu-tint px-3 py-1.5 text-kecil font-semibold">Program dari dokter</p>;
   if (plan !== "trial" || sisa === null || terkunci) return null;
+  // Status di dekat sapaan; seluruh pil bisa diketuk ke halaman program (target ≥ 44 px).
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <span className="rounded-full bg-jagung-muda px-4 py-2 text-kecil font-semibold text-jagung-tua">
-        {sisa <= 0 ? "Trial berakhir hari ini" : `Sisa trial ${sisa} hari`}
-      </span>
-      {sisa <= 1 && <Link to="/langganan" className="text-kecil font-semibold underline underline-offset-4">Lihat program 30 hari</Link>}
-    </div>
+    <Link to="/langganan" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-jagung-muda px-4 text-kecil font-semibold text-jagung-tua outline-none focus-visible:ring-4 focus-visible:ring-jagung">
+      {sisa <= 0 ? "Trial berakhir hari ini" : `Sisa trial ${sisa} hari`}
+      <span aria-hidden="true" className="text-ungu">· Lihat program ›</span>
+    </Link>
   );
 }
 

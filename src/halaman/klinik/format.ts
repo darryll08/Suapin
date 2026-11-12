@@ -16,6 +16,11 @@ const bagianWib = (iso: string) => {
   return { hari: d.getUTCDay(), tgl: d.getUTCDate(), bln: d.getUTCMonth(), jam: d.getUTCHours(), mnt: d.getUTCMinutes(),
     kunci: d.toISOString().slice(0, 10) }
 }
+/** Bagian tanggal WIB untuk lencana kalender: { hari: "Sen", tgl: "9", bln: "Nov" }. */
+export function bagianTanggal(iso: string) {
+  const b = bagianWib(iso)
+  return { hari: HARI[b.hari]!, tgl: String(b.tgl), bln: BULAN[b.bln]! }
+}
 /** "Sen, 9 Nov" (UI UX 15: tanggal pendek). */
 export function tanggal(iso: string) {
   const b = bagianWib(iso)
