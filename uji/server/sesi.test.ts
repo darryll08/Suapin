@@ -12,7 +12,7 @@ it.each([
   { jalur: "klinik", klinik: true, tahapAkhir: 1 },
 ])("menerapkan aturan naik tahap di jalur $jalur", async ({ klinik, tahapAkhir }) => {
   const daftar = await uji.req("/api/children", "POST", {
-    panggilan: "Anak Uji", tanggal_lahir: "2022-08-01", sapaan: "bu", nama_pengasuh: "Ibu Uji",
+    panggilan: "Anak Uji", tanggal_lahir: "2022-08-01", sapaan: "bu", nama_pengasuh: "Ibu Uji", email: crypto.randomUUID() + "@uji.test", kata_sandi: "sandi-uji-123",
   })
   expect(daftar.status).toBe(200)
   const { child_id } = API.anakBuat.res.parse(await daftar.json())

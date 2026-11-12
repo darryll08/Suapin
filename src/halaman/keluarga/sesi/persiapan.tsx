@@ -31,11 +31,12 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
         <KepalaHalaman judul="Sesi belum dibuka" kembali="/beranda" />
         <p className="mb-6 text-isi">
           {kunci === "trial_habis" ? "Trial 5 hari sudah selesai. Lanjutkan program untuk membuka sesi lagi."
+            : kunci === "paket_habis" ? "Program 30 Hari sudah selesai. Perpanjang program untuk membuka sesi lagi."
             : kunci === "tanda_bahaya" ? "Sebaiknya periksa ke dokter dulu. Dokter bisa membuka program lewat link laporan."
               : "Isi skrining dulu supaya program aman untuk anak."}
         </p>
-        <Link className={tombolUtama} to={kunci === "trial_habis" ? "/langganan" : kunci === "tanda_bahaya" ? "/laporan" : "/mulai/skrining"}>
-          {kunci === "trial_habis" ? "Lanjutkan program" : kunci === "tanda_bahaya" ? "Bagikan laporan ke dokter" : "Isi skrining"}
+        <Link className={tombolUtama} to={kunci === "trial_habis" || kunci === "paket_habis" ? "/langganan" : kunci === "tanda_bahaya" ? "/laporan" : "/mulai/skrining"}>
+          {kunci === "trial_habis" ? "Lanjutkan program" : kunci === "paket_habis" ? "Perpanjang program" : kunci === "tanda_bahaya" ? "Bagikan laporan ke dokter" : "Isi skrining"}
         </Link>
       </main>
     );

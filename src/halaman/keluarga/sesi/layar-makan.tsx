@@ -15,6 +15,7 @@ import { saklarTahap } from "../../../mesin/tahap.ts";
 import type { AturanSesi, Tombol as TombolEngine } from "../../../mesin/sesi.ts";
 import { useKlip } from "../../../suara/use-klip.ts";
 import { api, type Saya } from "../data.ts";
+import { beritahu } from "../../../komponen/notifikasi.tsx";
 import { Pemanasan } from "./pemanasan.tsx";
 import type { PilihanSesi } from "./persiapan.tsx";
 
@@ -96,6 +97,7 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
       });
     } catch (e) {
       setGalatSimpan(e instanceof Error ? e.message : String(e));
+      beritahu({ nada: "galat", judul: "Sesi belum tersimpan", pesan: "Hasil sesi masih ada di HP ini. Tekan simpan lagi saat koneksi stabil." });
     } finally {
       setMenyimpan(false);
     }

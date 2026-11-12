@@ -1,5 +1,6 @@
 import { useEffect, useReducer, useState } from "react"
 import { API, type Input, type Keluaran, type NamaEndpoint } from "../../bersama/kontrak/api"
+import { beritahu } from "../komponen/notifikasi"
 
 type Opsi<N extends NamaEndpoint> = {
   params?: Record<string, string>
@@ -40,15 +41,23 @@ export async function panggil<N extends NamaEndpoint>(nama: N, opsi: Opsi<N> = {
     return endpoint.res.parse(keluarga[nama]) as Keluaran<N>
   }
   const query = opsi.query ? "?" + new URLSearchParams(opsi.query) : ""
-  const response = await fetch(path + query, {
-    method: endpoint.metode, credentials: "include", signal: opsi.signal,
-    headers: data === undefined ? undefined : { "content-type": "application/json" },
-    body: data === undefined ? undefined : JSON.stringify(data),
-  })
+  let response: Response
+  try {
+    response = await fetch(path + query, {
+      method: endpoint.metode, credentials: "include", signal: opsi.signal,
+      headers: data === undefined ? undefined : { "content-type": "application/json" },
+      body: data === undefined ? undefined : JSON.stringify(data),
+    })
+  } catch (galat) {
+    // Jaringan putus / server mati: beri tahu sekali lewat toast, lalu tetap lempar supaya halaman menampilkan galatnya.
+    if (!opsi.signal?.aborted) beritahu({ nada: "galat", judul: "Tidak tersambung ke server", pesan: "Periksa internet, lalu coba lagi." })
+    throw galat
+  }
   const hasil: unknown = response.status === 204 ? undefined : await response.json().catch(() => undefined)
   if (!response.ok) {
     const pesan = hasil && typeof hasil === "object" && "galat" in hasil && typeof hasil.galat === "string"
       ? hasil.galat : "Layanan belum bisa diakses. Coba lagi."
+    if (response.status >= 500) beritahu({ nada: "galat", judul: "Proses belum berhasil", pesan })
     throw new GalatApi(response.status, pesan)
   }
   return endpoint.res.parse(hasil) as Keluaran<N>

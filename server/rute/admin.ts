@@ -1,91 +1,81 @@
-import { compare, hash } from "bcryptjs"
-import { timingSafeEqual } from "node:crypto"
 import { eq, sql } from "drizzle-orm"
-import { hapusCookie, pasangCookie } from "../akses"
+import { adminCocok, pastikanEmailBebas, sandiBaru } from "../akun"
+import { hapusCookie, masukSebagai } from "../akses"
 import type { Db } from "../db/klien"
 import { children, clinics, doctors } from "../db/skema"
 import type { Env } from "../env"
-import { buatKodeAkses } from "../kode"
 import { gagal, type Daftar } from "./daftar"
-import { hashPalsu } from "./klinik"
 
-// Sandi sementara memakai alfabet kode akses (12 karakter, tanpa huruf/angka mirip).
-// Ditampilkan sekali ke admin; server hanya menyimpan hash bcrypt.
-async function sandiBaru() {
-  const sandi_sementara = buatKodeAkses()
-  return { sandi_sementara, sandi_hash: await hash(sandi_sementara, 10) }
-}
 const emailDipakai = (e: unknown) => e instanceof Error &&
-  /UNIQUE constraint failed: doctors\.email/.test(e.message + String((e as { cause?: unknown }).cause))
+  /UNIQUE constraint failed: (clinics|doctors)\.email/.test(e.message + String((e as { cause?: unknown }).cause))
 
 export function ruteAdmin(daftar: Daftar, db: Db, env: Env) {
-  async function dokter(id: string) {
-    return await db.select({ id: doctors.id }).from(doctors).where(eq(doctors.id, id)).get() ??
-      gagal(404, "Dokter tidak ditemukan")
+  async function ada(tabel: typeof doctors | typeof clinics, id: string, pesan: string) {
+    return await db.select({ id: tabel.id }).from(tabel).where(eq(tabel.id, id)).get() ?? gagal(404, pesan)
   }
 
   daftar("adminMasuk", async (c, { email, kata_sandi }) => {
-    // Bandingkan selalu dengan biaya yang sama supaya waktu respons tidak membocorkan email admin.
-    await compare(kata_sandi.slice(0, 72), hashPalsu)
-    const a = Buffer.from(email + "\n" + kata_sandi)
-    const b = Buffer.from(env.ADMIN_EMAIL + "\n" + (env.ADMIN_SANDI ?? ""))
-    const cocok = !!env.ADMIN_SANDI && a.length === b.length && timingSafeEqual(a, b)
-    if (!cocok) gagal(401, "Email atau kata sandi tidak sesuai")
-    await pasangCookie(c, env, "admin", env.ADMIN_EMAIL)
+    if (!await adminCocok(env, email, kata_sandi)) gagal(401, "Email atau kata sandi tidak sesuai")
+    await masukSebagai(c, env, "admin", env.ADMIN_EMAIL)
   })
   daftar("adminKeluar", (c) => hapusCookie(c, env, "admin"))
 
   daftar("adminAkun", async (c) => {
-    const [semuaKlinik, semuaDokter, pasien] = await Promise.all([
+    const [semuaKlinik, semuaDokter, pasienKlinik, pasienDokter] = await Promise.all([
       db.select().from(clinics).orderBy(clinics.nama).all(),
-      db.select({ id: doctors.id, clinic_id: doctors.clinic_id, nama: doctors.nama, email: doctors.email,
-        aktif: doctors.aktif }).from(doctors).orderBy(doctors.nama).all(),
+      db.select().from(doctors).orderBy(doctors.nama).all(),
       db.select({ id: children.clinic_id, n: sql<number>`count(*)`.mapWith(Number) }).from(children)
         .groupBy(children.clinic_id).all(),
+      db.select({ id: children.doctor_id, n: sql<number>`count(*)`.mapWith(Number) }).from(children)
+        .groupBy(children.doctor_id).all(),
     ])
-    const jumlah = new Map(pasien.map(({ id, n }) => [id, n]))
+    const perKlinik = new Map(pasienKlinik.map(({ id, n }) => [id, n]))
+    const perDokter = new Map(pasienDokter.map(({ id, n }) => [id, n]))
     return { admin_email: c.var.admin!, klinik: semuaKlinik.map((k) => ({
-      id: k.id, nama: k.nama, jumlah_pasien: jumlah.get(k.id) ?? 0,
-      dokter: semuaDokter.filter((d) => d.clinic_id === k.id).map(({ clinic_id: _, ...d }) => d),
+      id: k.id, nama: k.nama, kota: k.kota, email: k.email, jumlah_pasien: perKlinik.get(k.id) ?? 0,
+      dokter: semuaDokter.filter((d) => d.clinic_id === k.id).map((d) => ({
+        id: d.id, nama: d.nama, spesialis: d.spesialis, email: d.email, aktif: d.aktif, jumlah_pasien: perDokter.get(d.id) ?? 0 })),
     })) }
   })
 
-  daftar("adminKlinikBuat", async (_c, { nama_klinik, dokter: d }) => {
+  daftar("adminKlinikBuat", async (_c, { nama_klinik, kota, email }) => {
+    await pastikanEmailBebas(db, env, email)
     const { sandi_sementara, sandi_hash } = await sandiBaru()
     try {
-      return await db.transaction(async (tx) => {
-        const [klinik] = await tx.insert(clinics).values({ nama: nama_klinik }).returning({ id: clinics.id })
-        const [baru] = await tx.insert(doctors).values({ clinic_id: klinik!.id, nama: d.nama, email: d.email, sandi_hash })
-          .returning({ id: doctors.id })
-        return { clinic_id: klinik!.id, doctor_id: baru!.id, sandi_sementara }
-      })
+      const [klinik] = await db.insert(clinics).values({ nama: nama_klinik, kota: kota || null, email, sandi_hash })
+        .returning({ id: clinics.id })
+      return { clinic_id: klinik!.id, sandi_sementara }
     } catch (e) {
-      if (emailDipakai(e)) gagal(409, "Email ini sudah dipakai akun dokter lain")
+      if (emailDipakai(e)) gagal(409, "Email ini sudah dipakai akun lain")
       throw e
     }
   })
+  daftar("adminKlinikSandi", async (c) => {
+    const { id } = await ada(clinics, c.req.param("id")!, "Klinik tidak ditemukan")
+    const { sandi_sementara, sandi_hash } = await sandiBaru()
+    await db.update(clinics).set({ sandi_hash }).where(eq(clinics.id, id))
+    return { sandi_sementara }
+  })
 
-  daftar("adminDokterBuat", async (_c, { clinic_id, nama, email }) => {
-    if (!await db.select({ id: clinics.id }).from(clinics).where(eq(clinics.id, clinic_id)).get()) {
-      gagal(404, "Klinik tidak ditemukan")
-    }
+  daftar("adminDokterBuat", async (_c, { clinic_id, nama, spesialis, email }) => {
+    await ada(clinics, clinic_id, "Klinik tidak ditemukan")
+    await pastikanEmailBebas(db, env, email)
     const { sandi_sementara, sandi_hash } = await sandiBaru()
     try {
-      const [baru] = await db.insert(doctors).values({ clinic_id, nama, email, sandi_hash }).returning({ id: doctors.id })
+      const [baru] = await db.insert(doctors).values({ clinic_id, nama, spesialis: spesialis || null, email, sandi_hash })
+        .returning({ id: doctors.id })
       return { doctor_id: baru!.id, sandi_sementara }
     } catch (e) {
-      if (emailDipakai(e)) gagal(409, "Email ini sudah dipakai akun dokter lain")
+      if (emailDipakai(e)) gagal(409, "Email ini sudah dipakai akun lain")
       throw e
     }
   })
-
   daftar("adminDokterStatus", async (c, { aktif }) => {
-    const { id } = await dokter(c.req.param("id")!)
+    const { id } = await ada(doctors, c.req.param("id")!, "Dokter tidak ditemukan")
     await db.update(doctors).set({ aktif }).where(eq(doctors.id, id))
   })
-
   daftar("adminDokterSandi", async (c) => {
-    const { id } = await dokter(c.req.param("id")!)
+    const { id } = await ada(doctors, c.req.param("id")!, "Dokter tidak ditemukan")
     const { sandi_sementara, sandi_hash } = await sandiBaru()
     await db.update(doctors).set({ sandi_hash }).where(eq(doctors.id, id))
     return { sandi_sementara }

@@ -31,6 +31,8 @@ export default defineConfig({
         // K19: file WASM MediaPipe ±14,6 MB; di bawah batas ini build PWA gagal.
         maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
         navigateFallbackDenylist: [/^\/api\//],
+        // Penangan Web Push (notifikasi pengingat/trial/paket) ikut dimuat service worker PWA.
+        importScripts: ["sw-push.js"],
         runtimeCaching: [],
       },
     }),

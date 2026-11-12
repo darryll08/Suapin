@@ -24,16 +24,16 @@ export async function bantu() {
     const req = pemanggil(app)
     async function masuk(url: string, data: unknown, nama: string) {
       const respons = await req(url, "POST", data)
-      if (respons.status !== 204) throw new Error("Login uji gagal: " + respons.status)
+      if (respons.status !== 200 && respons.status !== 204) throw new Error("Login uji gagal: " + respons.status)
       const cookie = respons.headers.getSetCookie().find((x) => x.startsWith(nama + "="))
       if (!cookie) throw new Error("Cookie uji tidak tersedia")
       return cookie.split(";")[0]!
     }
     const [dika, nara, dokter, lain] = await Promise.all([
-      masuk("/api/masuk", { kode_akses: seed.kodeDika }, "tm_keluarga"),
-      masuk("/api/masuk", { kode_akses: seed.kodeNara }, "tm_keluarga"),
-      masuk("/api/clinic/login", { email: "dokter@demo.test", kata_sandi: env.DEMO_DOKTER_SANDI }, "tm_dokter"),
-      masuk("/api/clinic/login", { email: "lain@demo.test", kata_sandi: env.DEMO_DOKTER_SANDI }, "tm_dokter"),
+      masuk("/api/masuk", { email: "keluarga@demo.test", kata_sandi: env.DEMO_DOKTER_SANDI }, "tm_keluarga"),
+      masuk("/api/masuk", { email: "nara@demo.test", kata_sandi: env.DEMO_DOKTER_SANDI }, "tm_keluarga"),
+      masuk("/api/masuk", { email: "dokter@demo.test", kata_sandi: env.DEMO_DOKTER_SANDI }, "tm_dokter"),
+      masuk("/api/masuk", { email: "lain@demo.test", kata_sandi: env.DEMO_DOKTER_SANDI }, "tm_dokter"),
     ])
     return { db, env, app, req, seed, tutup, dika, nara, dokter, lain,
       sebagai: (cookie: string, llm?: Llm) => pemanggil(llm ? buatApp(env, db, llm) : app, cookie) }

@@ -101,3 +101,16 @@ Tulis bagianmu di akhir setiap titik integrasi: apa yang jadi, apa yang belum, k
 - Migrasi `0002_dokter_aktif`: kolom `doctors.aktif`. Dokter nonaktif tidak bisa login dan cookie lamanya langsung 401.
 - Halaman `/admin` + tab Admin di `/masuk`. Tombol demo "Admin" sekarang masuk ke `/admin` (panel ambang tetap bisa dibuka dari kartu "Alat demo").
 - Tes `uji/server/admin.test.ts` (akses 401, daftar klinik, email ganda 409 + transaksi batal, nonaktif, reset sandi, demo admin). Diuji di browser 375 px dan desktop.
+
+## Login email + peran klinik + notifikasi (Satya, 12 Nov malam)
+
+- **Login:** satu form `/masuk` email + kata sandi untuk semua peran (`masuk` → `{ peran }`: keluarga `/beranda`, dokter `/dokter`, klinik `/klinik`, admin `/admin`). Kode akses tidak dipakai lagi untuk masuk. Daftar `/mulai` minta email + sandi (min 8). Email unik lintas peran (409).
+- **Peran klinik:** `/klinik` = overview dokter → anak yang dipegang, jadwal kontrol, pasien tanpa dokter. Dokter di `/dokter` + `/dokter/pasien/:id`, hanya melihat anak dengan `children.doctor_id` = dirinya. Klaim `/r/:token` mengisi `clinic_id` + `doctor_id`. Alamat lama `/klinik/pasien*` dialihkan.
+- **Admin:** daftar klinik (nama, kota, email) dan dokter (nama, spesialis, email) → sandi sementara 12 karakter tampil sekali; tombol sandi baru; nonaktifkan dokter.
+- **Notifikasi:**
+  1. Toast (`src/komponen/notifikasi.tsx`): otomatis dari `panggil()` saat jaringan putus / server 5xx, sesi gagal tersimpan, offline/online, error tak terduga.
+  2. Pengingat ≥ 2 hari tanpa sesi, trial ≤ 1 hari / habis, Program 30 Hari ≤ 3 hari / habis (`server/logika/notifikasi.ts`). Program kini berakhir 30 hari setelah `program_since` (status `paket_habis`).
+  3. Web Push (`web-push`, VAPID di `.env.local`), `public/sw-push.js` (dev didaftar langsung, build lewat `importScripts`). Pemeriksa berkala tiap 10 menit di `server/dev.ts`. Lonceng di beranda: daftar notifikasi, saklar notifikasi HP, tombol demo "Kirim contoh pengingat".
+- Migrasi `0003`–`0006`. **Setelah pull: `npm run db:migrasi` lalu `npx tsx server/db/seed.ts --reset`.** Untuk push, isi `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY` (`npx web-push generate-vapid-keys`).
+- Akun demo (sandi = `DEMO_DOKTER_SANDI`): `keluarga@demo.test` (Dika), `dokter@demo.test`, `klinik@demo.test`; admin `admin@demo.test` (`ADMIN_SANDI`). Seed: 3 tenaga kesehatan, 9 pasien klinik + 2 tanpa dokter, ±200 sesi, 27 jadwal.
+- Belum diuji: push di HP asli (browser bawaan Claude memblokir izin notifikasi). Push di iPhone hanya setelah dipasang ke Layar Utama.

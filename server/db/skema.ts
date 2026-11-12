@@ -4,21 +4,34 @@ import type { Aturan } from "../../bersama/kontrak/aturan"
 const id = () => text("id").primaryKey().notNull().$defaultFn(() => crypto.randomUUID())
 const anakFk = () => text("child_id").notNull().references(() => children.id, { onDelete: "cascade" })
 
-export const clinics = sqliteTable("clinics", { id: id(), nama: text().notNull() })
+// Akun klinik (email + sandi) hanya melihat overview: dokter, pasien per dokter, jadwal.
+export const clinics = sqliteTable("clinics", {
+  id: id(),
+  nama: text().notNull(),
+  kota: text(),
+  email: text().unique(),
+  sandi_hash: text(),
+})
 export const doctors = sqliteTable("doctors", {
   id: id(),
   clinic_id: text().notNull().references(() => clinics.id),
   nama: text().notNull(),
-  email: text().notNull().unique(),
-  sandi_hash: text().notNull(),
+  spesialis: text(),
+  // Semua peran masuk dengan email + kata sandi (hash bcrypt). Email unik lintas peran dicek di server.
+  email: text().unique(),
+  sandi_hash: text(),
   aktif: integer({ mode: "boolean" }).notNull().default(true),
 })
 export const children = sqliteTable("children", {
   id: id(),
   clinic_id: text().references(() => clinics.id),
+  doctor_id: text().references(() => doctors.id),
   panggilan: text().notNull(),
   tanggal_lahir: text().notNull(),
   kode_akses_hash: text().notNull().unique(),
+  // Akun keluarga: satu email per anak. Pasien klinik yang belum punya akun boleh kosong.
+  email: text().unique(),
+  sandi_hash: text(),
   sapaan: text({ enum: ["mbak", "bu", "oma", "ayah"] }).notNull(),
   nama_pengasuh: text().notNull(),
   plan: text({ enum: ["trial", "expired", "program", "lanjutan", "klinik"] }).notNull(),
@@ -102,3 +115,35 @@ export const llm_cache = sqliteTable("llm_cache", {
   hasil_json: text({ mode: "json" }).$type<unknown>().notNull(),
   dibuat: text().notNull(),
 })
+// Jadwal kontrol anak dengan dokternya (ditampilkan ke klinik dan dokter).
+export const appointments = sqliteTable("appointments", {
+  id: id(),
+  child_id: anakFk(),
+  doctor_id: text().notNull().references(() => doctors.id),
+  waktu: text().notNull(),
+  jenis: text({ enum: ["konsultasi_awal", "kontrol", "evaluasi_tahap"] }).notNull(),
+  status: text({ enum: ["terjadwal", "selesai", "batal"] }).notNull(),
+  catatan: text(),
+}, (t) => [index("appointments_doctor_waktu").on(t.doctor_id, t.waktu), index("appointments_child").on(t.child_id)])
+// Notifikasi untuk keluarga: pengingat lama tidak sesi, trial/paket hampir habis atau habis.
+// `kunci` mencegah notifikasi yang sama dibuat dua kali (mis. tanggal trial_until).
+export const notifications = sqliteTable("notifications", {
+  id: id(),
+  child_id: anakFk(),
+  jenis: text({ enum: ["pengingat", "trial_hampir_habis", "trial_habis", "paket_hampir_habis", "paket_habis", "uji"] }).notNull(),
+  kunci: text().notNull(),
+  judul: text().notNull(),
+  isi: text().notNull(),
+  tautan: text().notNull(),
+  dibuat: text().notNull(),
+  dibaca: integer({ mode: "boolean" }).notNull().default(false),
+}, (t) => [uniqueIndex("notifications_child_jenis_kunci").on(t.child_id, t.jenis, t.kunci),
+  index("notifications_child_dibuat").on(t.child_id, t.dibuat)])
+// Langganan Web Push per perangkat (endpoint dari browser).
+export const push_subscriptions = sqliteTable("push_subscriptions", {
+  endpoint: text().primaryKey().notNull(),
+  child_id: anakFk(),
+  p256dh: text().notNull(),
+  auth: text().notNull(),
+  dibuat: text().notNull(),
+}, (t) => [index("push_child").on(t.child_id)])

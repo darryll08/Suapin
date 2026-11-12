@@ -36,16 +36,24 @@ export async function bacaAturan(db: Kueri, id: string) {
   return { aturan: AturanSchema.parse(baris?.rules_json ?? ATURAN_DEFAULT),
     source: baris?.source ?? "default", confirmed_at: baris?.confirmed_at ?? null } as const
 }
+/** Program 30 Hari: berlaku 30 hari sejak program_since. */
+export const HARI_PROGRAM = 30
+export const paketSampai = (anak: Pick<typeof children.$inferSelect, "plan" | "program_since">) =>
+  anak.plan === "program" && anak.program_since
+    ? new Date(Date.parse(anak.program_since) + HARI_PROGRAM * MS_HARI).toISOString() : null
+
 export async function bacaAksesSesi(db: Kueri, anak: typeof children.$inferSelect) {
   const sekarang = new Date().toISOString()
-  const expired = anak.plan === "trial" && anak.trial_until !== null && anak.trial_until <= sekarang
-  const plan = expired ? "expired" : anak.plan
+  const trialHabis = anak.plan === "trial" && anak.trial_until !== null && anak.trial_until <= sekarang
+  const paket_sampai = paketSampai(anak)
+  const paketHabis = paket_sampai !== null && paket_sampai <= sekarang
+  const plan = trialHabis || paketHabis ? "expired" : anak.plan
   const skrining = await db.select().from(screenings).where(eq(screenings.child_id, anak.id))
     .orderBy(desc(screenings.tanggal), sql`rowid desc`).get()
   const alasan_terkunci = !skrining ? "skrining_belum" :
     skrining.ada_tanda_bahaya && plan !== "klinik" ? "tanda_bahaya" :
-    plan === "expired" ? "trial_habis" : null
-  return { plan, alasan_terkunci, sesi_dibuka: alasan_terkunci === null } as const
+    paketHabis ? "paket_habis" : plan === "expired" ? "trial_habis" : null
+  return { plan, alasan_terkunci, sesi_dibuka: alasan_terkunci === null, paket_sampai } as const
 }
 export function sesiSejak(db: Kueri, id: string, hari: number) {
   return db.select().from(sessions).where(and(eq(sessions.child_id, id), gte(sessions.mulai, lalu(hari))))

@@ -4,6 +4,7 @@ import { Link, useSearchParams } from "react-router";
 import { cariMakanan } from "../../../bersama/konten/makanan.ts";
 import { CincinProgres, GrafikPil, KartuAngka, KartuHero } from "../../komponen/beranda.tsx";
 import { Memuat, PesanGalat } from "../../komponen/dasar.tsx";
+import { Lonceng } from "../../komponen/lonceng.tsx";
 import { bento, tombolHero, tombolIkon } from "../../gaya/gaya.ts";
 import { HARI_SEN_MIN, kalimatTahap, NAMA_SAPAAN, namaDenganSapaan, tanggalLokal, tanggalMingguIni, totalPerHari, useMuat } from "./bantu.ts";
 import { api } from "./data.ts";
@@ -17,7 +18,7 @@ export function Beranda() {
   const sapaan = NAMA_SAPAAN[c.sapaan];
 
   return (
-    <Halaman kanan={<Link to="/laporan" aria-label="Laporan" title="Laporan" className={tombolIkon}><IkonGrafik /></Link>}>
+    <Halaman kanan={<div className="flex items-center gap-2"><Lonceng /><Link to="/laporan" aria-label="Laporan" title="Laporan" className={tombolIkon}><IkonGrafik /></Link></div>}>
       <header className="pt-4 pb-5">
         <p className="truncate text-isi text-ungu-muda">Halo {namaDenganSapaan(sapaan, c.nama_pengasuh)},</p>
         <h1 className="font-judul text-judul font-bold">Siap makan bareng {c.panggilan}?</h1>
@@ -30,8 +31,8 @@ export function Beranda() {
       {memuat && !lap ? <Memuat /> : galat ? <PesanGalat pesan={galat} ulangi={ulangi} /> : lap && (
         <div className="flex flex-col gap-4">
           <KartuHero tahap={lap.tahap} kalimat={kalimatTahap(lap.tahap, c.panggilan, sapaan)}>
-            {saya.alasan_terkunci === "trial_habis" ? (
-              <Link to="/langganan" className={tombolHero}>Lanjutkan program</Link>
+            {saya.alasan_terkunci === "trial_habis" || saya.alasan_terkunci === "paket_habis" ? (
+              <Link to="/langganan" className={tombolHero}>{saya.alasan_terkunci === "paket_habis" ? "Perpanjang program" : "Lanjutkan program"}</Link>
             ) : saya.alasan_terkunci === "tanda_bahaya" ? (
               <div className="rounded-kartu bg-jagung-muda p-4 text-ungu">
                 <p className="font-judul text-subjudul font-bold text-jagung-tua">Sebaiknya periksa ke dokter dulu</p>

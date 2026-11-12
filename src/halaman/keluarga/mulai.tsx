@@ -1,8 +1,9 @@
-// Pemilik: B (Satya). Daftar `/mulai` + tampilan kode akses sekali (B3.2, UI UX 10.2–10.3), gaya bento.
+// Pemilik: B (Satya). Daftar `/mulai` (B3.2, UI UX 10.2–10.3), gaya bento. Akun keluarga = email + kata sandi (min 8).
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";
 import { Isian, KepalaHalaman, PesanGalat, Tombol } from "../../komponen/dasar.tsx";
-import { bento, tombolHeroKedua, tombolSegmen, tombolUtama, wadahKeluarga, wadahSegmen } from "../../gaya/gaya.ts";
+import { bento, tombolSegmen, tombolTeks, wadahKeluarga, wadahSegmen } from "../../gaya/gaya.ts";
+import { GalatApi } from "../../lib/panggil.ts";
 import { NAMA_SAPAAN } from "./bantu.ts";
 import { api, usiaBulan } from "./data.ts";
 
@@ -17,7 +18,9 @@ export function Mulai() {
   const [galat, setGalat] = useState<Record<string, string>>({});
   const [galatServer, setGalatServer] = useState("");
   const [memuat, setMemuat] = useState(false);
-  const [kode, setKode] = useState("");
+  const [email, setEmail] = useState("");
+  const [sandi, setSandi] = useState("");
+  const [terlihat, setTerlihat] = useState(false);
 
   const usia = lahir ? usiaBulan(lahir) : null;
 
@@ -29,21 +32,23 @@ export function Mulai() {
     else if (new Date(lahir) > new Date()) g.lahir = "Tanggal lahir tidak boleh di masa depan.";
     if (!sapaan) g.sapaan = "Pilih siapa yang menyuapi.";
     if (!pengasuh.trim()) g.pengasuh = "Isi nama pengasuh.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) g.email = "Isi email yang aktif, contoh nama@gmail.com.";
+    if (sandi.length < 8) g.sandi = "Kata sandi minimal 8 karakter.";
     setGalat(g);
     if (Object.keys(g).length || !sapaan) return;
     setMemuat(true);
     setGalatServer("");
     try {
-      const r = await api.buatAnak({ panggilan: panggilan.trim(), tanggal_lahir: lahir, sapaan, nama_pengasuh: pengasuh.trim() });
-      setKode(r.kode_akses);
+      await api.buatAnak({ panggilan: panggilan.trim(), tanggal_lahir: lahir, sapaan, nama_pengasuh: pengasuh.trim(),
+        email: email.trim(), kata_sandi: sandi });
+      void pindah("/mulai/skrining", { replace: true });
     } catch (err) {
-      setGalatServer(err instanceof Error ? err.message : String(err));
+      setGalatServer(err instanceof GalatApi && err.status === 409 ? "Email ini sudah terdaftar. Masuk dengan email tersebut atau pakai email lain."
+        : err instanceof Error ? err.message : String(err));
     } finally {
       setMemuat(false);
     }
   };
-
-  if (kode) return <KodeAkses kode={kode} lanjut={() => void pindah("/mulai/skrining", { replace: true })} />;
 
   return (
     <main className={wadahKeluarga}>
@@ -82,6 +87,21 @@ export function Mulai() {
           <Isian label="Nama pengasuh" value={pengasuh} maxLength={40} onChange={(e) => setPengasuh(e.target.value)}
             galat={galat.pengasuh} autoComplete="off" />
         </section>
+        <section className={`${bento} flex flex-col gap-5`}>
+          <div className="flex flex-col gap-1">
+            <h2 className="font-judul text-subjudul font-bold">Akun</h2>
+            <p className="text-kecil text-ungu-muda">Untuk masuk lagi di HP lain dan menerima pengingat.</p>
+          </div>
+          <Isian label="Email" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false}
+            value={email} maxLength={120} onChange={(e) => setEmail(e.target.value)} galat={galat.email} />
+          <div className="flex flex-col gap-1">
+            <Isian label="Kata sandi" bantuan="Minimal 8 karakter" type={terlihat ? "text" : "password"} autoComplete="new-password"
+              value={sandi} maxLength={72} onChange={(e) => setSandi(e.target.value)} galat={galat.sandi} />
+            <button type="button" onClick={() => setTerlihat((t) => !t)} className={`${tombolTeks} -ml-3 self-start text-kecil`}>
+              {terlihat ? "Sembunyikan" : "Tampilkan"} kata sandi
+            </button>
+          </div>
+        </section>
         {galatServer && <PesanGalat pesan={galatServer} />}
         <div className="fixed inset-x-0 bottom-0 bg-latar/95 px-4 py-3 shadow-lembar">
           <div className="mx-auto max-w-[560px]">
@@ -89,35 +109,6 @@ export function Mulai() {
           </div>
         </div>
       </form>
-    </main>
-  );
-}
-
-function KodeAkses({ kode, lanjut }: { kode: string; lanjut: () => void }) {
-  const [tersalin, setTersalin] = useState(false);
-  const [disimpan, setDisimpan] = useState(false);
-  const tampil = kode.match(/.{1,4}/g)?.join(" ") ?? kode;
-  const salin = async () => {
-    try { await navigator.clipboard.writeText(kode); } catch { /* tetap tampil */ }
-    setTersalin(true);
-    setTimeout(() => setTersalin(false), 2000);
-  };
-  return (
-    <main className={`${wadahKeluarga} flex flex-col gap-4`}>
-      <KepalaHalaman judul="Simpan kode ini" sub="Pakai kode ini untuk membuka Suapin di HP lain." />
-      <section className="flex flex-col items-center gap-5 rounded-bento bg-ungu p-6 text-latar shadow-kartu">
-        <p className="text-kecil font-semibold text-latar/80">Kode akses</p>
-        <p className="font-mono text-[30px] leading-10 font-bold tracking-wider text-center sm:text-tampilan" aria-label={`Kode akses ${kode.split("").join(" ")}`}>{tampil}</p>
-        <button type="button" className={tombolHeroKedua} onClick={salin}>{tersalin ? "✓ Tersalin" : "Salin kode"}</button>
-      </section>
-      <section className={`${bento} flex flex-col gap-2`}>
-        <p className="text-isi font-semibold">Kode hanya tampil sekali.</p>
-        <label className="flex min-h-12 items-center gap-3 text-isi">
-          <input type="checkbox" className="size-6 accent-ungu" checked={disimpan} onChange={(e) => setDisimpan(e.target.checked)} />
-          Sudah saya simpan
-        </label>
-      </section>
-      <button type="button" className={`${tombolUtama} sm:w-full`} disabled={!disimpan} onClick={lanjut}>Lanjut ke skrining</button>
     </main>
   );
 }

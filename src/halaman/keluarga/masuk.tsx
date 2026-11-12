@@ -1,28 +1,21 @@
-// Pemilik: B (Satya). Halaman masuk gabungan `/masuk`: Keluarga (kode akses), Klinik (email + kata sandi), atau Admin.
-// Login klinik memakai endpoint yang sama dengan /klinik/masuk milik C (`dokterMasuk` lewat panggil()).
-// `?sebagai=klinik|admin` membuka tab itu; `?kembali=/r/<token>` dipertahankan untuk dokter dari link laporan.
-// Panel "Akun demo" (pola dari sibuker) hanya muncul bila server berjalan dengan DEMO=1 (`GET /api/sehat`).
-// Admin = operator Suapin yang mendaftarkan klinik + dokter (`/admin`, `adminMasuk`); sandi dari ADMIN_SANDI di server.
+// Pemilik: B (Satya). Halaman masuk `/masuk`: satu form email + kata sandi untuk semua peran.
+// Server menentukan perannya: keluarga → /beranda, dokter → /dokter, klinik → /klinik, admin → /admin.
+// `?kembali=/r/<token>` dipertahankan untuk dokter yang datang dari link laporan keluarga.
+// Panel "Akun demo" hanya muncul bila server berjalan dengan DEMO=1 (`GET /api/sehat`).
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import { Isian, PesanGalat, Tombol } from "../../komponen/dasar.tsx";
-import { bento, tombolSegmen, tombolTeks, wadahKeluarga, wadahSegmen } from "../../gaya/gaya.ts";
+import { bento, tombolTeks, wadahKeluarga } from "../../gaya/gaya.ts";
 import { GalatApi, panggil } from "../../lib/panggil.ts";
 import { api } from "./data.ts";
 import { Logo } from "./tata-letak.tsx";
 
-type Peran = "keluarga" | "klinik" | "admin";
-const LABEL: Record<Peran, string> = { keluarga: "Keluarga", klinik: "Klinik", admin: "Admin" };
+const kembaliAman = (k: string) => /^\/r\/[A-Za-z0-9_-]{43}$/.test(k) ? k : "";
+const TUJUAN = { keluarga: "/beranda", dokter: "/dokter", klinik: "/klinik", admin: "/admin" } as const;
 
 export function Masuk() {
-  const [param, setParam] = useSearchParams();
-  const sebagai = param.get("sebagai");
-  const peran: Peran = sebagai === "klinik" || sebagai === "admin" ? sebagai : "keluarga";
-  const ganti = (p: Peran) => {
-    const baru = new URLSearchParams(param);
-    if (p === "keluarga") baru.delete("sebagai"); else baru.set("sebagai", p);
-    setParam(baru, { replace: true });
-  };
+  const [param] = useSearchParams();
+  const kembali = kembaliAman(param.get("kembali") ?? "");
 
   return (
     <main className={`${wadahKeluarga} flex min-h-dvh flex-col`}>
@@ -30,67 +23,25 @@ export function Masuk() {
       <div className="flex flex-1 flex-col gap-6 pt-10 pb-8 sm:pt-16">
         <header className="flex flex-col gap-1">
           <h1 className="font-judul text-judul font-bold">Masuk ke Suapin</h1>
-          <p className="text-isi text-ungu-muda">Pilih siapa yang masuk.</p>
+          <p className="text-isi text-ungu-muda">Untuk keluarga, dokter, dan klinik.</p>
         </header>
 
-        <div className={`${wadahSegmen} grid-cols-3`} role="tablist" aria-label="Masuk sebagai">
-          {(["keluarga", "klinik", "admin"] as const).map((p) => (
-            <button key={p} type="button" role="tab" aria-selected={peran === p} onClick={() => ganti(p)} className={tombolSegmen(peran === p)}>
-              {LABEL[p]}
-            </button>
-          ))}
-        </div>
-
-        <section key={peran} className={`${bento} masuk flex flex-col gap-5`} role="tabpanel">
-          {peran === "keluarga" ? <FormKeluarga /> : peran === "klinik" ? <FormKlinik kembali={param.get("kembali") ?? ""} /> : <FormKlinik admin />}
+        <section className={`${bento} masuk flex flex-col gap-5`}>
+          <FormMasuk kembali={kembali} />
         </section>
 
-        {peran === "keluarga" ? (
-          <Link to="/mulai" className={`${tombolTeks} -ml-3 self-start`}>Belum punya kode? Mulai gratis</Link>
-        ) : peran === "klinik" ? (
-          <p className="text-kecil text-ungu-muda">Akun dokter dibuat oleh admin Suapin setelah klinik bekerja sama.</p>
-        ) : (
-          <p className="text-kecil text-ungu-muda">Untuk operator Suapin yang mendaftarkan klinik.</p>
-        )}
+        <div className="flex flex-col gap-1">
+          <Link to="/mulai" className={`${tombolTeks} -ml-3 self-start`}>Belum punya akun? Mulai gratis</Link>
+          <p className="text-kecil text-ungu-muda">Akun dokter dan klinik dibuat oleh admin Suapin setelah klinik bekerja sama.</p>
+        </div>
 
-        <AkunDemo kembali={param.get("kembali") ?? ""} />
+        <AkunDemo kembali={kembali} />
       </div>
     </main>
   );
 }
 
-function FormKeluarga() {
-  const pindah = useNavigate();
-  const [kode, setKode] = useState("");
-  const [galat, setGalat] = useState("");
-  const [memuat, setMemuat] = useState(false);
-
-  const kirim = async (e: FormEvent) => {
-    e.preventDefault();
-    const bersih = kode.toUpperCase().replace(/[^A-Z0-9]/g, "");
-    if (bersih.length !== 12) { setGalat("Kode akses terdiri dari 12 huruf dan angka."); return; }
-    setMemuat(true); setGalat("");
-    try {
-      await api.masuk(bersih);
-      void pindah("/beranda", { replace: true });
-    } catch (err) {
-      setGalat(err instanceof GalatApi && err.status === 401 ? "Kode tidak dikenal. Periksa lagi huruf dan angkanya." : err instanceof Error ? err.message : String(err));
-    } finally { setMemuat(false); }
-  };
-
-  return (
-    <form onSubmit={kirim} noValidate className="flex flex-col gap-5">
-      <p className="text-isi">Masukkan kode akses 12 huruf dan angka dari saat mendaftar.</p>
-      <Isian label="Kode akses" value={kode} onChange={(e) => setKode(e.target.value.toUpperCase())}
-        autoComplete="off" autoCapitalize="characters" spellCheck={false} placeholder="K7QM 2XPA 9RHT"
-        className="[&_input]:font-mono [&_input]:tracking-wider" />
-      {galat && <PesanGalat pesan={galat} />}
-      <Tombol type="submit" memuat={memuat} className="sm:w-full">Masuk</Tombol>
-    </form>
-  );
-}
-
-function FormKlinik({ kembali = "", admin = false }: { kembali?: string; admin?: boolean }) {
+function FormMasuk({ kembali }: { kembali: string }) {
   const pindah = useNavigate();
   const [email, setEmail] = useState("");
   const [sandi, setSandi] = useState("");
@@ -103,10 +54,8 @@ function FormKlinik({ kembali = "", admin = false }: { kembali?: string; admin?:
     if (!email.trim() || !sandi) { setGalat("Isi email dan kata sandi."); return; }
     setMemuat(true); setGalat("");
     try {
-      const body = { email: email.trim(), kata_sandi: sandi };
-      if (admin) { await panggil("adminMasuk", { body }); void pindah("/admin", { replace: true }); return; }
-      await panggil("dokterMasuk", { body });
-      void pindah(/^\/r\/[A-Za-z0-9_-]{43}$/.test(kembali) ? kembali : "/klinik/pasien", { replace: true });
+      const { peran } = await api.masuk(email.trim(), sandi);
+      void pindah(peran === "dokter" && kembali ? kembali : TUJUAN[peran], { replace: true });
     } catch (err) {
       setGalat(err instanceof GalatApi && err.status === 401 ? "Email atau kata sandi salah." : err instanceof Error ? err.message : String(err));
     } finally { setMemuat(false); }
@@ -114,8 +63,8 @@ function FormKlinik({ kembali = "", admin = false }: { kembali?: string; admin?:
 
   return (
     <form onSubmit={kirim} noValidate className="flex flex-col gap-5">
-      <p className="text-isi">{admin ? "Kelola klinik dan akun dokter." : "Untuk dokter dan tenaga kesehatan klinik."}</p>
-      <Isian label="Email" type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} />
+      <Isian label="Email" type="email" inputMode="email" autoComplete="username" autoCapitalize="none" spellCheck={false}
+        value={email} onChange={(e) => setEmail(e.target.value)} />
       <div className="flex flex-col gap-1">
         <Isian label="Kata sandi" type={terlihat ? "text" : "password"} autoComplete="current-password" value={sandi} onChange={(e) => setSandi(e.target.value)} />
         <button type="button" onClick={() => setTerlihat((t) => !t)} className={`${tombolTeks} -ml-3 self-start text-kecil`}>
@@ -128,12 +77,13 @@ function FormKlinik({ kembali = "", admin = false }: { kembali?: string; admin?:
   );
 }
 
-type Akun = { id: "keluarga" | "klinik" | "admin"; peran: string; nama: string; ket: string; ikon: ReactNode };
+type Akun = { id: "keluarga_dika" | "dokter_demo" | "klinik_demo" | "admin_demo"; ke: string; peran: string; nama: string; ket: string; ikon: ReactNode };
 
 const AKUN_DEMO: Akun[] = [
-  { id: "keluarga", peran: "Keluarga", nama: "Mbak Rina · Dika (4 th)", ket: "Beranda, sesi makan, laporan", ikon: <IkonRumah /> },
-  { id: "klinik", peran: "Klinik", nama: "dr. Demo · dokter@demo.test", ket: "Daftar pasien, resep jadi aturan", ikon: <IkonStetoskop /> },
-  { id: "admin", peran: "Admin", nama: "Operator Suapin", ket: "Daftarkan klinik dan akun dokter", ikon: <IkonGerigi /> },
+  { id: "keluarga_dika", ke: "/beranda", peran: "Keluarga", nama: "keluarga@demo.test · Dika (4 th)", ket: "Beranda, sesi makan, laporan", ikon: <IkonRumah /> },
+  { id: "dokter_demo", ke: "/dokter", peran: "Dokter", nama: "dokter@demo.test · dr. Demo", ket: "Anak yang dipegang, resep jadi aturan", ikon: <IkonStetoskop /> },
+  { id: "klinik_demo", ke: "/klinik", peran: "Klinik", nama: "klinik@demo.test", ket: "Dokter, pasien per dokter, jadwal", ikon: <IkonGedung /> },
+  { id: "admin_demo", ke: "/admin", peran: "Admin", nama: "admin@demo.test · Operator Suapin", ket: "Daftarkan klinik dan dokter", ikon: <IkonGerigi /> },
 ];
 
 function AkunDemo({ kembali }: { kembali: string }) {
@@ -152,11 +102,8 @@ function AkunDemo({ kembali }: { kembali: string }) {
   const masuk = async (a: Akun) => {
     setSibuk(a.id); setGalat("");
     try {
-      const sebagai = a.id === "keluarga" ? "keluarga_dika" : a.id === "klinik" ? "dokter_demo" : "admin_demo";
-      await panggil("demoMasuk", { body: { sebagai } });
-      if (a.id === "keluarga") void pindah("/beranda", { replace: true });
-      else if (a.id === "admin") void pindah("/admin", { replace: true });
-      else void pindah(/^\/r\/[A-Za-z0-9_-]{43}$/.test(kembali) ? kembali : "/klinik/pasien", { replace: true });
+      await panggil("demoMasuk", { body: { sebagai: a.id } });
+      void pindah(a.id === "dokter_demo" && kembali ? kembali : a.ke, { replace: true });
     } catch (e) {
       setGalat(e instanceof Error ? e.message : String(e));
     } finally { setSibuk(null); }
@@ -198,6 +145,9 @@ function IkonRumah() {
 }
 function IkonStetoskop() {
   return <svg viewBox="0 0 24 24" className="size-5" {...garisIkon} aria-hidden="true"><path d="M6 3v5a4 4 0 0 0 8 0V3" /><path d="M10 12v3a5 5 0 0 0 10 0v-2" /><circle cx="20" cy="11" r="2" /></svg>;
+}
+function IkonGedung() {
+  return <svg viewBox="0 0 24 24" className="size-5" {...garisIkon} aria-hidden="true"><path d="M4 21V5l8-2v18" /><path d="M12 9h8v12" /><path d="M2 21h20M8 8v.01M8 12v.01M8 16v.01M16 13v.01M16 17v.01" /></svg>;
 }
 function IkonGerigi() {
   return <svg viewBox="0 0 24 24" className="size-5" {...garisIkon} aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1L7 17M17 7l2.1-2.1" /></svg>;

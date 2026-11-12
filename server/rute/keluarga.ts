@@ -1,6 +1,8 @@
 import { and, eq, isNull } from "drizzle-orm"
 import { ATURAN_DEFAULT } from "../../bersama/kontrak/aturan"
-import { anakMilikKeluarga, pasangCookie } from "../akses"
+import { hash } from "bcryptjs"
+import { anakMilikKeluarga, masukSebagai } from "../akses"
+import { cariAkun, pastikanEmailBebas } from "../akun"
 import type { Db } from "../db/klien"
 import { children, rules, screenings, shared_reports } from "../db/skema"
 import type { Env } from "../env"
@@ -12,22 +14,23 @@ import {
 import { gagal, type Daftar } from "./daftar"
 
 export function ruteKeluarga(daftar: Daftar, db: Db, env: Env) {
-  daftar("anakBuat", async (c, data) => {
+  daftar("anakBuat", async (c, { email, kata_sandi, ...data }) => {
     const sekarang = new Date()
     if (data.tanggal_lahir > tanggalWib(sekarang)) gagal(400, "Tanggal lahir belum terjadi")
-    const kode_akses = buatKodeAkses()
+    await pastikanEmailBebas(db, env, email)
     const child_id = crypto.randomUUID()
-    await db.insert(children).values({ ...data, id: child_id, kode_akses_hash: hashKode(kode_akses),
+    await db.insert(children).values({ ...data, id: child_id, kode_akses_hash: hashKode(buatKodeAkses()),
+      email, sandi_hash: await hash(kata_sandi, 10),
       stage: 1, plan: "trial", dibuat: sekarang.toISOString(),
       trial_until: new Date(+sekarang + 5 * MS_HARI).toISOString() })
-    await pasangCookie(c, env, "keluarga", child_id)
-    return { child_id, kode_akses }
+    await masukSebagai(c, env, "keluarga", child_id)
+    return { child_id }
   })
-  daftar("keluargaMasuk", async (c, data) => {
-    const anak = await db.select({ id: children.id }).from(children)
-      .where(eq(children.kode_akses_hash, hashKode(data.kode_akses.toUpperCase()))).get()
-    if (!anak) gagal(401, "Kode tidak dikenal")
-    await pasangCookie(c, env, "keluarga", anak.id)
+  daftar("masuk", async (c, { email, kata_sandi }) => {
+    const akun = await cariAkun(db, env, email, kata_sandi)
+    if (!akun) gagal(401, "Email atau kata sandi tidak sesuai")
+    await masukSebagai(c, env, akun.peran, akun.id)
+    return { peran: akun.peran }
   })
   daftar("saya", async (c) => {
     const anak = await bacaAnak(db, c.var.childId!)

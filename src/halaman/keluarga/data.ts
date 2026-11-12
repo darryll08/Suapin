@@ -20,9 +20,7 @@ export function usiaBulan(tanggalLahir: string, kini = new Date()): number {
 
 export const api = {
   buatAnak: (body: Input<"anakBuat">) => panggil("anakBuat", { body }),
-  masuk: (kode: string) => panggil("keluargaMasuk", {
-    body: { kode_akses: kode.toUpperCase().replace(/[^A-Z0-9]/g, "") },
-  }),
+  masuk: (email: string, kata_sandi: string) => panggil("masuk", { body: { email, kata_sandi } }),
   demoMasukDika: () => panggil("demoMasuk", { body: { sebagai: "keluarga_dika" } }),
   saya: () => panggil("saya"),
   skrining: (jawaban: boolean[]) => panggil("skriningSimpan", { body: { jawaban } }),

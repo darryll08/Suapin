@@ -8,6 +8,7 @@ import { buatLlm } from "./llm/klien"
 import { parseResep } from "./llm/resep"
 import { buatRingkasan } from "./llm/ringkasan"
 import { bacaAnak, mingguIni } from "./logika/data"
+import { ruteNotifikasi } from "./rute/notifikasi"
 import { ruteAdmin } from "./rute/admin"
 import { daftarRute, gagal } from "./rute/daftar"
 import { ruteDemo } from "./rute/demo"
@@ -29,6 +30,7 @@ export function buatApp(env: Env, db = buatDb(env), llm = buatLlm(env)) {
   ruteKlinik(daftar, db, env)
   ruteDemo(daftar, db, env)
   ruteAdmin(daftar, db, env)
+  ruteNotifikasi(daftar, db, env)
   daftar("sehat", async () => {
     let dbAktif = true
     try { await db.run(sql`select 1`) } catch { dbAktif = false }
@@ -38,7 +40,7 @@ export function buatApp(env: Env, db = buatDb(env), llm = buatLlm(env)) {
   daftar("ringkasanBuat", async (c, input) => {
     const id = c.req.param("childId")!
     const anak = await bacaAnak(db, id)
-    if (c.var.childId !== id && (!c.var.dokter || c.var.dokter.clinic_id !== anak.clinic_id)) {
+    if (c.var.childId !== id && (!c.var.dokter || c.var.dokter.id !== anak.doctor_id)) {
       gagal(404, "Anak tidak ditemukan")
     }
     return buatRingkasan(db, llm, env.OPENAI_MODEL, id, input?.minggu ?? mingguIni(), c.req.query("ulang") === "1")

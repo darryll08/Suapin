@@ -10,7 +10,7 @@ afterAll(() => uji?.tutup())
 
 it("semua rute yang butuh peran menolak request tanpa cookie", async () => {
   for (const e of Object.values(API)) {
-    if (e.akses !== "keluarga" && e.akses !== "dokter" && e.akses !== "keluarga_atau_dokter") continue
+    if (e.akses === "publik" || e.akses === "token" || e.akses === "demo") continue
     const res = await uji.req(e.path.replace(/:\w+/g, "contoh"), e.metode)
     expect(res.status, e.path).toBe(401)
   }
@@ -40,14 +40,36 @@ it("demo tidak aktif saat dimatikan", async () => {
   expect((await app.request("/api/demo/reset", { method: "POST" })).status).toBe(404)
 })
 
-it("menolak kode keluarga salah dan menyamakan galat login dokter", async () => {
-  const keluarga = await uji.req("/api/masuk", "POST", { kode_akses: "KODETIDAKADA" })
-  expect(keluarga.status).toBe(401)
-
+it("menyamakan galat login untuk sandi salah dan email tidak dikenal", async () => {
   const kata_sandi = crypto.randomUUID()
-  const login = (email: string) => uji.req("/api/clinic/login", "POST", { email, kata_sandi })
-  const [sandiSalah, emailSalah] = await Promise.all([login("dokter@demo.test"), login("tidak-ada@demo.test")])
+  const login = (email: string) => uji.req("/api/masuk", "POST", { email, kata_sandi })
+  const [sandiSalah, emailSalah] = await Promise.all([login("klinik@demo.test"), login("tidak-ada@demo.test")])
   expect(sandiSalah.status).toBe(401)
   expect(emailSalah.status).toBe(401)
   expect(await sandiSalah.json()).toEqual(await emailSalah.json())
+})
+
+it("email dokter masuk sebagai dokter; dokter hanya melihat pasiennya sendiri", async () => {
+  const r = await uji.req("/api/masuk", "POST", { email: "dokter@demo.test", kata_sandi: uji.env.DEMO_DOKTER_SANDI })
+  expect(await r.json()).toEqual({ peran: "dokter" })
+  const daftar = await (await uji.sebagai(uji.dokter)("/api/clinic/patients")).json()
+  expect(daftar.pasien.map((p: { panggilan: string }) => p.panggilan)).toEqual(expect.arrayContaining(["Alya", "Gilang"]))
+  expect(daftar.pasien.map((p: { panggilan: string }) => p.panggilan)).not.toContain("Laras")
+  expect(daftar.jadwal.length).toBeGreaterThan(0)
+  const laras = (await (await uji.sebagai(uji.lain)("/api/clinic/patients")).json()).pasien
+  expect(laras.map((p: { panggilan: string }) => p.panggilan)).toEqual(["Raka"])
+})
+
+it("akun klinik melihat overview dokter + jadwal kliniknya saja", async () => {
+  const r = await uji.req("/api/masuk", "POST", { email: "klinik@demo.test", kata_sandi: uji.env.DEMO_DOKTER_SANDI })
+  expect(await r.json()).toEqual({ peran: "klinik" })
+  const cookie = r.headers.getSetCookie().find((x) => x.startsWith("tm_klinik="))!.split(";")[0]!
+  const o = await (await uji.sebagai(cookie)("/api/klinik/overview")).json()
+  expect(o.klinik.nama).toBe("Klinik Tumbuh Kembang Contoh")
+  expect(o.dokter.map((d: { nama: string }) => d.nama)).not.toContain("dr. Lain")
+  expect(o.tanpa_dokter.length).toBeGreaterThan(0)
+  expect(o.jadwal.every((j: { panggilan: string }) => j.panggilan !== "Raka")).toBe(true)
+  expect((await uji.sebagai(cookie)("/api/clinic/patients")).status).toBe(401)
+  const admin = await uji.req("/api/masuk", "POST", { email: "admin@demo.test", kata_sandi: uji.env.ADMIN_SANDI })
+  expect(await admin.json()).toEqual({ peran: "admin" })
 })

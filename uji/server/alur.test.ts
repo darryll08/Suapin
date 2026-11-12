@@ -13,7 +13,7 @@ afterAll(() => uji?.tutup())
 
 it("skrining membuka sesi, simpan dan retry tidak menggandakan paparan", async () => {
   const res = await uji.req("/api/children", "POST",
-    { panggilan: "Uji", tanggal_lahir: "2022-09-01", sapaan: "bu", nama_pengasuh: "Ibu Uji" })
+    { panggilan: "Uji", tanggal_lahir: "2022-09-01", sapaan: "bu", nama_pengasuh: "Ibu Uji", email: crypto.randomUUID() + "@uji.test", kata_sandi: "sandi-uji-123" })
   expect(res.status).toBe(200)
   const anak = API.anakBuat.res.parse(await res.json())
   const cookie = res.headers.getSetCookie()[0]!.split(";")[0]!
@@ -57,7 +57,7 @@ it("bagikan, klaim, baca resep dari cache, konfirmasi, lalu keluarga mendapat at
   expect(anonim).not.toHaveProperty("pasien_saya")
   expect((await dokter("/api/clinic/claim/" + share.token, "POST")).status).toBe(200)
   expect(await (await dokter("/api/clinic/patients")).json()).toMatchObject({
-    dokter_nama: "dr. Demo", pasien: [{ id: DIKA }],
+    dokter_nama: "dr. Demo", pasien: expect.arrayContaining([expect.objectContaining({ id: DIKA })]),
   })
   const teks = contohResep[0]!.teks
   const mock: Llm = async (_nama, skema) => skema.parse({ ...contohResep[0]!.hasil, max_minutes: 60 })
@@ -98,7 +98,7 @@ it("bagikan, klaim, baca resep dari cache, konfirmasi, lalu keluarga mendapat at
 
 it("klaim klinik tetap memerlukan skrining sebelum keluarga dapat menyimpan sesi", async () => {
   const daftar = await uji.req("/api/children", "POST",
-    { panggilan: "Anak Klinik", tanggal_lahir: "2022-09-01", sapaan: "bu", nama_pengasuh: "Ibu Uji" })
+    { panggilan: "Anak Klinik", tanggal_lahir: "2022-09-01", sapaan: "bu", nama_pengasuh: "Ibu Uji", email: crypto.randomUUID() + "@uji.test", kata_sandi: "sandi-uji-123" })
   const { child_id } = API.anakBuat.res.parse(await daftar.json())
   const keluarga = uji.sebagai(daftar.headers.getSetCookie()[0]!.split(";")[0]!)
   const { token } = API.laporanBagikan.res.parse(await (await keluarga("/api/reports/share", "POST")).json())
@@ -134,14 +134,14 @@ it("resep memakai cache saat LLM gagal dan menawarkan isian manual bila cache ko
 
 it("seed idempoten, reset menghapus data latihan dan tetap menyediakan cache", async () => {
   const anakLatihan = await uji.req("/api/children", "POST",
-    { panggilan: "Anak Latihan", tanggal_lahir: "2022-09-01", sapaan: "bu", nama_pengasuh: "Ibu Uji" })
+    { panggilan: "Anak Latihan", tanggal_lahir: "2022-09-01", sapaan: "bu", nama_pengasuh: "Ibu Uji", email: crypto.randomUUID() + "@uji.test", kata_sandi: "sandi-uji-123" })
   expect(anakLatihan.status).toBe(200)
   const cookieLatihan = anakLatihan.headers.getSetCookie()[0]!.split(";")[0]!
   const pertama = await jalankanSeed(uji.db, uji.env)
   expect((await jalankanSeed(uji.db, uji.env)).jumlah).toEqual(pertama.jumlah)
   const reset = await uji.req("/api/demo/reset", "POST")
   expect(reset.status).toBe(200)
-  expect(await reset.json()).toMatchObject({ jumlah: { children: 3 }, ok: true })
+  expect(await reset.json()).toMatchObject({ jumlah: { children: 14 }, ok: true })
   expect((await uji.sebagai(cookieLatihan)("/api/saya")).status).toBe(401)
   const dikaDemo = await uji.req("/api/demo/masuk", "POST", { sebagai: "keluarga_dika" })
   expect(dikaDemo.status).toBe(204)

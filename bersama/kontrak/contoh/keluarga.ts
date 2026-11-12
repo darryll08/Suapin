@@ -19,16 +19,18 @@ export const ATURAN_DEFAULT_CONTOH: Aturan = ATURAN_DEFAULT;
 export const CONTOH_SAYA: Saya = {
   child: {
     id: "anak-dika", panggilan: "Dika", usia_bulan: 50, sapaan: "mbak", nama_pengasuh: "Rini",
-    plan: "trial", trial_until: "2026-11-14T16:59:00.000Z", stage: 1,
+    plan: "trial", trial_until: "2026-11-14T16:59:00.000Z", stage: 1, email: "keluarga@demo.test",
   },
   sesi_dibuka: true,
   alasan_terkunci: null,
+  paket_sampai: null,
 };
 
 export const CONTOH_SAYA_ANAK_BARU: Saya = {
   child: { ...CONTOH_SAYA.child, id: "anak-nara", panggilan: "Nara", usia_bulan: 38, trial_until: null },
   sesi_dibuka: false,
   alasan_terkunci: "skrining_belum",
+  paket_sampai: null,
 };
 
 export const CONTOH_SAYA_TANDA_BAHAYA: Saya = {
@@ -39,12 +41,14 @@ export const CONTOH_SAYA_TRIAL_HABIS: Saya = {
   child: { ...CONTOH_SAYA.child, plan: "expired", trial_until: "2026-11-08T16:59:00.000Z" },
   sesi_dibuka: false,
   alasan_terkunci: "trial_habis",
+  paket_sampai: null,
 };
 
 export const CONTOH_SAYA_NAMA_PANJANG: Saya = {
   child: { ...CONTOH_SAYA.child, panggilan: "Muhammad Rafandra Alfarizqi", nama_pengasuh: "Rini Kusumawardhani Prameswari" },
   sesi_dibuka: true,
   alasan_terkunci: null,
+  paket_sampai: null,
 };
 
 export const CONTOH_ATURAN: AturanAnak = { aturan: ATURAN_DEFAULT_CONTOH, source: "default", confirmed_at: null };
@@ -95,7 +99,7 @@ export const CONTOH_RINGKASAN: Ringkasan = {
 const tokenContoh = "contoh-laporan-dika".padEnd(43, "_");
 
 export const CONTOH_API_KELUARGA = {
-  anakBuat: { child_id: CONTOH_SAYA_ANAK_BARU.child.id, kode_akses: "DKAX7QMP2RHT" },
+  anakBuat: { child_id: CONTOH_SAYA_ANAK_BARU.child.id },
   saya: CONTOH_SAYA,
   skriningSimpan: { ada_tanda_bahaya: false },
   aturanBaca: CONTOH_ATURAN,
@@ -104,4 +108,7 @@ export const CONTOH_API_KELUARGA = {
   laporanBagikan: { token: tokenContoh, url: "/r/" + tokenContoh },
   paketAktifkan: { plan: "program" },
   ringkasanBuat: CONTOH_RINGKASAN,
+  notifikasiDaftar: { belum_dibaca: 1, kunci_publik: null, notifikasi: [{ id: "n-1", jenis: "pengingat",
+    judul: "Yuk makan bareng Dika lagi", isi: "Sudah beberapa hari belum ada sesi.", tautan: "/sesi",
+    dibuat: "2026-11-12T01:00:00.000Z", dibaca: false }] },
 } satisfies Partial<{ [N in NamaEndpoint]: Keluaran<N> }>;

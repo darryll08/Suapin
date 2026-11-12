@@ -31,7 +31,8 @@ export function Langganan() {
   return (
     <main className={`${wadahKeluarga} flex flex-col gap-4`}>
       <KepalaHalaman judul="Program 30 Hari" kembali="/beranda"
-        sub={saya.alasan_terkunci === "trial_habis" ? `Trial 5 hari sudah selesai. Data ${saya.child.panggilan} tetap aman.` : undefined} />
+        sub={saya.alasan_terkunci === "trial_habis" ? `Trial 5 hari sudah selesai. Data ${saya.child.panggilan} tetap aman.`
+          : saya.alasan_terkunci === "paket_habis" ? `Program sudah selesai. Data ${saya.child.panggilan} tetap aman.` : undefined} />
 
       <section className="flex flex-col gap-5 rounded-bento bg-ungu p-6 text-latar shadow-kartu">
         <div className="flex flex-wrap items-center justify-between gap-2">

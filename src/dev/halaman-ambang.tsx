@@ -43,7 +43,7 @@ export function HalamanAmbang() {
   const masukDemo = async (sebagai: "keluarga_dika" | "dokter_demo") => {
     try {
       await panggil("demoMasuk", { body: { sebagai } });
-      void pindah(sebagai === "keluarga_dika" ? "/beranda" : "/klinik/pasien");
+      void pindah(sebagai === "keluarga_dika" ? "/beranda" : "/dokter");
     } catch (e) {
       setPesan(e instanceof Error ? e.message : "Masuk demo gagal.");
     }

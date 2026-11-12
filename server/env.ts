@@ -10,6 +10,10 @@ const skema = z.object({
   ADMIN_EMAIL: z.email().default("admin@demo.test"),
   ADMIN_SANDI: opsional,
   OPENAI_API_KEY: opsional,
+  // Web Push (notifikasi keluarga). Kosong = push mati, notifikasi tetap tampil di dalam app.
+  VAPID_PUBLIC_KEY: opsional,
+  VAPID_PRIVATE_KEY: opsional,
+  VAPID_SUBJECT: opsional,
   OPENAI_MODEL: z.string().min(1).default("gpt-6-luna"),
   NODE_ENV: z.string().optional(),
 })

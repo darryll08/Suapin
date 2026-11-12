@@ -22,6 +22,34 @@
       "when": 1794409194225,
       "tag": "0002_dokter_aktif",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1794478641412,
+      "tag": "0003_klinik_jadwal",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1794478653530,
+      "tag": "0004_dokter_tanpa_sandi",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1794480179260,
+      "tag": "0005_email_notifikasi",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1794480185552,
+      "tag": "0006_dokter_tanpa_kode",
+      "breakpoints": true
     }
   ]
 }

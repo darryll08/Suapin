@@ -1,6 +1,7 @@
 // Pemilik: B (Satya). Router (B0.2): rute keluarga jobdesk 2.7 + rute klinik (C) dan dev (A) dari file pemiliknya.
 // Rute klinik/dev baru cukup ditambah di file masing-masing, tanpa mengubah file ini.
 import { createBrowserRouter, RouterProvider } from "react-router";
+import { PusatPemberitahuan } from "./komponen/notifikasi.tsx";
 import { rutDev } from "./dev/rute.tsx";
 import { rutKlinik } from "./halaman/klinik/rute.tsx";
 import { ButuhKeluarga } from "./halaman/keluarga/tata-letak.tsx";
@@ -31,5 +32,10 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+      <PusatPemberitahuan />
+    </>
+  );
 }

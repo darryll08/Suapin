@@ -1,6 +1,6 @@
 // Pemilik: B (Satya). Halaman `/admin` untuk operator Suapin (jalur B2B2C):
-// mendaftarkan klinik + dokter pertama setelah ada kerja sama, menambah dokter, reset sandi, dan menonaktifkan akun.
-// Klinik tidak bisa mendaftar sendiri. Sandi sementara hanya tampil sekali; server menyimpan hash-nya saja.
+// mendaftarkan akun klinik dan dokter (email + sandi sementara), membuat sandi baru, dan menonaktifkan dokter.
+// Sandi sementara hanya tampil sekali; server menyimpan hash-nya saja. Admin masuk lewat form /masuk biasa.
 import { useState, type FormEvent } from "react";
 import { Link, Navigate, useNavigate } from "react-router";
 import type { Keluaran } from "../../../bersama/kontrak/api";
@@ -11,24 +11,24 @@ import { Logo } from "../keluarga/tata-letak.tsx";
 
 type Klinik = Keluaran<"adminAkun">["klinik"][number];
 type Dokter = Klinik["dokter"][number];
-type SandiBaru = { untuk: string; email: string; sandi: string };
+type Rahasia = { untuk: string; ket: string; nilai: string };
 
 const pesan = (e: unknown) =>
-  e instanceof GalatApi && e.status === 409 ? "Email ini sudah dipakai akun dokter lain." : e instanceof Error ? e.message : String(e);
+  e instanceof GalatApi && e.status === 409 ? "Email ini sudah dipakai akun lain." : e instanceof Error ? e.message : String(e);
 
 export function Admin() {
   const pindah = useNavigate();
   const { data, galat, memuat, ulang } = usePanggil("adminAkun");
   const sehat = usePanggil("sehat");
-  const [sandiBaru, setSandiBaru] = useState<SandiBaru | null>(null);
+  const [rahasia, setRahasia] = useState<Rahasia | null>(null);
   const [keluar, setKeluar] = useState(false);
 
-  if (galat instanceof GalatApi && galat.status === 401) return <Navigate to="/masuk?sebagai=admin" replace />;
+  if (galat instanceof GalatApi && galat.status === 401) return <Navigate to="/masuk" replace />;
 
-  const selesai = (s: SandiBaru) => { setSandiBaru(s); ulang(); };
+  const selesai = (s: Rahasia) => { setRahasia(s); ulang(); window.scrollTo({ top: 0 }); };
   const keluarAdmin = async () => {
     setKeluar(true);
-    try { await panggil("adminKeluar"); void pindah("/masuk?sebagai=admin", { replace: true }); }
+    try { await panggil("adminKeluar"); void pindah("/masuk", { replace: true }); }
     finally { setKeluar(false); }
   };
   const totalDokter = data?.klinik.reduce((n, k) => n + k.dokter.length, 0) ?? 0;
@@ -38,7 +38,7 @@ export function Admin() {
       <header className="flex flex-wrap items-center justify-between gap-3 pt-3">
         <div className="flex items-center gap-3"><Logo ke="/admin" /><Pil nada="jagung">Admin</Pil></div>
         <div className="flex flex-wrap items-center gap-2">
-          {data && <span className="text-kecil text-ungu-muda break-all">{data.admin_email}</span>}
+          {data && <span className="hidden text-kecil text-ungu-muda break-all sm:inline">{data.admin_email}</span>}
           <Tombol varian="kedua" memuat={keluar} onClick={() => void keluarAdmin()} className="min-h-12 sm:w-auto">Keluar</Tombol>
         </div>
       </header>
@@ -46,11 +46,11 @@ export function Admin() {
       <div className="flex flex-col gap-1">
         <h1 className="font-judul text-judul font-bold">Akun klinik</h1>
         <p className="text-isi text-ungu-muda">
-          Daftarkan klinik setelah kerja sama disepakati. Dokter masuk dengan sandi sementara dari sini.
+          Daftarkan klinik setelah kerja sama disepakati. Klinik dan dokter masuk dengan email + sandi sementara dari sini.
         </p>
       </div>
 
-      {sandiBaru && <KotakSandi data={sandiBaru} tutup={() => setSandiBaru(null)} />}
+      {rahasia && <KotakRahasia data={rahasia} tutup={() => setRahasia(null)} />}
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
         <FormKlinikBaru selesai={selesai} />
@@ -80,20 +80,17 @@ export function Admin() {
   );
 }
 
-function KotakSandi({ data, tutup }: { data: SandiBaru; tutup: () => void }) {
+function KotakRahasia({ data, tutup }: { data: Rahasia; tutup: () => void }) {
   const [disalin, setDisalin] = useState(false);
   const salin = async () => {
-    try { await navigator.clipboard.writeText(data.sandi); setDisalin(true); } catch { setDisalin(false); }
+    try { await navigator.clipboard.writeText(data.nilai); setDisalin(true); } catch { setDisalin(false); }
   };
   return (
     <section role="status" className="flex flex-col gap-3 rounded-bento border-2 border-jagung bg-jagung-muda p-5">
       <h2 className="font-judul text-subjudul font-bold">Sandi sementara untuk {data.untuk}</h2>
-      <p className="text-isi">
-        Email <strong className="break-all">{data.email}</strong>. Kirim sandi ini ke dokter lewat jalur aman.
-        Sandi hanya tampil sekali.
-      </p>
+      <p className="text-isi">{data.ket} Kirim lewat jalur aman. Hanya tampil sekali.</p>
       <div className="flex flex-wrap items-center gap-3">
-        <code className="rounded-xl bg-permukaan px-4 py-3 font-mono text-subjudul tracking-wider">{data.sandi}</code>
+        <code className="rounded-xl bg-permukaan px-4 py-3 font-mono text-subjudul tracking-wider">{data.nilai}</code>
         <Tombol varian="kedua" onClick={() => void salin()} className="min-h-12">{disalin ? "Tersalin" : "Salin"}</Tombol>
         <button type="button" onClick={tutup} className={tombolTeks}>Sudah dicatat</button>
       </div>
@@ -101,21 +98,21 @@ function KotakSandi({ data, tutup }: { data: SandiBaru; tutup: () => void }) {
   );
 }
 
-function FormKlinikBaru({ selesai }: { selesai: (s: SandiBaru) => void }) {
+function FormKlinikBaru({ selesai }: { selesai: (s: Rahasia) => void }) {
   const [klinik, setKlinik] = useState("");
-  const [nama, setNama] = useState("");
+  const [kota, setKota] = useState("");
   const [email, setEmail] = useState("");
   const [galat, setGalat] = useState("");
   const [memuat, setMemuat] = useState(false);
 
   const kirim = async (e: FormEvent) => {
     e.preventDefault();
-    if (!klinik.trim() || !nama.trim() || !email.trim()) { setGalat("Isi nama klinik, nama dokter, dan email."); return; }
+    if (!klinik.trim() || !email.trim()) { setGalat("Isi nama klinik dan email akun klinik."); return; }
     setMemuat(true); setGalat("");
     try {
-      const r = await panggil("adminKlinikBuat", { body: { nama_klinik: klinik.trim(), dokter: { nama: nama.trim(), email: email.trim() } } });
-      selesai({ untuk: nama.trim(), email: email.trim().toLowerCase(), sandi: r.sandi_sementara });
-      setKlinik(""); setNama(""); setEmail("");
+      const r = await panggil("adminKlinikBuat", { body: { nama_klinik: klinik.trim(), kota: kota.trim() || undefined, email: email.trim() } });
+      selesai({ untuk: klinik.trim(), ket: `Masuk di /masuk dengan email ${email.trim().toLowerCase()}.`, nilai: r.sandi_sementara });
+      setKlinik(""); setKota(""); setEmail("");
     } catch (err) { setGalat(pesan(err)); } finally { setMemuat(false); }
   };
 
@@ -123,22 +120,39 @@ function FormKlinikBaru({ selesai }: { selesai: (s: SandiBaru) => void }) {
     <form onSubmit={kirim} noValidate className={`${bento} flex flex-col gap-4`} aria-labelledby="judul-klinik-baru">
       <h2 id="judul-klinik-baru" className="font-judul text-subjudul font-bold">Daftarkan klinik</h2>
       <Isian label="Nama klinik" value={klinik} onChange={(e) => setKlinik(e.target.value)} maxLength={80} />
-      <Isian label="Nama dokter pertama" value={nama} onChange={(e) => setNama(e.target.value)} maxLength={80} placeholder="dr. …" />
-      <Isian label="Email dokter" type="email" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={120} />
+      <Isian label="Kota" value={kota} onChange={(e) => setKota(e.target.value)} maxLength={80} />
+      <Isian label="Email akun klinik" type="email" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={120} />
+      <p className="text-kecil text-ungu-muda">Dokter ditambahkan setelah klinik terdaftar, masing-masing dengan email sendiri.</p>
       {galat && <PesanGalat pesan={galat} />}
       <Tombol type="submit" memuat={memuat} className="sm:w-full">Daftarkan</Tombol>
     </form>
   );
 }
 
-function KartuKlinik({ klinik, selesai, ulang }: { klinik: Klinik; selesai: (s: SandiBaru) => void; ulang: () => void }) {
+function KartuKlinik({ klinik, selesai, ulang }: { klinik: Klinik; selesai: (s: Rahasia) => void; ulang: () => void }) {
   const [tambah, setTambah] = useState(false);
+  const [sibuk, setSibuk] = useState(false);
+  const [galat, setGalat] = useState("");
+  const sandiKlinik = async () => {
+    if (!window.confirm(`Buat sandi baru untuk ${klinik.nama}? Sandi lama langsung tidak berlaku.`)) return;
+    setSibuk(true); setGalat("");
+    try {
+      const r = await panggil("adminKlinikSandi", { params: { id: klinik.id } });
+      selesai({ untuk: klinik.nama, ket: `Email ${klinik.email ?? "-"}.`, nilai: r.sandi_sementara });
+    } catch (e) { setGalat(pesan(e)); } finally { setSibuk(false); }
+  };
   return (
     <article className={`${bento} flex flex-col gap-3`}>
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="text-isi font-bold">{klinik.nama}</h3>
-        <span className="text-kecil text-ungu-muda">{klinik.jumlah_pasien} pasien</span>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div className="flex min-w-0 flex-col">
+          <h3 className="text-isi font-bold">{klinik.nama}</h3>
+          <span className="text-kecil break-all text-ungu-muda">{[klinik.kota, klinik.email ?? "Belum punya akun klinik"].filter(Boolean).join(" · ")}</span>
+        </div>
+        <span className="text-kecil text-ungu-muda">{klinik.dokter.length} dokter · {klinik.jumlah_pasien} pasien</span>
       </div>
+      {klinik.email && <button type="button" disabled={sibuk} onClick={() => void sandiKlinik()} className={`${tombolTeks} -ml-3 self-start`}>
+        {sibuk ? "Membuat…" : "Sandi klinik baru"}</button>}
+      {galat && <PesanGalat pesan={galat} />}
       <ul className="flex flex-col divide-y divide-garis/50">
         {klinik.dokter.map((d) => <BarisDokter key={d.id} dokter={d} selesai={selesai} ulang={ulang} />)}
       </ul>
@@ -149,7 +163,7 @@ function KartuKlinik({ klinik, selesai, ulang }: { klinik: Klinik; selesai: (s: 
   );
 }
 
-function BarisDokter({ dokter, selesai, ulang }: { dokter: Dokter; selesai: (s: SandiBaru) => void; ulang: () => void }) {
+function BarisDokter({ dokter, selesai, ulang }: { dokter: Dokter; selesai: (s: Rahasia) => void; ulang: () => void }) {
   const [sibuk, setSibuk] = useState<"sandi" | "status" | null>(null);
   const [galat, setGalat] = useState("");
   const jalankan = async (jenis: "sandi" | "status") => {
@@ -158,7 +172,7 @@ function BarisDokter({ dokter, selesai, ulang }: { dokter: Dokter; selesai: (s: 
     try {
       if (jenis === "sandi") {
         const r = await panggil("adminDokterSandi", { params: { id: dokter.id } });
-        selesai({ untuk: dokter.nama, email: dokter.email, sandi: r.sandi_sementara });
+        selesai({ untuk: dokter.nama, ket: `Email ${dokter.email ?? "-"}.`, nilai: r.sandi_sementara });
       } else {
         await panggil("adminDokterStatus", { params: { id: dokter.id }, body: { aktif: !dokter.aktif } });
         ulang();
@@ -172,12 +186,12 @@ function BarisDokter({ dokter, selesai, ulang }: { dokter: Dokter; selesai: (s: 
           {dokter.nama}
           {!dokter.aktif && <Pil nada="jagung">Nonaktif</Pil>}
         </span>
-        <span className="text-kecil break-all text-ungu-muda">{dokter.email}</span>
+        <span className="text-kecil break-all text-ungu-muda">{dokter.email ?? "Belum punya email"} · {dokter.spesialis ?? "Tenaga kesehatan"} · {dokter.jumlah_pasien} pasien</span>
         {galat && <PesanGalat pesan={galat} />}
       </div>
       <div className="-ml-3 flex shrink-0 flex-wrap gap-1 sm:ml-0">
         <button type="button" disabled={sibuk !== null} onClick={() => void jalankan("sandi")} className={tombolTeks}>
-          {sibuk === "sandi" ? "Membuat…" : "Reset sandi"}
+          {sibuk === "sandi" ? "Membuat…" : "Sandi baru"}
         </button>
         <button type="button" disabled={sibuk !== null} onClick={() => void jalankan("status")} className={tombolTeks}>
           {sibuk === "status" ? "Menyimpan…" : dokter.aktif ? "Nonaktifkan" : "Aktifkan"}
@@ -187,8 +201,9 @@ function BarisDokter({ dokter, selesai, ulang }: { dokter: Dokter; selesai: (s: 
   );
 }
 
-function FormDokterBaru({ clinicId, batal, selesai }: { clinicId: string; batal: () => void; selesai: (s: SandiBaru) => void }) {
+function FormDokterBaru({ clinicId, batal, selesai }: { clinicId: string; batal: () => void; selesai: (s: Rahasia) => void }) {
   const [nama, setNama] = useState("");
+  const [spesialis, setSpesialis] = useState("");
   const [email, setEmail] = useState("");
   const [galat, setGalat] = useState("");
   const [memuat, setMemuat] = useState(false);
@@ -197,15 +212,16 @@ function FormDokterBaru({ clinicId, batal, selesai }: { clinicId: string; batal:
     if (!nama.trim() || !email.trim()) { setGalat("Isi nama dan email dokter."); return; }
     setMemuat(true); setGalat("");
     try {
-      const r = await panggil("adminDokterBuat", { body: { clinic_id: clinicId, nama: nama.trim(), email: email.trim() } });
-      selesai({ untuk: nama.trim(), email: email.trim().toLowerCase(), sandi: r.sandi_sementara });
+      const r = await panggil("adminDokterBuat", { body: { clinic_id: clinicId, nama: nama.trim(), spesialis: spesialis.trim() || undefined, email: email.trim() } });
+      selesai({ untuk: nama.trim(), ket: `Masuk di /masuk dengan email ${email.trim().toLowerCase()}.`, nilai: r.sandi_sementara });
     } catch (err) { setGalat(pesan(err)); } finally { setMemuat(false); }
   };
   return (
     <form onSubmit={kirim} noValidate className="flex flex-col gap-3 rounded-kartu bg-latar p-4">
       <div className="grid gap-3 sm:grid-cols-2">
-        <Isian label="Nama dokter" value={nama} onChange={(e) => setNama(e.target.value)} maxLength={80} />
-        <Isian label="Email" type="email" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={120} />
+        <Isian label="Nama dokter" value={nama} onChange={(e) => setNama(e.target.value)} maxLength={80} placeholder="dr. …" />
+        <Isian label="Spesialis atau peran" value={spesialis} onChange={(e) => setSpesialis(e.target.value)} maxLength={80} />
+        <Isian label="Email dokter" type="email" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={120} className="sm:col-span-2" />
       </div>
       {galat && <PesanGalat pesan={galat} />}
       <div className="flex flex-wrap gap-2">

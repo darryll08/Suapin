@@ -1,29 +1,23 @@
+/* Gaya lingkup untuk komponen klinik lama (form resep, tabel sesi). Tata letak halaman pakai Tailwind. */
 .suapin-klinik {
   --klinik-nasi: var(--color-latar, #faf6ee);
   --klinik-ubi: var(--color-ungu, #4b2e5a);
   --klinik-ungu-muda: var(--color-ungu-muda, #6e5a78);
   --klinik-jagung: var(--color-jagung-tua, #8a5f0b);
-  box-sizing: border-box;
-  width: min(100%, 1024px);
-  margin-inline: auto;
-  padding: clamp(16px, 4vw, 40px);
   color: var(--klinik-ubi);
-  background: var(--klinik-nasi);
   overflow-wrap: anywhere;
-  font-family: var(--font-isi, system-ui, sans-serif);
 }
-.suapin-klinik h1 { margin-block: 16px; font-size: clamp(1.5rem, 4vw, 2.25rem); }
-.suapin-klinik h2 { margin-block: 0 12px; font-size: 1.25rem; }
+.suapin-klinik h2 { margin-block: 0 12px; font-size: 1.25rem; font-weight: 700; font-family: var(--font-judul); }
+.suapin-klinik h3 { margin-block: 0 8px; font-weight: 700; }
 .suapin-klinik a { color: inherit; }
 .suapin-klinik :focus-visible { outline: 3px solid var(--klinik-ubi); outline-offset: 3px; }
 .suapin-klinik .suapin-merek { font-weight: 800; display: inline-flex; align-items: center; min-height: 48px; }
 .suapin-klinik .suapin-kartu {
   min-width: 0;
   background: #fffdf8;
-  border: 1px solid #c9b79c;
-  border-radius: 16px;
-  padding: clamp(12px, 3vw, 24px);
-  margin-block: 16px;
+  border: 1px solid rgb(201 183 156 / 0.5);
+  border-radius: 28px;
+  padding: 20px;
 }
 .suapin-baris, .suapin-aksi { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
 .suapin-baris { justify-content: space-between; }
@@ -37,9 +31,10 @@
   width: 100%;
   color: inherit;
   background: #fffdf8;
-  border: 1px solid var(--klinik-ungu-muda);
-  padding: 10px;
-  border-radius: 8px;
+  border: 2px solid var(--color-garis, #c9b79c);
+  min-height: 48px;
+  padding: 10px 14px;
+  border-radius: 12px;
   font: inherit;
 }
 .suapin-klinik :is(button, .suapin-tombol) {
@@ -47,8 +42,8 @@
   place-items: center;
   min-height: 48px;
   padding: 8px 16px;
-  border: 1px solid var(--klinik-ubi);
-  border-radius: 10px;
+  border: 2px solid var(--klinik-ubi);
+  border-radius: 16px;
   background: #fffdf8;
   font: inherit;
   color: inherit;
