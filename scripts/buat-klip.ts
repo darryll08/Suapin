@@ -28,11 +28,20 @@ const iPaksa = process.argv.indexOf("--paksa");
 const paksa = iPaksa >= 0 ? process.argv[iPaksa + 1] : null;
 const semuaUlang = process.argv.includes("--semua");
 
-// Stability rendah + sedikit style = intonasi lebih hidup untuk ajakan main.
-// `nanti_lagi` (anak menolak) dibuat stabil dan tanpa style supaya terdengar datar (UI UX 13).
-const SUARA_HIDUP = { stability: 0.35, similarity_boost: 0.75, style: 0.35, use_speaker_boost: true };
-const SUARA_DATAR = { stability: 0.8, similarity_boost: 0.75, style: 0, use_speaker_boost: true };
-const MODEL = env.ELEVENLABS_MODEL || "eleven_multilingual_v2";
+// 12 Nov (malam): pindah ke eleven_v3 + `language_code: "id"` karena multilingual_v2 membaca kalimat pendek
+// ("Mantap!", "Oke", "Tos") dengan logat Inggris dan tidak bisa dipaksa berbahasa Indonesia. Dipilih Satya
+// setelah membandingkan 5 versi (draf-klip/uji-lafal.html di folder dokumen).
+// v3 memakai stability bertingkat: 0,5 = Natural (ajakan main), 1,0 = Robust (`nanti_lagi` datar, UI UX 13).
+const MODEL = env.ELEVENLABS_MODEL || "eleven_v3";
+const V3 = MODEL.startsWith("eleven_v3");
+const SUARA_HIDUP = V3 ? { stability: 0.5, similarity_boost: 0.75 }
+  : { stability: 0.35, similarity_boost: 0.75, style: 0.35, use_speaker_boost: true };
+const SUARA_DATAR = V3 ? { stability: 1, similarity_boost: 0.75 }
+  : { stability: 0.8, similarity_boost: 0.75, style: 0, use_speaker_boost: true };
+// multilingual_v2 menolak `language_code`; sebagai gantinya diberi konteks Indonesia (tidak ikut diucapkan).
+const KODE_BAHASA = MODEL === "eleven_multilingual_v2"
+  ? { previous_text: "Halo, sayang. Ayo kita makan bareng, ya.", next_text: "Sekarang giliran kamu, ya." }
+  : { language_code: "id" };
 
 let adaFfmpeg = true;
 try { execFileSync("ffmpeg", ["-version"], { stdio: "ignore" }); } catch { adaFfmpeg = false; }
@@ -47,7 +56,7 @@ for (const id of Object.keys(KLIP) as IdKlip[]) {
     const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${suara}`, {
       method: "POST",
       headers: { "xi-api-key": kunci, "content-type": "application/json", accept: "audio/mpeg" },
-      body: JSON.stringify({ text: semua[i], model_id: MODEL,
+      body: JSON.stringify({ text: semua[i], model_id: MODEL, ...KODE_BAHASA,
         voice_settings: id === "nanti_lagi" ? SUARA_DATAR : SUARA_HIDUP }),
     });
     if (!r.ok) {
