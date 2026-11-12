@@ -1,5 +1,6 @@
 import { and, desc, eq, gte, lt } from "drizzle-orm"
 import { z } from "zod"
+import { MAKANAN } from "../../bersama/konten/makanan"
 import type { Keluaran } from "../../bersama/kontrak/api"
 import type { Db } from "../db/klien"
 import { bites, session_notes, sessions, weekly_summaries } from "../db/skema"
@@ -46,7 +47,8 @@ export async function buatRingkasan(
   const n = riwayat.length
   const tahap = aktif.aturan.stage
   const evaluasi = cekNaikTahap(await sesiUntukTahap(db, id, tahap), aktif.aturan)
-  const menuUmum = (menu: string) => ["brokoli", "nasi", "wortel"].includes(menu) ? menu : "umum"
+  // Hanya id dari daftar makanan bersama yang diteruskan ke LLM; teks lain jadi "umum".
+  const menuUmum = (menu: string) => MAKANAN.some((m) => m.id === menu) ? menu : "umum"
   const input = JSON.stringify({ jumlah_sesi: n, diterima: total.diterima, ditolak: total.ditolak,
     rata_durasi_detik: n ? Math.round(total.durasi / n) : 0, tahap,
     ngemut_dikonfirmasi: dikonfirmasi.length, siap_naik: evaluasi.siapNaik,

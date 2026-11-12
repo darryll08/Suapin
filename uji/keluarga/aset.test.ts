@@ -1,15 +1,17 @@
 // Pemilik: B (Satya). B1.2: setiap gambar di MAKANAN dan STIKER ada di public/; contoh data keluarga konsisten.
 import { existsSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { MAKANAN, STIKER } from "../../bersama/konten/makanan.ts";
+import { JUMLAH_TAHAP_MAKANAN, MAKANAN, STIKER } from "../../bersama/konten/makanan.ts";
 import { CONTOH_LAPORAN, CONTOH_SAYA, CONTOH_SAYA_TRIAL_HABIS } from "../../bersama/kontrak/contoh/keluarga.ts";
 
 const ada = (p: string) => existsSync(new URL(`../../public${p}`, import.meta.url));
 
 describe("aset keluarga", () => {
-  it("semua gambar makanan ada (3 tahap gigitan)", () => {
+  it("semua gambar makanan ada (utuh + 4 gigitan), id unik, umum terakhir", () => {
+    expect(new Set(MAKANAN.map((m) => m.id)).size).toBe(MAKANAN.length);
+    expect(MAKANAN[MAKANAN.length - 1].id).toBe("umum");
     for (const m of MAKANAN) {
-      expect(m.gambar).toHaveLength(3);
+      expect(m.gambar).toHaveLength(JUMLAH_TAHAP_MAKANAN);
       for (const g of m.gambar) expect(ada(g), g).toBe(true);
     }
   });

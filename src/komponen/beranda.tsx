@@ -16,7 +16,7 @@ export function KartuHero({ tahap, kalimat, children }: { tahap: number; kalimat
         </div>
         <span className="font-judul text-[56px] leading-none font-bold tabular-nums text-jagung" aria-hidden="true">{tahap}</span>
       </div>
-      <div className="flex gap-1.5" aria-label={`Tahap ${tahap} dari 4`}>
+      <div className="flex gap-1.5" role="img" aria-label={`Tahap ${tahap} dari 4`}>
         {[1, 2, 3, 4].map((t) => (
           <span key={t} className={`h-2 flex-1 rounded-full ${t <= tahap ? "bg-jagung" : "bg-latar/25"}`} />
         ))}
@@ -61,7 +61,7 @@ export function GrafikPil({ batang, judul, tampilDitolak = true, tinggi = 140 }:
           const hTerima = b.ada && total > 0 ? (b.diterima / total) * h : 0;
           return (
             <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
-              {b.sorot && b.ada && <span className="text-[13px] font-bold tabular-nums">{b.diterima}</span>}
+              {b.sorot && b.ada && <span className="text-kecil font-bold tabular-nums">{b.diterima}</span>}
               <div className={`flex w-full ${b.ada ? "max-w-9" : "max-w-6"} flex-col overflow-hidden rounded-full ${b.ada ? (tampilDitolak && b.ditolak ? "arsir border border-ungu-muda" : "") : "border-2 border-dashed border-ungu-muda"} ${b.sorot ? "ring-2 ring-jagung-tua ring-offset-2 ring-offset-permukaan" : ""}`}
                 style={{ height: h }}>
                 <span className="mt-auto block w-full rounded-full bg-ungu" style={{ height: hTerima }} />
@@ -78,7 +78,7 @@ export function GrafikPil({ batang, judul, tampilDitolak = true, tinggi = 140 }:
                 ? <img src={STIKER[i % STIKER.length]} alt="" className="size-7" />
                 : <span className="size-7 rounded-full border-2 border-dashed border-ungu-muda" />
             )}
-            <span className={`text-[13px] ${b.sorot ? "font-bold text-ungu" : "text-ungu-muda"}`}>{b.label}</span>
+            <span className={`text-kecil ${b.sorot ? "font-bold text-ungu" : "text-ungu-muda"}`}>{b.label}</span>
           </div>
         ))}
       </div>
@@ -118,7 +118,7 @@ export function CincinProgres({ nilai, target, label }: { nilai: number; target:
 export function LabelAI({ sumber }: { sumber: "ai" | "cache" | "template" }) {
   const lencana = sumber === "ai" ? "AI" : sumber === "cache" ? "AI (tersimpan)" : "Ringkasan otomatis";
   return (
-    <p className="flex flex-wrap items-center gap-2 text-[13px] text-ungu-muda">
+    <p className="flex flex-wrap items-center gap-2 text-kecil text-ungu-muda">
       <span>{sumber === "template" ? "Ringkasan otomatis dari data sesi" : "Dibuat oleh AI dari data sesi"}</span>
       <span className="inline-flex h-6 items-center rounded-full border border-ungu-muda px-3">{lencana}</span>
     </p>

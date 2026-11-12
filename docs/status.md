@@ -73,6 +73,13 @@ Tulis bagianmu di akhir setiap titik integrasi: apa yang jadi, apa yang belum, k
 - `/masuk` sekarang halaman masuk gabungan: tab **Keluarga** (kode akses) dan **Klinik** (email + kata sandi, endpoint `dokterMasuk` yang sama dengan `/klinik/masuk`). `?sebagai=klinik` membuka tab klinik, `?kembali=/r/<token>` dipertahankan.
 - **Adit:** `/klinik/masuk` (milikmu) masih jalan dan dipakai link di `/r/:token`. Kalau setuju, arahkan saja ke `/masuk?sebagai=klinik&kembali=...` supaya cuma ada satu halaman masuk.
 
+### Audit tampilan HP · 12 November 2026 (Satya)
+
+- Playwright dengan emulasi HP (sentuh) di 360, 390, 412, 800x360 (miring), dan 1280 px untuk semua rute keluarga, `/r/:token`, `/klinik/pasien`, dan `/admin`, termasuk anak uji bernama panjang. Ukuran diambil dari DOM: scroll samping, target sentuh ≥ 48 px, teks ≥ 14 px, elemen tertutup, dan axe-core 4.10.2 (serious/critical). Screenshot 390 dan 1280 di `docs/layar/`.
+- Diperbaiki: layar makan di HP miring (bingkai HP hanya aktif bila lebar ≥ 640 **dan** tinggi ≥ 600, varian `bingkai` di `token.css`); tabel sesi klinik dan laporan bagikan jadi kartu di ≤ 700 px, tanggal "Kam, 12 Nov", jam "14.20", nama menu, durasi "mnt", angka rata kanan; tombol klinik 44 → 48 px; teks 13 → 14 px di beranda, masuk, dan demo landing; `role="img"` pada strip tahap beranda.
+- **Adit:** `src/komponen/klinik/tabel-sesi.tsx` dan `src/halaman/klinik/klinik.css` ikut diubah (lihat poin di atas).
+- Audit ulang: 0 pelanggaran. Belum diuji: detail pasien (dr. Demo belum punya pasien), layar hitam tahap 3, keadaan offline. Uji di HP Android asli (keyboard, PWA terpasang, Wake Lock, kamera) masih perlu.
+
 ## C (Adit)
 
 ### Integrasi keluarga dan klinik · 11 November 2026

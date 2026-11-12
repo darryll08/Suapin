@@ -54,7 +54,7 @@ export type Keadaan = {
   terakhirDiterima: number | null;
   putaran: number;
   pose: Pose;
-  makananTahap: 0 | 1 | 2;
+  makananTahap: 0 | 1 | 2 | 3 | 4;
   teks: { id: IdTeks; tanya: boolean } | null;
   teksSejak: number;
   klip: { id: IdKlip; nonce: number } | null;
@@ -148,7 +148,8 @@ function ke(k: Keadaan, status: StatusSesi, t: number, kx: Konteks, p: Perintah[
       const ajak = kx.saklar.ajakPengasuhGigit === "selalu" || (kx.saklar.ajakPengasuhGigit === "kadang" && k.putaran % 3 === 0);
       if (kx.saklar.karakterMenggigit) {
         k.pose = "menggigit";
-        k.makananTahap = ((k.makananTahap + 1) % 3) as 0 | 1 | 2;
+        // Utuh + 4 gigitan (gambar makanan punya 5 tahap, bersama/konten/makanan.ts).
+        k.makananTahap = ((k.makananTahap + 1) % 5) as 0 | 1 | 2 | 3 | 4;
       } else {
         k.pose = "enak";
       }

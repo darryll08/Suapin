@@ -2,7 +2,7 @@
 // `sisiPengasuh` = dilihat dari arah anak menghadap layar (disepakati A+B, docs/status.md).
 import { useState, type ReactNode } from "react";
 import { Link } from "react-router";
-import { MAKANAN } from "../../../../bersama/konten/makanan.ts";
+import { MAKANAN, NAMA_KELOMPOK, type KelompokMakanan } from "../../../../bersama/konten/makanan.ts";
 import { KepalaHalaman } from "../../../komponen/dasar.tsx";
 import { bento, tombolHero, tombolSegmen, tombolUtama, wadahKeluarga, wadahSegmen } from "../../../gaya/gaya.ts";
 import { NAMA_SAPAAN } from "../bantu.ts";
@@ -63,15 +63,20 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
       <KepalaHalaman judul="Siapkan makan" kembali="/beranda" />
       <section className={`${bento} flex flex-col gap-4`}>
         <JudulLangkah n={1}>Menu hari ini</JudulLangkah>
-        <div className="grid grid-cols-2 gap-3">
-          {MAKANAN.map((m) => (
-            <button key={m.id} type="button" aria-pressed={menu === m.id} onClick={() => setMenu(m.id)}
-              className={`flex flex-col items-center gap-2 rounded-kartu p-3 text-isi font-semibold transition-colors outline-none focus-visible:ring-4 focus-visible:ring-jagung ${menu === m.id ? "bg-ungu-tint ring-2 ring-ungu" : "bg-latar hover:bg-ungu-tint"}`}>
-              <img src={m.gambar[0]} alt="" className="size-24" />
-              {m.nama}
-            </button>
-          ))}
-        </div>
+        {(Object.keys(NAMA_KELOMPOK) as KelompokMakanan[]).map((k) => (
+          <div key={k} className="flex flex-col gap-2">
+            <h3 className="text-kecil font-semibold text-ungu-muda">{NAMA_KELOMPOK[k]}</h3>
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+              {MAKANAN.filter((m) => m.kelompok === k).map((m) => (
+                <button key={m.id} type="button" aria-pressed={menu === m.id} onClick={() => setMenu(m.id)}
+                  className={`flex min-h-12 flex-col items-center gap-1 rounded-kartu p-2 text-kecil font-semibold transition-colors outline-none focus-visible:ring-4 focus-visible:ring-jagung ${menu === m.id ? "bg-ungu-tint ring-2 ring-ungu" : "bg-latar hover:bg-ungu-tint"}`}>
+                  <img src={m.gambar[0]} alt="" className="size-14" loading="lazy" />
+                  {m.nama}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
         <label className="flex min-h-12 items-start gap-3 rounded-kartu bg-latar p-3">
           <input type="checkbox" className="mt-1 size-6 shrink-0 accent-ungu" checked={baru} onChange={(e) => setBaru(e.target.checked)} />
           <span>

@@ -39,6 +39,8 @@ export default defineConfig({
     alias: { "@bersama": fileURLToPath(new URL("./bersama", import.meta.url)) },
   },
   server: {
+    // Uji di HP lewat tunnel ngrok (HTTPS, syarat kamera di HP).
+    allowedHosts: [".ngrok-free.app", ".ngrok-free.dev", ".ngrok.app", ".ngrok.dev"],
     proxy: { "/api": "http://127.0.0.1:8787" },
   },
   test: {

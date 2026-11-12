@@ -16,7 +16,7 @@
 .suapin-klinik h2 { margin-block: 0 12px; font-size: 1.25rem; }
 .suapin-klinik a { color: inherit; }
 .suapin-klinik :focus-visible { outline: 3px solid var(--klinik-ubi); outline-offset: 3px; }
-.suapin-klinik .suapin-merek { font-weight: 800; }
+.suapin-klinik .suapin-merek { font-weight: 800; display: inline-flex; align-items: center; min-height: 48px; }
 .suapin-klinik .suapin-kartu {
   min-width: 0;
   background: #fffdf8;
@@ -45,7 +45,7 @@
 .suapin-klinik :is(button, .suapin-tombol) {
   display: inline-grid;
   place-items: center;
-  min-height: 44px;
+  min-height: 48px;
   padding: 8px 16px;
   border: 1px solid var(--klinik-ubi);
   border-radius: 10px;
@@ -71,8 +71,14 @@
 .suapin-tabel table { width: 100%; min-width: 38rem; overflow-wrap: normal; border-collapse: collapse; text-align: left; font-variant-numeric: tabular-nums; }
 .suapin-tabel :is(th, td) { padding: 8px; border-bottom: 1px solid #c9b79c; }
 .suapin-tabel tbody tr:nth-child(even) { background: var(--klinik-nasi); }
+.suapin-tabel .suapin-angka { text-align: right; }
+.suapin-sesi-hp { display: none; list-style: none; padding: 0; margin: 0; }
+.suapin-sesi-hp li { display: grid; gap: 4px; padding: 12px 0; border-bottom: 1px solid #c9b79c; font-variant-numeric: tabular-nums; }
+.suapin-sesi-hp li span { color: var(--klinik-ungu-muda); }
 @media (max-width: 1023px) { .suapin-resep { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 700px) {
+  .suapin-tabel { display: none; }
+  .suapin-sesi-hp { display: block; }
   .suapin-kolom { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .suapin-kolom[aria-hidden="true"] { display: none; }
 }

@@ -3,14 +3,14 @@
 // `mulut` (0..1) dari engine langsung dipakai di atribut `d`.
 import { useEffect, useState, type CSSProperties } from "react";
 import type { ModeLayar, Pose } from "../../bersama/kontrak/sesi.ts";
-import { cariMakanan } from "../../bersama/konten/makanan.ts";
+import { cariMakanan, type TahapMakanan } from "../../bersama/konten/makanan.ts";
 import { IsiMulut } from "./mulut.tsx";
 import "./karakter.css";
 
 export type PropsKarakter = {
   pose: Pose;
   mulut: number;
-  makanan: { id: string; tahap: 0 | 1 | 2 } | null;
+  makanan: { id: string; tahap: TahapMakanan } | null;
   layar: ModeLayar;
   /** Lingkaran jagung muda di belakang karakter. */
   latar?: boolean;
@@ -132,8 +132,8 @@ export function Karakter({ pose, mulut, makanan, layar, latar = true, pegang = f
   if (layar === "hitam") return null;
 
   const bukaMulut = gigit ? gigit.mulut : mulut;
-  const tahapTampil: 0 | 1 | 2 = makanan
-    ? gigit && !gigit.sudahGigit && makanan.tahap > 0 ? ((makanan.tahap - 1) as 0 | 1) : makanan.tahap
+  const tahapTampil: TahapMakanan = makanan
+    ? gigit && !gigit.sudahGigit && makanan.tahap > 0 ? ((makanan.tahap - 1) as TahapMakanan) : makanan.tahap
     : 0;
   const gambarMakanan = makanan ? cariMakanan(makanan.id).gambar[tahapTampil] : null;
 

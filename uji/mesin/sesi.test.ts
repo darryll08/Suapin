@@ -384,3 +384,22 @@ describe("teks saat diterima", () => {
     expect(s.k.teks).toBeNull();
   });
 });
+
+describe("tahap gambar makanan", () => {
+  it("karakter menggigit 4 kali lalu makanan kembali utuh (5 tahap)", () => {
+    const s = new Sim();
+    const urutan: number[] = [s.k.makananTahap];
+    const catat = () => { if (urutan.at(-1) !== s.k.makananTahap) urutan.push(s.k.makananTahap); };
+    s.keGiliranAnak();
+    catat();
+    for (let i = 0; i < 4; i++) {
+      s.tekan("suap");
+      s.sinyal(2500, buka(0.3, 1.2)); // diterima
+      s.sinyal(2000); // perayaan selesai → jeda kunyah
+      s.tekan("lanjut"); // lewati jeda kunyah → giliran karakter berikutnya
+      s.sinyal(4100);
+      catat();
+    }
+    expect(urutan).toEqual([0, 1, 2, 3, 4, 0]);
+  });
+});

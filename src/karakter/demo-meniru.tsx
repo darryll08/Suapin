@@ -66,7 +66,7 @@ export function DemoMeniru({ className = "" }: { className?: string }) {
         <div className="aspect-square w-full overflow-hidden rounded-full border-4 border-permukaan bg-ungu-tint shadow-kartu">
           <Anak mulut={mulut} className="translate-y-[6%] scale-[1.12]" />
         </div>
-        <figcaption className="rounded-full bg-permukaan px-3 py-1 text-[13px] font-semibold shadow-kartu">Anak</figcaption>
+        <figcaption className="rounded-full bg-permukaan px-3 py-1 text-kecil font-semibold shadow-kartu">Anak</figcaption>
       </figure>
 
       <Label className="top-[6%] right-[0%]">Meniru mulut anak</Label>
@@ -79,7 +79,7 @@ export function DemoMeniru({ className = "" }: { className?: string }) {
 
 function Label({ children, className }: { children: string; className: string }) {
   return (
-    <span className={`absolute rounded-full bg-permukaan px-3 py-2 text-[13px] font-semibold whitespace-nowrap text-ungu shadow-kartu sm:px-4 sm:text-kecil ${className}`}
+    <span className={`absolute rounded-full bg-permukaan px-3 py-2 text-kecil font-semibold whitespace-nowrap text-ungu shadow-kartu sm:px-4 sm:text-kecil ${className}`}
       aria-hidden="true">
       {children}
     </span>

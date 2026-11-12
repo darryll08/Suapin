@@ -6,7 +6,7 @@
 |---|---|---|---|
 | Karakter (kepala, rambut, mata, alis, pipi, badan, tangan) | `src/karakter/karakter.tsx` (SVG di kode, kanvas 400×400) | Dibuat tim (Satya) | Milik tim |
 | Mulut parametrik | `src/karakter/mulut.tsx` | Rumus jobdesk B1.3 / UI UX 11.4 | Milik tim |
-| Makanan brokoli, umum (3 tahap gigitan) | `public/aset/makanan/{brokoli,umum}_{0,1,2}.svg`, kanvas 512×512 | Dibuat tim, bekas gigitan = mask lingkaran | Milik tim |
+| Makanan: 30 jenis + "Lainnya" (utuh + 4 gigitan) | `public/aset/makanan/<id>_{0..4}.svg`, kanvas 512×512, daftar di `bersama/konten/makanan.ts` | Dibuat tim (SVG flat dari skrip generator, 12 Nov), bekas gigitan = mask lingkaran | Milik tim |
 | Stiker jagung, nasi, ubi | `public/aset/stiker/*.svg`, kanvas 256×256, bingkai putih | Dibuat tim | Milik tim |
 | Ilustrasi anak (dada ke atas) untuk landing | `public/aset/anak/anak-senyum.webp`, `anak-buka.webp` (512×512, 31 KB) | Dibuat Satya dengan AI image generator (prompt di bawah); latar hitam dibuang, noise merah di garis luar dibersihkan; dua gambar ditukar sesuai bukaan mulut | Gambar AI, dibuat tim |
 | Adegan makan sambil nonton (landing, section masalah) | `public/aset/anak/adegan-nonton.webp` (1200×800, 43 KB) | Dibuat Satya dengan AI image generator (prompt di bawah) | Gambar AI, dibuat tim |

@@ -129,10 +129,15 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
   const sisiJauh = kanan ? "left-4" : "right-4";
 
   return (
-    <main className={`fixed inset-0 overflow-hidden ${hitam ? "bg-black text-latar" : "bg-latar text-ungu"}`}>
+    // Di HP (tegak maupun miring): layar penuh. Di laptop/tablet (varian `bingkai` di token.css:
+    // lebar ≥ 640 DAN tinggi ≥ 600): panel tegak setinggi layar, lebar max(560 px, 76dvh) supaya karakter
+    // tetap ±70% tinggi layar untuk juri yang melihat dari 1–3 m (UI UX 2.1, 10.8).
+    // `translateZ(0)` membuat lembar bawah dan layar darurat (`fixed`) tetap di dalam bingkai.
+    <div className={`fixed inset-0 bingkai:flex bingkai:items-center bingkai:justify-center bingkai:p-4 ${hitam ? "bg-black" : "bg-ungu-tint"}`}>
+    <main className={`relative size-full overflow-hidden [container-type:size] [transform:translateZ(0)] bingkai:h-full bingkai:w-full bingkai:max-w-[max(560px,76dvh)] bingkai:rounded-[40px] ${hitam ? "bg-black text-latar" : "bg-latar text-ungu bingkai:shadow-[0_20px_60px_rgb(75_46_90/0.25)]"}`}>
       {/* Karakter di tengah, ≥ 60% tinggi layar */}
       <div className="absolute inset-0 flex items-center justify-center pt-6 pb-36">
-        <div className="aspect-square h-[min(70dvh,92vw)] max-h-full">
+        <div className="aspect-square h-[min(70cqh,92cqw)] max-h-full">
           {!v ? <Memuat teks="Menyiapkan teman makan…" />
             : status === "PEMANASAN" ? (
               <Pemanasan makanan={pilihan.menu} panggilan={saya.child.panggilan} suara={saklar.suara} onSelesai={sesi.selesaiPemanasan} />
@@ -146,16 +151,16 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
       {/* Lapisan redup layar penuh (JEDA_KUNYAH, KEMUNGKINAN_NGEMUT) */}
       <div aria-hidden="true" className={`pointer-events-none absolute inset-0 bg-black transition-opacity duration-[400ms] ${v?.layar === "redup" ? "opacity-60" : "opacity-0"}`} />
 
-      {/* Stop: pojok atas sisi jauh */}
+      {/* Stop: pojok atas sisi jauh. Di panel bingkai, radius 24 = 40 (panel) − 16 (jarak tepi) supaya sudutnya sejajar. */}
       <button type="button" title="Stop (Esc)" onClick={() => setKonfirmStop(true)}
-        className={`absolute top-4 ${sisiJauh} min-h-12 rounded-tombol border-2 px-4 text-kecil font-bold ${hitam ? "border-latar/40 text-latar opacity-35" : "border-ungu bg-permukaan"}`}>
+        className={`absolute top-4 ${sisiJauh} min-h-12 rounded-tombol bingkai:rounded-[24px] border-2 px-4 text-kecil font-bold ${hitam ? "border-latar/40 text-latar opacity-35" : "border-ungu bg-permukaan"}`}>
         ■ Stop
       </button>
 
       {/* Pratinjau kamera: pojok atas sisi pengasuh. Video tetap terpasang (kamera jalan) walau disembunyikan di tahap 3. */}
       <div className={`absolute top-4 ${sisiP} ${hitam || !pakaiKamera ? "pointer-events-none opacity-0" : ""}`}>
         <video ref={videoRef} muted playsInline aria-label="Pratinjau kamera, ketuk wajah anak bila salah pilih"
-          className={`h-32 w-24 rounded-tombol border-2 bg-ungu-tint object-cover sm:h-[120px] sm:w-40 ${status === "TIDAK_TERLIHAT" ? "border-jagung" : "border-latar"}`}
+          className={`h-32 w-24 rounded-tombol bingkai:rounded-[24px] border-2 bg-ungu-tint object-cover sm:h-[120px] sm:w-40 ${status === "TIDAK_TERLIHAT" ? "border-jagung" : "border-latar"}`}
           style={{ transform: "scaleX(-1)" }}
           onClick={(e) => {
             const r = e.currentTarget.getBoundingClientRect();
@@ -258,6 +263,7 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
         </LembarBawah>
       )}
     </main>
+    </div>
   );
 }
 

@@ -166,7 +166,7 @@ function AkunDemo({ kembali }: { kembali: string }) {
     <section className={`${bento} masuk flex flex-col gap-4`} aria-labelledby="judul-akun-demo">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 id="judul-akun-demo" className="font-judul text-subjudul font-bold">Akun demo</h2>
-        <span className="rounded-full bg-jagung-muda px-3 py-1 text-[13px] font-semibold text-jagung-tua">Mode demo lomba</span>
+        <span className="rounded-full bg-jagung-muda px-3 py-1 text-kecil font-semibold text-jagung-tua">Mode demo lomba</span>
       </div>
       <ul className="flex flex-col gap-2">
         {AKUN_DEMO.map((a) => (
@@ -177,7 +177,7 @@ function AkunDemo({ kembali }: { kembali: string }) {
               <span className="flex min-w-0 flex-1 flex-col">
                 <span className="text-isi font-bold">{a.peran}</span>
                 <span className="text-kecil break-words text-ungu-muda">{a.nama}</span>
-                <span className="text-[13px] text-ungu-muda">{a.ket}</span>
+                <span className="text-kecil text-ungu-muda">{a.ket}</span>
               </span>
               <span className="shrink-0 rounded-full bg-ungu px-4 py-2 text-kecil font-bold text-permukaan transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none">
                 {sibuk === a.id ? "…" : "Masuk"}
@@ -187,7 +187,7 @@ function AkunDemo({ kembali }: { kembali: string }) {
         ))}
       </ul>
       {galat && <PesanGalat pesan={galat} />}
-      <p className="text-[13px] text-ungu-muda">Satu klik langsung masuk. Daftar ini hanya muncul saat server berjalan dengan DEMO=1.</p>
+      <p className="text-kecil text-ungu-muda">Satu klik langsung masuk. Daftar ini hanya muncul saat server berjalan dengan DEMO=1.</p>
     </section>
   );
 }

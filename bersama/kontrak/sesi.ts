@@ -42,7 +42,7 @@ export const TampilanSesiSchema = z.object({
   pose: Pose,
   mulutKarakter: z.number().min(0).max(1), // bukaan mulut SVG karakter frame ini
   layar: ModeLayar,
-  makananTahap: z.union([z.literal(0), z.literal(1), z.literal(2)]),
+  makananTahap: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3), z.literal(4)]), // utuh + 4 gigitan
   teks: z.object({ id: IdTeks, tanya: z.boolean() }).nullable(),
   klip: z.object({ id: IdKlip, nonce: z.number() }).nullable(), // nonce naik = putar klip baru
   gigitan: z.array(GigitanSchema),

@@ -1,6 +1,9 @@
 /* Pemilik: B (Satya). Token dari "Suapin - UI UX Guidelines.md" bagian 4.5. Tidak ada merah. */
 @import "tailwindcss";
 
+/* Layar cukup lebar DAN tinggi (laptop/tablet), bukan HP yang dimiringkan. Dipakai bingkai HP di layar makan. */
+@custom-variant bingkai (@media (min-width: 640px) and (min-height: 600px));
+
 @theme {
   --color-latar: #FAF6EE;
   --color-permukaan: #FFFDF8;
