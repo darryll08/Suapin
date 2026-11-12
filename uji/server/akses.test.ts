@@ -19,6 +19,8 @@ it("semua rute yang butuh peran menolak request tanpa cookie", async () => {
 it("menolak lintas keluarga, dokter lain, dan cookie yang diubah", async () => {
   const token = await (await uji.sebagai(uji.dika)("/api/reports/share", "POST")).json()
   expect((await uji.sebagai(uji.dokter)("/api/clinic/claim/" + token.token, "POST")).status).toBe(200)
+  // Setelah jadi pasien, laporan keluarga menyebut dokternya (tombol bagikan tidak perlu lagi).
+  expect(await (await uji.sebagai(uji.dika)("/api/children/" + DIKA + "/report")).json()).toMatchObject({ dokter_nama: "dr. Demo" })
   expect((await uji.sebagai(uji.nara)("/api/children/" + DIKA + "/report")).status).toBe(404)
   expect((await uji.sebagai(uji.lain)("/api/clinic/patients/" + DIKA)).status).toBe(404)
   expect((await uji.sebagai(uji.lain)("/api/clinic/claim/" + token.token, "POST")).status).toBe(409)

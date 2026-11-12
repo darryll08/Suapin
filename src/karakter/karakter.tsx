@@ -179,9 +179,11 @@ export function Karakter({ pose, mulut, makanan, layar, latar = true, pegang = f
       </g>
 
       {(gigit || pegang) && gambarMakanan && (
-        <g transform={`translate(0,${gigit ? gigit.tangan : 46})`} style={{ transition: gigit ? undefined : "transform 600ms var(--ease-standar)" }}>
+        <g transform={`translate(0,${gigit ? gigit.tangan : 30})`} style={{ transition: gigit ? undefined : "transform 600ms var(--ease-standar)" }}>
           <image href={gambarMakanan} x="148" y="252" width="104" height="104" />
-          <ellipse cx="200" cy="356" rx="34" ry="24" fill={KULIT} stroke={KULIT_BAYANG} strokeWidth="4" />
+          {/* Tangan hanya saat menggigit (masuk dari bawah). Saat memegang (pemanasan) makanan mengambang di depan badan
+              supaya tidak tampak setengah tangan terpotong di tepi bawah gambar. */}
+          {gigit && <ellipse cx="200" cy="356" rx="34" ry="24" fill={KULIT} stroke={KULIT_BAYANG} strokeWidth="4" />}
         </g>
       )}
 

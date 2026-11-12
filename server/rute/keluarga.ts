@@ -4,7 +4,7 @@ import { hash } from "bcryptjs"
 import { anakMilikKeluarga, masukSebagai } from "../akses"
 import { cariAkun, pastikanEmailBebas } from "../akun"
 import type { Db } from "../db/klien"
-import { children, rules, screenings, shared_reports } from "../db/skema"
+import { children, doctors, rules, screenings, shared_reports } from "../db/skema"
 import type { Env } from "../env"
 import { buatKodeAkses, buatToken, hashKode } from "../kode"
 import {
@@ -60,8 +60,9 @@ export function ruteKeluarga(daftar: Daftar, db: Db, env: Env) {
     const id = c.req.param("id")!
     anakMilikKeluarga(c, id)
     const anak = await bacaAnak(db, id)
-    const [sesi, paparan, ringkasan, akses] = await Promise.all([
+    const [sesi, paparan, ringkasan, akses, dokter] = await Promise.all([
       sesiSejak(db, id, 14), bacaPaparan(db, id), bacaRingkasan(db, id), bacaAksesSesi(db, anak),
+      anak.doctor_id ? db.select({ nama: doctors.nama }).from(doctors).where(eq(doctors.id, anak.doctor_id)).get() : undefined,
     ])
     const hariDapatStiker = new Set(sesi.filter((row) => row.diterima > 0).map((row) => tanggalWib(new Date(row.mulai))))
     const sekarang = new Date()
@@ -74,7 +75,8 @@ export function ruteKeluarga(daftar: Daftar, db: Db, env: Env) {
       stiker_minggu_ini: Array.from({ length: 7 }, (_, i) =>
         i <= hariKe && hariDapatStiker.has(tanggalWib(new Date(senin + i * MS_HARI)))),
       plan: akses.plan, trial_sisa_hari: akses.plan === "trial" && anak.trial_until ?
-        Math.max(0, Math.ceil((Date.parse(anak.trial_until) - +sekarang) / MS_HARI)) : null }
+        Math.max(0, Math.ceil((Date.parse(anak.trial_until) - +sekarang) / MS_HARI)) : null,
+      dokter_nama: dokter?.nama ?? null }
   })
   daftar("laporanBagikan", async (c) => {
     const token = buatToken()

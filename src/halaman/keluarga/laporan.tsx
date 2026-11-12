@@ -1,11 +1,13 @@
 // Pemilik: B (Satya). Laporan `/laporan` (B3.5, UI UX 10.11), gaya bento: angka 14 hari + grafik pil →
-// ringkasan AI → bagikan → daftar sesi.
+// ringkasan AI → daftar sesi → bagikan ke dokter.
+// Pasien klinik: tanpa tombol bagikan (data otomatis terlihat dokternya), cukup satu baris info.
+// Keluarga mandiri: kartu kecil di bawah; ditonjolkan di atas hanya bila skrining menemukan tanda bahaya.
 import { useState } from "react";
 import { cariMakanan } from "../../../bersama/konten/makanan.ts";
 import { GrafikPil, KartuAngka, LabelAI } from "../../komponen/beranda.tsx";
 import { KepalaHalaman, Memuat, PesanGalat, Tombol } from "../../komponen/dasar.tsx";
 import { LembarBawah } from "../../komponen/lembar.tsx";
-import { bento, wadahKeluarga } from "../../gaya/gaya.ts";
+import { bento, tombolTeks, wadahKeluarga } from "../../gaya/gaya.ts";
 import { formatTanggal, tanggalLokal, tanggalTerakhir, totalPerHari, useMuat } from "./bantu.ts";
 import { api, type Ringkasan, type SesiLaporan } from "./data.ts";
 import { useSaya } from "./tata-letak.tsx";
@@ -34,6 +36,10 @@ export function Laporan() {
   };
 
   const teksRingkasan = ringkasan?.keluarga ?? lap?.ringkasan_keluarga ?? null;
+  const tandaBahaya = saya.alasan_terkunci === "tanda_bahaya";
+  const kartuBagikan = lap && !lap.dokter_nama && (
+    <KartuBagikan sorot={tandaBahaya} memuat={memuatB} galat={galatB} bagikan={() => void bagikan()} />
+  );
   const sumber = ringkasan?.sumber ?? "cache";
 
   return (
@@ -41,6 +47,13 @@ export function Laporan() {
       <KepalaHalaman judul={`Laporan makan ${c.panggilan}`} kembali="/beranda" />
       {memuat && !lap ? <Memuat /> : galat ? <PesanGalat pesan={galat} ulangi={ulangi} /> : lap && (
         <div className="flex flex-col gap-4">
+          {lap.dokter_nama && (
+            <p className="flex items-start gap-2 rounded-kartu bg-ungu-tint p-3 text-kecil">
+              <span aria-hidden="true" className="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-ungu text-[12px] font-bold">i</span>
+              Laporan ini otomatis terlihat oleh {lap.dokter_nama}.
+            </p>
+          )}
+          {tandaBahaya && kartuBagikan}
           {lap.sesi.length > 0 && <Angka14 sesi={lap.sesi} panggilan={c.panggilan} />}
 
           <section className={`${bento} flex flex-col gap-3`}>
@@ -56,17 +69,39 @@ export function Laporan() {
             {galatR && <PesanGalat pesan={galatR} ulangi={buatRingkasan} />}
           </section>
 
-          <Tombol memuat={memuatB} onClick={bagikan} className="sm:w-full">Bagikan ke dokter</Tombol>
-          {galatB && <PesanGalat pesan={galatB} />}
-
           <section className={`${bento} flex flex-col gap-4`}>
             <h2 className="font-judul text-subjudul font-bold">Sesi 14 hari terakhir</h2>
             {lap.sesi.length === 0 ? <p className="text-isi text-ungu-muda">Belum ada sesi. Setelah sesi pertama, grafik dan daftar sesi muncul di sini.</p> : <DaftarSesi sesi={lap.sesi} />}
           </section>
+
+          {!tandaBahaya && kartuBagikan}
         </div>
       )}
       {link && <LembarBagikan link={link} panggilan={c.panggilan} tutup={() => setLink("")} />}
     </main>
+  );
+}
+
+function KartuBagikan({ sorot, memuat, galat, bagikan }: { sorot: boolean; memuat: boolean; galat: string; bagikan: () => void }) {
+  if (sorot) {
+    return (
+      <section className="flex flex-col gap-3 rounded-bento border-2 border-jagung bg-jagung-muda p-5">
+        <h2 className="font-judul text-subjudul font-bold text-jagung-tua">Periksa ke dokter dulu</h2>
+        <p className="text-isi">Kirim laporan ini ke dokter anak. Setelah diperiksa, dokter bisa membuka program dari link ini.</p>
+        <Tombol memuat={memuat} onClick={bagikan} className="sm:w-full">Bagikan laporan ke dokter</Tombol>
+        {galat && <PesanGalat pesan={galat} />}
+      </section>
+    );
+  }
+  return (
+    <section className={`${bento} flex flex-col gap-1`}>
+      <h2 className="text-isi font-semibold">Mau periksa ke dokter anak?</h2>
+      <p className="text-kecil text-ungu-muda">Bagikan laporan ini. Dokter bisa melihat catatan makan dan menjadikan anak pasiennya.</p>
+      <button type="button" onClick={bagikan} disabled={memuat} className={`${tombolTeks} -ml-3 self-start`}>
+        {memuat ? "Membuat link…" : "Bagikan laporan"}
+      </button>
+      {galat && <PesanGalat pesan={galat} />}
+    </section>
   );
 }
 

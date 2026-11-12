@@ -1,5 +1,6 @@
 // Pemilik: B (Satya). Layar makan `/sesi` (B2.2, UI UX 10.8). Engine dan kamera dari hook A (`useSesiMakan`).
-// Tata letak dicerminkan sesuai `sisiPengasuh`: Suap, Lanjut, pratinjau di sisi pengasuh; Stop di sisi jauh.
+// Tata letak: Suap di tengah bawah (12 Nov, lebih rapi dan terjangkau dari kedua sisi). Lanjut dan pratinjau
+// di sisi pengasuh; Stop dan koreksi suapan di sisi jauh (dicerminkan sesuai `sisiPengasuh`).
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { TEKS } from "../../../../bersama/konten/teks.ts";
@@ -129,6 +130,20 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
   const gigitanAkhir = v?.gigitan.at(-1);
   const sisiP = kanan ? "right-4" : "left-4";
   const sisiJauh = kanan ? "left-4" : "right-4";
+  const tombolLanjut = (status === "JEDA_KUNYAH" || status === "GILIRAN_KARAKTER") && !hitam && (
+    <button type="button" title="Lanjut (L)" disabled={status === "GILIRAN_KARAKTER"} onClick={() => tekan("lanjut")}
+      className="min-h-12 rounded-tombol border-2 border-ungu bg-permukaan px-4 text-kecil font-bold disabled:opacity-40">
+      Lanjut
+    </button>
+  );
+  const koreksiTerakhir = gigitanAkhir && !hitam && status !== "PEMANASAN" && (
+    // Dua baris disengaja: kolom samping Suap di HP 360 px hanya ±95 px.
+    <button type="button" onClick={() => setKoreksi(true)} aria-label={`Koreksi suapan terakhir: tadi ${gigitanAkhir.hasil}`}
+      className="flex min-h-12 flex-col items-start justify-center rounded-tombol bg-permukaan/90 px-3 py-1 text-left leading-tight hover:bg-ungu-tint">
+      <span className="text-[12px] text-ungu-muda">Tadi</span>
+      <span className="whitespace-nowrap text-kecil font-semibold">{gigitanAkhir.hasil === "diterima" ? "diterima" : gigitanAkhir.hasil === "ngemut" ? "ngemut" : "ditolak"} ▾</span>
+    </button>
+  );
 
   return (
     // Di HP (tegak maupun miring): layar penuh. Di laptop/tablet (varian `bingkai` di token.css:
@@ -187,24 +202,12 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
         </details>
       )}
 
-      {/* Lanjut + Suap: pojok bawah sisi pengasuh */}
-      <div className={`absolute bottom-[max(1rem,env(safe-area-inset-bottom))] ${sisiP} flex items-end gap-3 ${kanan ? "flex-row" : "flex-row-reverse"}`}>
-        {(status === "JEDA_KUNYAH" || status === "GILIRAN_KARAKTER") && !hitam && (
-          <button type="button" title="Lanjut (L)" disabled={status === "GILIRAN_KARAKTER"} onClick={() => tekan("lanjut")}
-            className="mb-2 min-h-12 rounded-tombol border-2 border-ungu bg-permukaan px-4 text-kecil font-bold disabled:opacity-40">
-            Lanjut
-          </button>
-        )}
+      {/* Baris bawah: [sisi kiri] Suap di tengah [sisi kanan]. Lanjut di sisi pengasuh, koreksi suapan di sisi jauh. */}
+      <div className="absolute inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3">
+        <div className="flex justify-start">{kanan ? koreksiTerakhir : tombolLanjut}</div>
         <TombolSuap menilai={status === "MENILAI"} redup={hitam} onClick={() => tekan("suap")} />
+        <div className="flex justify-end">{kanan ? tombolLanjut : koreksiTerakhir}</div>
       </div>
-
-      {/* Koreksi suapan terakhir: bawah, di sisi jauh supaya tidak menutupi Suap */}
-      {gigitanAkhir && !hitam && status !== "PEMANASAN" && (
-        <button type="button" onClick={() => setKoreksi(true)}
-          className={`absolute bottom-[max(1rem,env(safe-area-inset-bottom))] ${sisiJauh} min-h-12 rounded-tombol bg-permukaan/90 px-3 text-kecil font-semibold underline-offset-4 hover:underline`}>
-          Tadi {gigitanAkhir.hasil === "diterima" ? "diterima" : gigitanAkhir.hasil === "ngemut" ? "ngemut" : "ditolak"} ▾
-        </button>
-      )}
 
       {/* Strip teks: di atas tombol bawah */}
       {teks && !v?.teks?.tanya && (

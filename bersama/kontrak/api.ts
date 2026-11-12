@@ -82,7 +82,9 @@ export const API = {
   laporanKeluarga: endpoint("GET", "/api/children/:id/report", "keluarga", kosong,
     z.object({ tahap, stiker_minggu_ini: z.array(bool).length(7), paparan: z.array(paparan),
       sesi: z.array(sesi.extend({ id })), ringkasan_keluarga: z.string().nullable(), plan,
-      trial_sisa_hari: jumlah.nullable() }), 401, 404),
+      trial_sisa_hari: jumlah.nullable(),
+      // Nama dokter yang memegang anak ini (pasien klinik); null = keluarga mandiri.
+      dokter_nama: z.string().nullable().optional() }), 401, 404),
   laporanBagikan: endpoint("POST", "/api/reports/share", "keluarga", kosong,
     z.object({ token: z.string().length(43), url: z.string() }), 401),
   paketAktifkan: endpoint("POST", "/api/plan/activate", "keluarga",
