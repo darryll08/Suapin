@@ -61,13 +61,13 @@ Centang hanya bila ada buktinya. Format: `- [x] A0.1 Kerangka proyek · 10 Nov �
 - [x] C1.4 Catatan, laporan, bagikan, paket · 11 Nov · 7b74b30 · catatan parsial, laporan seed, token bagikan, dan aktivasi paket
 - [x] C2.1 Login dokter, daftar pasien, detail · 11 Nov · 66314d8 · login, daftar dan detail pasien, serta pembatasan akses dokter lain
 - [x] C2.2 Laporan bagikan dan klaim · 11 Nov · 66314d8 · bagikan laporan dan klaim pasien di Chrome
-- [ ] C2.3 Resep bahasa bebas → JSON
+- [x] C2.3 Resep bahasa bebas → JSON (diuji OpenAI asli gpt-6-luna 12 Nov, ±6,5 dtk)
 - [x] C2.4 Konfirmasi aturan · 11 Nov · 66314d8 · aturan baru terbaca di layar sesi keluarga
 - [x] C3.1 `/klinik/masuk` dan tata letak · 11 Nov · 85371f6 · nama sesuai akun, login dan logout Chrome 390/1280 px
 - [x] C3.2 `/klinik/pasien` · 11 Nov · 66314d8 · Dika tampil setelah klaim di Chrome
 - [x] C3.3 `/klinik/pasien/:id` · 11 Nov · 66314d8 · alur resep dari cache di Chrome dan tangkapan layar 390/1280 px
 - [x] C3.4 `/r/:token` · 11 Nov · 66314d8 · laporan dibuka di konteks browser terpisah dan berhasil diklaim
-- [ ] C4.1 Ringkasan mingguan
+- [x] C4.1 Ringkasan mingguan (diuji OpenAI asli 12 Nov, ±8-9,5 dtk; timeout 20 dtk)
 - [x] C4.2 Mode demo dan reset · 11 Nov · 7b74b30 · reset menghapus data latihan, memulihkan Dika, dan mempertahankan cache
 - [ ] C4.3 Uji Vercel + Turso (bonus)
 - [x] C5.1 Kontribusi Adit di README · 11 Nov · 7b74b30 · kontribusi Adit, cara kerja AI, dan bantuan Codex di README

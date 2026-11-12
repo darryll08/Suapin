@@ -74,7 +74,7 @@ export async function buatRingkasan(
     try {
       hasil = validasi(await llm("ringkasan", skema,
         "Ringkas data sesi anak dalam bahasa Indonesia. Tunjukkan 1–2 pola yang tampak dari data dan sebutkan angkanya. " +
-        "Versi keluarga hangat dan versi dokter faktual. Jangan mendiagnosis, memberi dosis atau menu, atau menyalahkan pengasuh.", input))
+        "Pakai hanya angka yang tertulis persis di data: jangan menghitung, menjumlah, membuat persen, mengubah satuan, atau memakai pemisah ribuan. Sebut \"suapan\", bukan \"makanan\"; tulis \"ya/tidak\", bukan true/false. Versi keluarga hangat dan versi dokter faktual. Jangan mendiagnosis, memberi dosis atau menu, atau menyalahkan pengasuh.", input))
     } catch { /* Lanjutkan dengan cadangan lokal. */ }
     if (hasil) {
       sumber = "ai"

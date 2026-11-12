@@ -7,7 +7,7 @@ export type Llm = <T>(nama: string, skema: z.ZodType<T>, instruksi: string, inpu
 
 export function buatLlm(env: Env): Llm | null {
   if (!env.OPENAI_API_KEY) return null
-  const client = new OpenAI({ apiKey: env.OPENAI_API_KEY, timeout: 8000, maxRetries: 0 })
+  const client = new OpenAI({ apiKey: env.OPENAI_API_KEY, timeout: 20000, maxRetries: 0 })
   return async (nama, skema, instruksi, input) => {
     const hasil = await client.responses.parse({
       model: env.OPENAI_MODEL,
