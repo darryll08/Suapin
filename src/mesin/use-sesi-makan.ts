@@ -42,6 +42,11 @@ export function useSesiMakan(o: OpsiSesiMakan) {
   const renderTerakhir = useRef(0);
   const sudahMulai = useRef(false);
   const hidup = useRef(true);
+  // Jeda: kejadian berhenti dikirim ke engine, lalu waktu engine digeser sebesar lama jeda supaya timer
+  // (batas waktu sesi, tunggu menolak, jeda kunyah) tidak ikut berjalan selama sesi dijeda.
+  const jedaSejak = useRef<number | null>(null);
+  const jedaTotal = useRef(0);
+  const [sedangJeda, setSedangJeda] = useState(false);
   const elVideo = useRef<HTMLVideoElement | null>(null); // disimpan sendiri: ref <video> sudah null saat unmount
 
   const berhenti = useCallback(() => {
@@ -61,7 +66,10 @@ export function useSesiMakan(o: OpsiSesiMakan) {
     }
   }, []);
 
-  const kirim = useCallback((e: Kejadian) => {
+  const kirim = useCallback((asli: Kejadian) => {
+    if (jedaSejak.current !== null) return;
+    const geser = jedaTotal.current;
+    const e: Kejadian = !geser ? asli : asli.jenis === "sinyal" ? { ...asli, s: { ...asli.s, t: asli.s.t - geser } } : { ...asli, t: asli.t - geser };
     const lama = keadaan.current;
     const kx = konteks.current;
     if (!lama || !kx || lama.status === "SELESAI") return;
@@ -70,7 +78,7 @@ export function useSesiMakan(o: OpsiSesiMakan) {
     keadaan.current = r.keadaan;
     terapkan(r.perintah);
     const k = r.keadaan;
-    const t = performance.now();
+    const t = performance.now() - geser;
     // Diagnosis lapangan (/sesi?debug=1): angka kunyah terakhir dibaca layar debug.
     (window as { __suapinDebug?: unknown }).__suapinDebug = {
       status: k.status, kunyahAktif: k.kunyahAktif, siklus3s: k.kunyah.siklus.filter((x) => x > t - 3_000).length,
@@ -156,5 +164,12 @@ export function useSesiMakan(o: OpsiSesiMakan) {
     tekan: useCallback((tombol: Tombol) => kirim({ jenis: "tombol", tombol, t: performance.now() }), [kirim]),
     selesaiPemanasan: useCallback(() => kirim({ jenis: "pemanasan_selesai", t: performance.now() }), [kirim]),
     pilihWajahDiTitik: useCallback((x: number, y: number) => kamera.current?.pilihWajahDiTitik(x, y), []),
+    sedangJeda,
+    /** Jeda/lanjutkan sesi: engine membeku (tanpa sinyal, tanpa timer). */
+    jeda: useCallback((aktif: boolean) => {
+      if (aktif && jedaSejak.current === null) jedaSejak.current = performance.now();
+      if (!aktif && jedaSejak.current !== null) { jedaTotal.current += performance.now() - jedaSejak.current; jedaSejak.current = null; }
+      setSedangJeda(aktif);
+    }, []),
   };
 }

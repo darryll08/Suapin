@@ -1,6 +1,6 @@
 // Pemilik: B (Satya). Layar makan `/sesi` (B2.2, UI UX 10.8). Engine dan kamera dari hook A (`useSesiMakan`).
 // Tata letak: Suap di tengah bawah (12 Nov, lebih rapi dan terjangkau dari kedua sisi). Lanjut dan pratinjau
-// di sisi pengasuh; Stop dan koreksi suapan di sisi jauh (dicerminkan sesuai `sisiPengasuh`).
+// di sisi pengasuh; Jeda dan koreksi suapan di sisi jauh (dicerminkan sesuai `sisiPengasuh`).
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { TEKS } from "../../../../bersama/konten/teks.ts";
@@ -15,6 +15,7 @@ import { useSesiMakan } from "../../../mesin/use-sesi-makan.ts";
 import { saklarTahap } from "../../../mesin/tahap.ts";
 import type { AturanSesi, Tombol as TombolEngine } from "../../../mesin/sesi.ts";
 import { useKlip } from "../../../suara/use-klip.ts";
+import { hentikanSemua } from "../../../suara/pemutar.ts";
 import { api, type Saya } from "../data.ts";
 import { beritahu } from "../../../komponen/notifikasi.tsx";
 import { KenalanMakanan, StikerLingkar } from "./panel-samping.tsx";
@@ -43,6 +44,7 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
   const kanan = pilihan.sisi === "kanan";
   const hitam = v?.layar === "hitam";
   const [konfirmStop, setKonfirmStop] = useState(false);
+  const [konfirmSelesai, setKonfirmSelesai] = useState(false);
   const [darurat, setDarurat] = useState(false);
   const [koreksi, setKoreksi] = useState(false);
   const [galatKameraDitutup, setGalatKameraDitutup] = useState(false);
@@ -66,18 +68,24 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
     if (t === "suap" && "vibrate" in navigator) navigator.vibrate(20);
     sesi.tekan(t);
   }, [sesi]);
+  // Jeda: engine membeku dan suara berhenti; lembar memberi pilihan lanjut, akhiri, atau darurat.
+  const bukaJeda = useCallback(() => { sesi.jeda(true); hentikanSemua(); setKonfirmStop(true); }, [sesi]);
+  const lanjutMakan = useCallback(() => { setKonfirmStop(false); sesi.jeda(false); }, [sesi]);
+  const akhiri = useCallback((t: "stop" | "darurat") => { setKonfirmStop(false); setKonfirmSelesai(false); sesi.jeda(false); tekan(t); }, [sesi, tekan]);
+  const tanyaSelesai = useCallback(() => { sesi.jeda(true); hentikanSemua(); setKonfirmSelesai(true); }, [sesi]);
+  const batalSelesai = useCallback(() => { setKonfirmSelesai(false); sesi.jeda(false); }, [sesi]);
 
-  // Pintasan laptop: Spasi = Suap, L = Lanjut, Esc = Stop.
+  // Pintasan laptop: Spasi = Suap, L = Lanjut, Esc = Jeda.
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement) return;
       if (e.code === "Space") { e.preventDefault(); tekan("suap"); }
       else if (e.key === "l" || e.key === "L") tekan("lanjut");
-      else if (e.key === "Escape") setKonfirmStop((x) => !x);
+      else if (e.key === "Escape") { if (konfirmSelesai) batalSelesai(); else if (sesi.sedangJeda) lanjutMakan(); else bukaJeda(); }
     };
     window.addEventListener("keydown", k);
     return () => window.removeEventListener("keydown", k);
-  }, [tekan]);
+  }, [tekan, sesi.sedangJeda, bukaJeda, lanjutMakan, konfirmSelesai, batalSelesai]);
 
   // Kembali ke tab: tanya lanjut atau akhiri.
   useEffect(() => {
@@ -140,6 +148,15 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
       Lanjut
     </button>
   );
+  // Selesai: akhir makan normal, sekali tekan langsung ke catatan. Di sisi pengasuh, dekat Suap.
+  const tombolSelesai = status !== "PEMANASAN" && (
+    <button type="button" onClick={tanyaSelesai}
+      className={`inline-flex min-h-12 items-center gap-2 rounded-full pr-4 pl-1.5 text-kecil font-bold transition-transform active:translate-y-0.5 ${hitam ? "border-2 border-latar/40 text-latar opacity-35" : "bg-ungu text-latar shadow-[0_3px_0_#2E1B38]"}`}>
+      <span aria-hidden="true" className={`inline-flex size-9 items-center justify-center rounded-full text-isi ${hitam ? "" : "bg-jagung text-ungu"}`}>✓</span>
+      Selesai
+    </button>
+  );
+  const sisiPengasuh = <div className="flex flex-col items-center gap-2">{tombolLanjut}{tombolSelesai}</div>;
   const koreksiTerakhir = gigitanAkhir && !hitam && status !== "PEMANASAN" && (
     // Dua baris disengaja: kolom samping Suap di HP 360 px hanya ±95 px.
     <button type="button" onClick={() => setKoreksi(true)} aria-label={`Koreksi suapan terakhir: tadi ${gigitanAkhir.hasil}`}
@@ -175,10 +192,10 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
 
       {hiasan && <KenalanMakanan makanan={pilihan.menu} diterima={jumlahDiterima} suara={saklar.suara} />}
 
-      {/* Stop: pojok atas sisi jauh. Di panel bingkai, radius 24 = 40 (panel) − 16 (jarak tepi) supaya sudutnya sejajar. */}
-      <button type="button" title="Stop (Esc)" onClick={() => setKonfirmStop(true)}
-        className={`absolute top-4 ${sisiJauh} min-h-12 rounded-full border-2 px-4 text-kecil font-bold ${hitam ? "border-latar/40 text-latar opacity-35" : "border-ungu bg-permukaan"}`}>
-        ■ Stop
+      {/* Jeda: pojok atas sisi jauh. Di panel bingkai, radius 24 = 40 (panel) − 16 (jarak tepi) supaya sudutnya sejajar. */}
+      <button type="button" title="Jeda (Esc)" onClick={bukaJeda}
+        className={`absolute top-4 ${sisiJauh} inline-flex min-h-12 items-center gap-2 rounded-full pr-4 pl-1.5 text-kecil font-bold transition-transform active:translate-y-0.5 ${hitam ? "border-2 border-latar/40 text-latar opacity-35" : "bg-permukaan text-ungu shadow-[0_3px_0_var(--color-garis)] ring-2 ring-ungu/15"}`}>
+        <span aria-hidden="true" className={`inline-flex size-9 items-center justify-center rounded-full text-[11px] ${hitam ? "" : "bg-ungu-tint"}`}>❚❚</span> Jeda
       </button>
 
       {/* Pratinjau kamera: pojok atas sisi pengasuh. Video tetap terpasang (kamera jalan) walau disembunyikan di tahap 3. */}
@@ -211,9 +228,9 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
 
       {/* Baris bawah: [sisi kiri] Suap di tengah [sisi kanan]. Lanjut di sisi pengasuh, koreksi suapan di sisi jauh. */}
       <div className="absolute inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3">
-        <div className="flex justify-start">{kanan ? koreksiTerakhir : tombolLanjut}</div>
+        <div className={`flex ${kanan ? "justify-start" : "justify-center"}`}>{kanan ? koreksiTerakhir : sisiPengasuh}</div>
         <TombolSuap menilai={status === "MENILAI"} redup={hitam} onClick={() => tekan("suap")} />
-        <div className="flex justify-end">{kanan ? tombolLanjut : koreksiTerakhir}</div>
+        <div className={`flex ${kanan ? "justify-center" : "justify-end"}`}>{kanan ? sisiPengasuh : koreksiTerakhir}</div>
       </div>
 
       {/* Strip teks: di atas tombol bawah */}
@@ -243,10 +260,10 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
       )}
 
       {konfirmStop && !darurat && (
-        <LembarBawah judul="Akhiri makan sekarang?" tutup={() => setKonfirmStop(false)}>
+        <LembarBawah judul="Makan dijeda" tutup={lanjutMakan}>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Tombol className="sm:w-full" onClick={() => { setKonfirmStop(false); tekan("stop"); }}>Akhiri makan</Tombol>
-            <Tombol varian="kedua" className="sm:w-full" onClick={() => setKonfirmStop(false)}>Lanjut makan</Tombol>
+            <Tombol className="sm:w-full" onClick={lanjutMakan}>Lanjut makan</Tombol>
+            <Tombol varian="kedua" className="sm:w-full" onClick={() => akhiri("stop")}>Akhiri makan</Tombol>
           </div>
           <button type="button" onClick={() => setDarurat(true)}
             className="flex min-h-12 items-center justify-center gap-2 text-isi font-semibold text-jagung-tua underline-offset-4 hover:underline">
@@ -256,13 +273,25 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
         </LembarBawah>
       )}
 
+      {konfirmSelesai && (
+        <LembarBawah judul="Selesai makan?" tutup={batalSelesai}>
+          <p className="text-isi text-ungu-muda">
+            {jumlahDiterima > 0 ? `${jumlahDiterima} suapan diterima. Setelah ini isi catatan singkat.` : "Belum ada suapan diterima. Tidak apa-apa, coba lagi nanti."}
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Tombol className="sm:w-full" onClick={() => akhiri("stop")}>Ya, selesai</Tombol>
+            <Tombol varian="kedua" className="sm:w-full" onClick={batalSelesai}>Belum, lanjut makan</Tombol>
+          </div>
+        </LembarBawah>
+      )}
+
       {darurat && (
         <div role="alertdialog" aria-label="Darurat" className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-latar p-6 text-center text-ungu">
           <p className="max-w-[480px] font-judul text-judul font-bold">
             Jika anak tersedak dan tidak bisa bernapas, segera minta bantuan medis atau hubungi 119.
           </p>
           <a href="tel:119" className="inline-flex min-h-14 w-full max-w-[320px] items-center justify-center rounded-full bg-ungu px-5 text-tombol font-bold text-permukaan">Telepon 119</a>
-          <Tombol varian="teks" onClick={() => { setDarurat(false); setKonfirmStop(false); tekan("darurat"); }}>Tutup</Tombol>
+          <Tombol varian="teks" onClick={() => { setDarurat(false); akhiri("darurat"); }}>Tutup</Tombol>
         </div>
       )}
 
