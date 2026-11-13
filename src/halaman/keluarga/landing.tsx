@@ -4,6 +4,7 @@
 import { useRef, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router";
 import { DemoMeniru } from "../../karakter/demo-meniru.tsx";
+import { AdeganDenganLayar, AdeganSenang, AdeganTanpaLayar } from "../../karakter/adegan-landing.tsx";
 import { AngkaNaik, Muncul } from "../../komponen/muncul.tsx";
 import { bento, tombolHero, tombolUtama, wadahKeluarga } from "../../gaya/gaya.ts";
 import { kalimatTahap } from "./bantu.ts";
@@ -80,12 +81,12 @@ export function Landing() {
           </Muncul>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Adegan src="/aset/anak/adegan-menolak.webp" label="Tanpa layar" ikon={<IkonTangan />} tunda={0} dari="kiri"
+          <Adegan gambar={<AdeganTanpaLayar />} label="Tanpa layar" ikon={<IkonTangan />} tunda={0} dari="kiri"
             judul="Anak menutup mulut dan menoleh dari sendok."
-            alt="Ilustrasi: anak menutup mulut dengan kedua tangan dan menoleh dari sendok berisi nasi dan brokoli." />
-          <Adegan src="/aset/anak/adegan-nonton.webp" label="Dengan layar" ikon={<IkonJam />} tunda={150} dari="kanan"
+            alt="Ilustrasi: teman makan menutup mulut dan menoleh dari sendok berisi brokoli." />
+          <Adegan gambar={<AdeganDenganLayar />} label="Dengan layar" ikon={<IkonJam />} tunda={150} dari="kanan"
             judul="Mau makan, tapi matanya ke layar. Bisa sampai satu jam."
-            alt="Ilustrasi: anak menatap tablet di meja makan sementara sendok berisi nasi dan brokoli menunggu di samping." />
+            alt="Ilustrasi: teman makan menatap tablet sementara sendok berisi brokoli menunggu di piring." />
         </div>
       </section>
 
@@ -112,8 +113,7 @@ export function Landing() {
         <Muncul dari="skala">
           <figure className={`${bento} grid items-center gap-5 p-4 sm:grid-cols-[220px_1fr] sm:p-5`}>
             <div className="mx-auto aspect-square w-full max-w-[220px] overflow-hidden rounded-[20px] bg-jagung-muda">
-              <img src="/aset/anak/anak-tertawa.webp" width={512} height={512} loading="lazy" decoding="async"
-                alt="Ilustrasi: anak tertawa senang." className="block size-full translate-y-[4%]" />
+              <div role="img" aria-label="Ilustrasi: teman makan tertawa, dikelilingi stiker." className="size-full"><AdeganSenang /></div>
             </div>
             <figcaption className="flex flex-col gap-2 sm:pr-4">
               <p className="font-judul text-subjudul font-bold text-balance md:text-judul">Makan jadi momen yang ditunggu, bukan drama setiap hari.</p>
@@ -177,12 +177,12 @@ export function Landing() {
   );
 }
 
-function Adegan({ src, label, ikon, judul, alt, tunda, dari }: { src: string; label: string; ikon: ReactNode; judul: string; alt: string; tunda: number; dari: "kiri" | "kanan" }) {
+function Adegan({ gambar, label, ikon, judul, alt, tunda, dari }: { gambar: ReactNode; label: string; ikon: ReactNode; judul: string; alt: string; tunda: number; dari: "kiri" | "kanan" }) {
   return (
     <Muncul tunda={tunda} dari={dari}>
       <figure className={`${bento} flex flex-col gap-3 p-3`}>
         <div className="relative">
-          <img src={src} width={1200} height={800} loading="lazy" decoding="async" alt={alt} className="block h-auto w-full rounded-[20px]" />
+          <div role="img" aria-label={alt} className="overflow-hidden rounded-[20px]">{gambar}</div>
           <span className="absolute top-3 left-3 inline-flex min-h-10 items-center gap-2 rounded-full bg-permukaan px-4 text-kecil font-bold">
             {ikon} {label}
           </span>

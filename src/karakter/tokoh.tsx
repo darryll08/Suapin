@@ -21,7 +21,7 @@ function mulutSvg(id: string, cx: number, cy: number, w: number, m: number) {
     + `<path class="tokoh-g" d="${d}" fill="none" style="stroke-width:4"/>`;
 }
 
-type Tokoh = { id: IdTokoh; nama: string; ket: string; mulut: [cx: number, cy: number, lebar: number, maks: number]; badan: string };
+type Tokoh<I extends string = IdTokoh> = { id: I; nama: string; ket: string; mulut: [cx: number, cy: number, lebar: number, maks: number]; badan: string };
 
 export const TOKOH: Tokoh[] = [
   {
@@ -106,6 +106,26 @@ export const TOKOH: Tokoh[] = [
   },
 ];
 
+/** Tokoh khusus landing (tidak muncul di pilihan persiapan sesi). Gaya sama: garis ungu tua 5 px, pipi, mata bulat. */
+const TOKOH_LANDING: Tokoh<"ubi">[] = [
+  {
+    // Ubi ungu, warna logo Suapin. Kulit lavender supaya mata gelap tetap terlihat.
+    id: "ubi", nama: "Ubi", ket: "ubi ungu", mulut: [120, 156, 28, 0.9],
+    badan: `
+      <path class="tokoh-g" d="M120 50 C112 34 100 26 86 26 C88 40 100 50 116 54 Z" fill="#8FA36B"/>
+      <path class="tokoh-g" d="M122 52 C130 30 148 20 166 24 C162 42 146 54 126 56 Z" fill="#A3B57E"/>
+      <path class="tokoh-tipis" d="M120 54 C118 46 114 40 108 36 M124 54 C132 44 142 36 154 32" style="stroke-width:3"/>
+      <path class="tokoh-g" d="M118 232 C116 242 110 248 102 250" fill="none"/>
+      <path class="tokoh-g" d="M64 150 C46 146 38 160 46 172 C52 180 62 178 68 170" fill="#A98BBE"/>
+      <path class="tokoh-g" d="M176 150 C194 146 202 160 194 172 C188 180 178 178 172 170" fill="#A98BBE"/>
+      <path class="tokoh-g" d="M120 52 C162 52 184 88 186 132 C188 182 162 232 120 234 C78 232 52 182 54 132 C56 88 78 52 120 52 Z" fill="#A98BBE"/>
+      <path d="M150 70 C166 86 174 108 176 132" fill="none" stroke="#C7AFD6" stroke-width="7" stroke-linecap="round" opacity=".8"/>
+      ${[[80, 96, 0], [164, 172, 30], [90, 200, -20], [150, 214, 10], [72, 156, 60]].map(([x, y, r]) =>
+        `<path class="tokoh-tipis" d="M${x - 6} ${y} q6 -4 12 0" transform="rotate(${r} ${x} ${y})" style="stroke:#7E5E96;stroke-width:3"/>`).join("")}
+      ${alis(98, 108, 2)}${alis(142, 108, -2)}${mata(98, 130)}${mata(142, 130)}${pipi(80, 152)}${pipi(160, 152)}`,
+  },
+];
+
 export const TOKOH_AWAL: IdTokoh = "raka";
 const KUNCI_TOKOH = "tm_tokoh";
 
@@ -121,9 +141,10 @@ export function simpanTokoh(id: IdTokoh) {
 }
 
 /** Isi SVG satu tokoh dalam koordinat 240×260, untuk ditempel di dalam <svg>. */
-export function GambarTokoh({ id, mulut }: { id: IdTokoh; mulut: number }) {
-  const t = TOKOH.find((x) => x.id === id) ?? TOKOH[0];
+/** `kunci` membedakan clipPath bila tokoh yang sama tampil lebih dari sekali di satu halaman. */
+export function GambarTokoh({ id, mulut, kunci }: { id: IdTokoh | "ubi"; mulut: number; kunci?: string }) {
+  const t = ([...TOKOH, ...TOKOH_LANDING] as Tokoh<string>[]).find((x) => x.id === id) ?? TOKOH[0];
   const [cx, cy, w, maks] = t.mulut;
   const m = Math.min(1, Math.max(0, mulut)) * maks;
-  return <g dangerouslySetInnerHTML={{ __html: t.badan + mulutSvg(t.id, cx, cy, w, m) }} />;
+  return <g dangerouslySetInnerHTML={{ __html: t.badan + mulutSvg(kunci ?? t.id, cx, cy, w, m) }} />;
 }

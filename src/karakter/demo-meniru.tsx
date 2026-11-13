@@ -1,10 +1,10 @@
-// Pemilik: B (Satya). Demo hero landing: anak (ilustrasi AI + mulut SVG) dan karakter Suapin bergerak dari rekaman sinyal
+// Pemilik: B (Satya). Demo hero landing: anak (tokoh Raka, besar) dan teman makan (tokoh Ubi, kecil di orbit, khusus landing), keduanya SVG dari tokoh.tsx, bergerak dari rekaman sinyal
 // yang sama (bersama/kontrak/contoh/rekaman-sinyal.json, rekaman buatan), jadi pengunjung melihat karakter meniru mulut.
 // Tidak memakai kamera atau MediaPipe. Animasi hanya berjalan saat terlihat di layar.
 import { useEffect, useRef, useState } from "react";
 import type { Pose } from "../../bersama/kontrak/sesi.ts";
-import { Teman } from "./teman.tsx";
-import { Anak } from "./anak.tsx";
+import { GambarTokoh } from "./tokoh.tsx";
+import "./karakter.css";
 
 type Sampel = { t: number; mulut: number };
 const REKAMAN = import.meta.glob<{ sinyal: Sampel[] }>("../../bersama/kontrak/contoh/rekaman-sinyal.json", { import: "default" });
@@ -58,15 +58,21 @@ export function DemoMeniru({ className = "" }: { className?: string }) {
         <circle cx="200" cy="200" r="160" fill="none" stroke="var(--color-garis)" strokeWidth="1.5" strokeDasharray="4 8" />
       </svg>
       <div className="absolute inset-[12%] overflow-hidden rounded-full bg-jagung-muda">
-        <Teman mulut={mulut} merayakan={pose === "merayakan"} className="translate-y-[5%]" />
+        <svg viewBox="0 0 240 260" className="block size-full translate-y-[9%]" aria-hidden="true">
+          <GambarTokoh id="raka" mulut={mulut} kunci="hero-anak" />
+        </svg>
       </div>
 
-      {/* wajah anak (ilustrasi) di orbit, mulutnya digerakkan sinyal yang sama */}
+      {/* teman makan (Ubi) di orbit: mulutnya meniru mulut anak dari sinyal yang sama, melompat saat suapan diterima */}
       <figure className="absolute bottom-[2%] left-[0%] flex w-[30%] flex-col items-center gap-1">
         <div className="aspect-square w-full overflow-hidden rounded-full border-4 border-permukaan bg-ungu-tint shadow-kartu">
-          <Anak mulut={mulut} className="translate-y-[6%] scale-[1.12]" />
+          <div key={pose === "merayakan" ? "rayakan" : "biasa"} className={`size-full ${pose === "merayakan" ? "karakter-lompat" : ""}`}>
+            <svg viewBox="0 0 240 260" className="block size-full translate-y-[8%] scale-[1.1]" aria-hidden="true">
+              <GambarTokoh id="ubi" mulut={mulut} kunci="hero-teman" />
+            </svg>
+          </div>
         </div>
-        <figcaption className="rounded-full bg-permukaan px-3 py-1 text-kecil font-semibold shadow-kartu">Anak</figcaption>
+        <figcaption className="rounded-full bg-permukaan px-3 py-1 text-kecil font-semibold whitespace-nowrap shadow-kartu">Teman makan</figcaption>
       </figure>
 
       <Label className="top-[6%] right-[0%]">Meniru mulut anak</Label>
