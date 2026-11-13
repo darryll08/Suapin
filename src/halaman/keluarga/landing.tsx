@@ -163,15 +163,12 @@ export function Landing() {
         </section>
       </Muncul>
 
-      <footer className="flex flex-col gap-3 border-t border-garis/60 pt-6 text-mini text-ungu-muda">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <span>Prototipe lomba LOGICODIX 2026. Bukan alat diagnosis.</span>
-          <button type="button" className="min-h-12 underline-offset-4 hover:underline"
-            onClick={() => void api.demoMasukDika().then(() => pindah("/beranda"))}>
-            Mode demo: keluarga Dika
-          </button>
-        </div>
-        <span>Klip suara dan skrining masih draf. Deteksi diuji pada orang dewasa.</span>
+      <footer className="flex items-center justify-between gap-2 border-t border-garis/60 pt-4 text-kecil text-ungu-muda">
+        <span>Suapin · 2026</span>
+        <button type="button" className="min-h-12 underline-offset-4 hover:underline"
+          onClick={() => void api.demoMasukDika().then(() => pindah("/beranda"))}>
+          Coba demo
+        </button>
       </footer>
     </main>
   );

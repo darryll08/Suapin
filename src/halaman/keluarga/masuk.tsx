@@ -32,7 +32,6 @@ export function Masuk() {
 
         <div className="flex flex-col gap-1">
           <Link to="/mulai" className={`${tombolTeks} -ml-3 self-start`}>Belum punya akun? Mulai gratis</Link>
-          <p className="text-kecil text-ungu-muda">Akun dokter dan klinik dibuat oleh admin Suapin setelah klinik bekerja sama.</p>
         </div>
 
         <AkunDemo kembali={kembali} />
@@ -77,13 +76,13 @@ function FormMasuk({ kembali }: { kembali: string }) {
   );
 }
 
-type Akun = { id: "keluarga_dika" | "dokter_demo" | "klinik_demo" | "admin_demo"; ke: string; peran: string; nama: string; ket: string; ikon: ReactNode };
+type Akun = { id: "keluarga_dika" | "dokter_demo" | "klinik_demo" | "admin_demo"; ke: string; peran: string; nama: string; ikon: ReactNode };
 
 const AKUN_DEMO: Akun[] = [
-  { id: "keluarga_dika", ke: "/beranda", peran: "Keluarga", nama: "keluarga@demo.test · Dika (4 th)", ket: "Beranda, sesi makan, laporan", ikon: <IkonRumah /> },
-  { id: "dokter_demo", ke: "/dokter", peran: "Dokter", nama: "dokter@demo.test · dr. Demo", ket: "Anak yang dipegang, resep jadi aturan", ikon: <IkonStetoskop /> },
-  { id: "klinik_demo", ke: "/klinik", peran: "Klinik", nama: "klinik@demo.test", ket: "Dokter, pasien per dokter, jadwal", ikon: <IkonGedung /> },
-  { id: "admin_demo", ke: "/admin", peran: "Admin", nama: "admin@demo.test · Operator Suapin", ket: "Daftarkan klinik dan dokter", ikon: <IkonGerigi /> },
+  { id: "keluarga_dika", ke: "/beranda", peran: "Keluarga", nama: "keluarga@demo.test · Dika (4 th)", ikon: <IkonRumah /> },
+  { id: "dokter_demo", ke: "/dokter", peran: "Dokter", nama: "dokter@demo.test · dr. Demo", ikon: <IkonStetoskop /> },
+  { id: "klinik_demo", ke: "/klinik", peran: "Klinik", nama: "klinik@demo.test", ikon: <IkonGedung /> },
+  { id: "admin_demo", ke: "/admin", peran: "Admin", nama: "admin@demo.test · Operator Suapin", ikon: <IkonGerigi /> },
 ];
 
 function AkunDemo({ kembali }: { kembali: string }) {
@@ -111,10 +110,7 @@ function AkunDemo({ kembali }: { kembali: string }) {
 
   return (
     <section className={`${bento} masuk flex flex-col gap-4`} aria-labelledby="judul-akun-demo">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 id="judul-akun-demo" className="font-judul text-subjudul font-bold">Akun demo</h2>
-        <span className="rounded-full bg-jagung-muda px-3 py-1 text-kecil font-semibold text-jagung-tua">Mode demo lomba</span>
-      </div>
+      <h2 id="judul-akun-demo" className="font-judul text-subjudul font-bold">Akun demo</h2>
       <ul className="flex flex-col gap-2">
         {AKUN_DEMO.map((a) => (
           <li key={a.id}>
@@ -124,7 +120,6 @@ function AkunDemo({ kembali }: { kembali: string }) {
               <span className="flex min-w-0 flex-1 flex-col">
                 <span className="text-isi font-bold">{a.peran}</span>
                 <span className="text-kecil break-words text-ungu-muda">{a.nama}</span>
-                <span className="text-kecil text-ungu-muda">{a.ket}</span>
               </span>
               <span className="shrink-0 rounded-full bg-ungu px-4 py-2 text-kecil font-bold text-permukaan transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none">
                 {sibuk === a.id ? "…" : "Masuk"}
@@ -134,7 +129,6 @@ function AkunDemo({ kembali }: { kembali: string }) {
         ))}
       </ul>
       {galat && <PesanGalat pesan={galat} />}
-      <p className="text-kecil text-ungu-muda">Satu klik langsung masuk. Daftar ini hanya muncul saat server berjalan dengan DEMO=1.</p>
     </section>
   );
 }
