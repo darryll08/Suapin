@@ -23,12 +23,35 @@ function Tokoh({ id, x, y, skala = 1, putar = 0, cermin = false, mulut = 0, tutu
     <g transform={`translate(${x} ${y}) scale(${cermin ? -skala : skala} ${skala}) rotate(${putar} 120 120) translate(${cermin ? -240 : 0} 0)`}>
       <GambarTokoh id={id} mulut={mulut} kunci={`adegan-${id}`} />
       {tutupMulut && (
-        // Dua tangan menutup mulut (warna kulit tokoh).
-        <g fill="#F7D5BC" stroke={GARIS} strokeWidth={5} strokeLinejoin="round">
-          <ellipse cx={104} cy={156} rx={24} ry={18} transform="rotate(-18 104 156)" />
-          <ellipse cx={136} cy={156} rx={24} ry={18} transform="rotate(18 136 156)" />
+        // Dua lengan naik dari badan, tangan kecil bertemu di depan mulut (warna lengan baju + kulit tokoh).
+        <g strokeLinecap="round" strokeLinejoin="round">
+          <Lengan dari={[84, 238]} ke={[100, 168]} />
+          <Lengan dari={[156, 238]} ke={[142, 170]} />
+          <Telapak x={110} y={158} putar={-12} />
+          <Telapak x={131} y={161} putar={12} cermin />
         </g>
       )}
+    </g>
+  );
+}
+
+/** Lengan baju dari badan ke pergelangan, melengkung keluar. */
+function Lengan({ dari: [x1, y1], ke: [x2, y2] }: { dari: [number, number]; ke: [number, number] }) {
+  const d = `M${x1} ${y1} Q${(x1 + x2) / 2 + (x1 < 120 ? -16 : 16)} ${(y1 + y2) / 2 + 6} ${x2} ${y2}`;
+  return (
+    <g fill="none">
+      <path d={d} stroke={GARIS} strokeWidth={25} />
+      <path d={d} stroke="#F2B54A" strokeWidth={15} />
+    </g>
+  );
+}
+
+/** Tangan kecil polos (bentuk sarung tangan) menghadap ke tengah, ibu jari menyembul di atas. (x, y) = pusat. */
+function Telapak({ x, y, putar, cermin = false }: { x: number; y: number; putar: number; cermin?: boolean }) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${putar}) scale(${cermin ? -1 : 1} 1)`} stroke={GARIS} strokeWidth={4.5} fill="#F7D5BC">
+      <path d="M-5 -10 C-6 -18 4 -19 5 -11" />
+      <path d="M-15 0 C-15 -8 -9 -11 -1 -11 L8 -11 C15 -11 17 -5 15 -1 C17 3 15 10 8 10 L-3 11 C-11 11 -15 7 -15 0 Z" />
     </g>
   );
 }
