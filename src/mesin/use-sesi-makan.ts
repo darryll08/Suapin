@@ -42,12 +42,16 @@ export function useSesiMakan(o: OpsiSesiMakan) {
   const renderTerakhir = useRef(0);
   const sudahMulai = useRef(false);
   const hidup = useRef(true);
+  const elVideo = useRef<HTMLVideoElement | null>(null); // disimpan sendiri: ref <video> sudah null saat unmount
 
   const berhenti = useCallback(() => {
     window.clearInterval(interval.current);
     sumber.current?.berhenti();
     sumber.current = null;
     kamera.current = null;
+    // Jaring pengaman: semua track yang masih menempel di <video> dimatikan, supaya kamera tidak tetap menyala.
+    const el = elVideo.current;
+    if (el?.srcObject instanceof MediaStream) { el.srcObject.getTracks().forEach((t) => t.stop()); el.srcObject = null; }
   }, []);
 
   const terapkan = useCallback((perintah: Perintah[]) => {
@@ -83,6 +87,7 @@ export function useSesiMakan(o: OpsiSesiMakan) {
     sudahMulai.current = true;
     const { aturan, sisiPengasuh, sumber: jenis, video } = opsi.current;
     const videoEl = video.current;
+    elVideo.current = videoEl;
     const ambang = bacaAmbang();
     konteks.current = {
       aturan,

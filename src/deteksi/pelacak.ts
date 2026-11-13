@@ -78,7 +78,15 @@ export async function mulaiPelacak(
   video.srcObject = stream;
   video.muted = true;
   video.playsInline = true;
-  await video.play();
+  try {
+    await video.play();
+  } catch (e) {
+    // play() bisa ditolak di HP (mis. AbortError): matikan kamera, jangan biarkan lampu kamera menyala tanpa pemilik.
+    stream.getTracks().forEach((t) => t.stop());
+    if (video.srcObject === stream) video.srcObject = null;
+    landmarker.close();
+    throw new Error("Kamera gagal diputar. Muat ulang halaman.", { cause: e });
+  }
 
   let jalan = true;
   let terakhir = -Infinity;
