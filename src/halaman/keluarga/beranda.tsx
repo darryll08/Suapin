@@ -1,7 +1,6 @@
 // Pemilik: B (Satya). Beranda `/beranda` (B3.4, UI UX 10.6), tata letak bento (inspo 11 Nov):
-// kartu hero tahap + Mulai makan → angka minggu ini + cincin makanan baru → grafik pil 7 hari dengan stiker.
+// kartu hero tahap + Mulai makan → angka minggu ini + cincin hari makan → grafik pil 7 hari dengan stiker.
 import { Link, useSearchParams } from "react-router";
-import { cariMakanan } from "../../../bersama/konten/makanan.ts";
 import { CincinProgres, GrafikPil, KartuAngka, KartuHero } from "../../komponen/beranda.tsx";
 import { Memuat, PesanGalat } from "../../komponen/dasar.tsx";
 import { bento, tombolHero } from "../../gaya/gaya.ts";
@@ -48,7 +47,7 @@ export function Beranda() {
               <p className="text-isi">Sesi pertama hari ini? Siapkan makanan, lalu tekan Mulai makan.</p>
             </section>
           ) : (
-            <Ringkas sesi={lap.sesi} stiker={lap.stiker_minggu_ini} paparan={lap.paparan} panggilan={c.panggilan} />
+            <Ringkas sesi={lap.sesi} stiker={lap.stiker_minggu_ini} panggilan={c.panggilan} />
           )}
 
         </div>
@@ -57,25 +56,20 @@ export function Beranda() {
   );
 }
 
-function Ringkas({ sesi, stiker, paparan, panggilan }: {
+function Ringkas({ sesi, stiker, panggilan }: {
   sesi: { tanggal: string; diterima: number; ditolak: number }[];
   stiker: boolean[];
-  paparan: { makanan: string; jumlah: number; target: number }[];
   panggilan: string;
 }) {
   const minggu = totalPerHari(sesi, tanggalMingguIni());
   const hariIni = tanggalLokal(new Date());
   const totalMinggu = minggu.reduce((a, h) => a + h.diterima, 0);
-  const p = paparan[0];
   return (
     <>
       <div className="grid grid-cols-2 gap-4">
         <KartuAngka label="Suapan diterima" angka={totalMinggu} ket="minggu ini" />
-        {p ? (
-          <CincinProgres label={cariMakanan(p.makanan).nama} nilai={p.jumlah} target={p.target} />
-        ) : (
-          <KartuAngka label="Hari makan" angka={minggu.filter((h) => h.ada).length} satuan="/7" ket="minggu ini" />
-        )}
+        {/* Hari makan, bukan pelacak satu makanan baru: menu sekarang beragam (keputusan Satya 13 Nov). */}
+        <CincinProgres label="Hari makan" nilai={minggu.filter((h) => h.ada).length} target={7} ket="minggu ini" />
       </div>
       <section className={`${bento} flex flex-col gap-3`}>
         <h2 className="font-judul text-subjudul font-bold">Minggu ini</h2>

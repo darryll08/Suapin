@@ -94,14 +94,14 @@ export function GrafikPil({ batang, judul, tampilDitolak = true, tinggi = 140 }:
 }
 
 /** Cincin progres (mis. makanan baru dicoba 4/10). */
-export function CincinProgres({ nilai, target, label }: { nilai: number; target: number; label: string }) {
+export function CincinProgres({ nilai, target, label, ket = "kali dicoba" }: { nilai: number; target: number; label: string; ket?: string }) {
   const r = 34, k = 2 * Math.PI * r;
   const isi = Math.min(1, nilai / target);
   return (
     <section className={`${bento} flex flex-col gap-2`}>
       <p className="text-kecil font-semibold text-ungu-muda">{label}</p>
       <div className="flex items-center gap-3">
-        <svg viewBox="0 0 84 84" className="size-21 shrink-0 -rotate-90" role="img" aria-label={`${label}: ${nilai} dari ${target} kali`}>
+        <svg viewBox="0 0 84 84" className="size-21 shrink-0 -rotate-90" role="img" aria-label={`${label}: ${nilai} dari ${target}, ${ket}`}>
           <circle cx="42" cy="42" r={r} fill="none" stroke="var(--color-ungu-tint)" strokeWidth="10" />
           <circle cx="42" cy="42" r={r} fill="none" stroke="var(--color-ungu)" strokeWidth="10" strokeLinecap="round"
             strokeDasharray={`${k * isi} ${k}`} />
@@ -110,7 +110,7 @@ export function CincinProgres({ nilai, target, label }: { nilai: number; target:
           {Math.min(nilai, target)}<span className="text-isi text-ungu-muda">/{target}</span>
         </p>
       </div>
-      <p className="text-kecil text-ungu-muda">kali dicoba</p>
+      <p className="text-kecil text-ungu-muda">{ket}</p>
     </section>
   );
 }
