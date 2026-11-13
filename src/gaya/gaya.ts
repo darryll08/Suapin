@@ -4,16 +4,16 @@ const fokus =
   "outline-none focus-visible:ring-4 focus-visible:ring-jagung focus-visible:ring-offset-2 focus-visible:ring-offset-latar";
 
 const dasarTombol =
-  `group inline-flex items-center justify-center gap-2 rounded-tombol px-5 font-judul text-tombol font-bold ` +
+  `group inline-flex items-center justify-center gap-2 rounded-full px-5 font-judul text-tombol font-bold ` +
   `transition-[transform,background-color,box-shadow] duration-200 ease-standar hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] ` +
   `motion-reduce:transform-none disabled:hover:translate-y-0 disabled:hover:shadow-none ` +
   `disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 ${fokus}`;
 
-/** Aksi utama: ungu, tinggi ≥ 56 px, lebar penuh di HP. */
-export const tombolUtama = `${dasarTombol} min-h-14 w-full sm:w-auto bg-ungu text-permukaan hover:bg-ungu-muda hover:shadow-[0_10px_24px_rgb(75_46_90/0.28)]`;
+/** Semua tombol berbentuk pil (audit 13 Nov). Aksi utama: ungu, tinggi ≥ 56 px, lebar penuh di HP. */
+export const tombolUtama = `${dasarTombol} min-h-14 w-full sm:w-auto bg-ungu text-permukaan hover:bg-ungu-muda hover:shadow-angkat`;
 
 /** Aksi kedua: garis ungu di atas permukaan. */
-export const tombolKedua = `${dasarTombol} min-h-14 w-full sm:w-auto border-2 border-ungu bg-permukaan text-ungu hover:bg-ungu-tint hover:shadow-[0_10px_24px_rgb(75_46_90/0.16)]`;
+export const tombolKedua = `${dasarTombol} min-h-14 w-full sm:w-auto border-2 border-ungu bg-permukaan text-ungu hover:bg-ungu-tint hover:shadow-angkat-tipis`;
 
 /** Aksi teks: tetap ≥ 48 px supaya mudah disentuh. */
 export const tombolTeks = `${dasarTombol} min-h-12 px-3 text-ungu underline-offset-4 hover:translate-y-0 hover:underline hover:decoration-jagung hover:decoration-2`;
@@ -22,7 +22,8 @@ export const isian =
   `block min-h-12 w-full rounded-isian border-2 border-garis bg-permukaan px-4 text-isi text-ungu ` +
   `placeholder:text-ungu-muda focus:border-ungu ${fokus} aria-invalid:border-jagung`;
 
-export const kartu = "rounded-kartu border border-garis/60 bg-permukaan p-5 shadow-kartu";
+/** Kartu biasa = tampilan bento (audit 13 Nov: satu gaya kartu di semua halaman). */
+export const kartu = "rounded-bento border border-garis/50 bg-permukaan p-5";
 
 /** Kartu bento: radius besar, garis tipis kerupuk, tanpa bayangan (bayangan hanya untuk elemen yang terangkat). */
 export const bento = "rounded-bento border border-garis/50 bg-permukaan p-5";

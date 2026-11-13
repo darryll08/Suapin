@@ -48,7 +48,7 @@ export function Admin() {
         </div>
       </header>
 
-      <section className="flex flex-col gap-4 rounded-[28px] bg-ungu p-5 text-permukaan sm:p-6">
+      <section className="flex flex-col gap-4 rounded-bento bg-ungu p-5 text-permukaan sm:p-6">
         <div className="flex flex-col gap-1">
           <h1 className="font-judul text-judul font-bold">Akun klinik</h1>
           <p className="text-isi text-latar/85">
@@ -162,8 +162,8 @@ function KartuKlinik({ klinik, selesai, ulang }: { klinik: Klinik; selesai: (s: 
           <span className="text-kecil [overflow-wrap:anywhere] text-ungu-muda">{[klinik.kota, klinik.email ?? "Belum punya akun klinik"].filter(Boolean).join(" · ")}</span>
         </div>
         <span className="flex shrink-0 gap-1.5">
-          <span className="flex flex-col items-center rounded-[14px] bg-latar px-3 py-1.5 leading-tight"><span className="font-judul text-subjudul font-bold tabular-nums">{klinik.dokter.length}</span><span className="text-[12px] text-ungu-muda">dokter</span></span>
-          <span className="flex flex-col items-center rounded-[14px] bg-latar px-3 py-1.5 leading-tight"><span className="font-judul text-subjudul font-bold tabular-nums">{klinik.jumlah_pasien}</span><span className="text-[12px] text-ungu-muda">pasien</span></span>
+          <span className="flex flex-col items-center rounded-isian bg-latar px-3 py-1.5 leading-tight"><span className="font-judul text-subjudul font-bold tabular-nums">{klinik.dokter.length}</span><span className="text-mini text-ungu-muda">dokter</span></span>
+          <span className="flex flex-col items-center rounded-isian bg-latar px-3 py-1.5 leading-tight"><span className="font-judul text-subjudul font-bold tabular-nums">{klinik.jumlah_pasien}</span><span className="text-mini text-ungu-muda">pasien</span></span>
         </span>
       </div>
       {klinik.email && <button type="button" disabled={sibuk} onClick={() => void sandiKlinik()} className={`${tombolTeks} -ml-3 self-start`}>

@@ -13,11 +13,11 @@ import { api } from "./data.ts";
 const fokus = "outline-none focus-visible:ring-4 focus-visible:ring-jagung focus-visible:ring-offset-2 focus-visible:ring-offset-latar";
 const tombolPilUngu =
   `group inline-flex min-h-14 items-center justify-between gap-3 rounded-full bg-ungu pl-6 pr-2 font-judul text-isi font-bold whitespace-nowrap text-latar sm:text-tombol ` +
-  `transition-[transform,box-shadow,background-color] duration-200 ease-standar hover:-translate-y-0.5 hover:bg-ungu-muda hover:shadow-[0_10px_24px_rgb(75_46_90/0.28)] ` +
+  `transition-[transform,box-shadow,background-color] duration-200 ease-standar hover:-translate-y-0.5 hover:bg-ungu-muda hover:shadow-angkat ` +
   `active:translate-y-0 active:scale-[0.97] motion-reduce:transform-none ${fokus}`;
 const tombolPilGaris =
   `inline-flex min-h-14 items-center justify-center rounded-full border-2 border-ungu px-8 font-judul text-isi font-bold text-ungu sm:text-tombol ` +
-  `transition-[transform,box-shadow,background-color] duration-200 ease-standar hover:-translate-y-0.5 hover:bg-ungu-tint hover:shadow-[0_10px_24px_rgb(75_46_90/0.16)] ` +
+  `transition-[transform,box-shadow,background-color] duration-200 ease-standar hover:-translate-y-0.5 hover:bg-ungu-tint hover:shadow-angkat-tipis ` +
   `active:translate-y-0 active:scale-[0.97] motion-reduce:transform-none ${fokus}`;
 
 export function Landing() {
@@ -34,7 +34,7 @@ export function Landing() {
       <div className="flex flex-col">
         <header className="flex items-center justify-between pt-3">
           <button type="button" onClick={ketukLogo} className="inline-flex min-h-12 items-center gap-2 font-judul text-subjudul font-bold">
-            <img src="/ikon/suapin-ikon-ungu-putih.svg" alt="" className="size-9 rounded-[10px]" />
+            <img src="/ikon/suapin-ikon-ungu-putih.svg" alt="" className="size-9 rounded-isian" />
             Suapin
           </button>
           <Link to="/masuk" className="inline-flex min-h-12 items-center rounded-full px-4 text-isi font-semibold text-ungu underline-offset-4 hover:underline hover:decoration-jagung hover:decoration-2">Masuk</Link>
@@ -43,7 +43,7 @@ export function Landing() {
         {/* 1. Hook */}
         <section className="grid items-center gap-8 pt-6 md:grid-cols-[1.1fr_1fr] md:pt-12">
           <div className="flex flex-col gap-5">
-            <h1 className="masuk font-judul text-[34px] leading-[42px] font-bold text-balance md:text-[52px] md:leading-[60px]">
+            <h1 className="masuk font-judul text-besar font-bold text-balance md:text-hero">
               Makan jadi giliran main,{" "}
               <span className="relative inline-block text-jagung-tua">
                 bukan tontonan.
@@ -71,13 +71,13 @@ export function Landing() {
       <section className="flex flex-col gap-8">
         <div className="grid items-end gap-6 md:grid-cols-[1.3fr_1fr]">
           <Muncul dari="kiri" className="flex flex-col gap-4">
-            <h2 className="font-judul text-judul font-bold md:text-[34px] md:leading-[42px]">Tanpa layar menolak, dengan layar tidak memperhatikan.</h2>
+            <h2 className="font-judul text-judul font-bold md:text-besar">Tanpa layar menolak, dengan layar tidak memperhatikan.</h2>
             <p className="text-isi text-ungu-muda">Dokter meminta makan tanpa layar, tapi di rumah tidak ada penggantinya.</p>
           </Muncul>
           <Muncul dari="kanan" tunda={150} className={`${bento} flex flex-col gap-1`}>
-            <p className="font-judul text-[34px] leading-10 font-bold tabular-nums">15–<AngkaNaik dari={15} ke={60} />%</p>
+            <p className="font-judul text-besar font-bold tabular-nums">15–<AngkaNaik dari={15} ke={60} />%</p>
             <p className="text-isi">anak prasekolah mengalami kesulitan makan, menurut berbagai studi di Indonesia.</p>
-            <p className="text-[13px] text-ungu-muda">Angka berbeda karena definisinya berbeda. Sumber: kajian pustaka, repositori UKWMS.</p>
+            <p className="text-mini text-ungu-muda">Angka berbeda karena definisinya berbeda. Sumber: kajian pustaka, repositori UKWMS.</p>
           </Muncul>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -93,7 +93,7 @@ export function Landing() {
       {/* 3. Cara kerja */}
       <section className="flex flex-col gap-8">
         <Muncul className="mx-auto flex max-w-[640px] flex-col gap-3 text-center">
-          <h2 className="font-judul text-judul font-bold md:text-[34px] md:leading-[42px]">Layar dipakai untuk makan bareng, bukan untuk ditonton.</h2>
+          <h2 className="font-judul text-judul font-bold md:text-besar">Layar dipakai untuk makan bareng, bukan untuk ditonton.</h2>
         </Muncul>
         <ol className="grid gap-4 md:grid-cols-3">
           {[
@@ -103,7 +103,7 @@ export function Landing() {
           ].map(([n, judul, isi], i) => (
             <li key={n}>
               <Muncul tunda={i * 150} className={`${bento} flex h-full flex-col gap-2`}>
-                <span className="font-judul text-[34px] leading-10 font-bold text-jagung-tua tabular-nums">{n}</span>
+                <span className="font-judul text-besar font-bold text-jagung-tua tabular-nums">{n}</span>
                 <h3 className="font-judul text-subjudul font-bold">{judul}</h3>
                 <p className="text-isi text-ungu-muda">{isi}</p>
               </Muncul>
@@ -112,7 +112,7 @@ export function Landing() {
         </ol>
         <Muncul dari="skala">
           <figure className={`${bento} grid items-center gap-5 p-4 sm:grid-cols-[220px_1fr] sm:p-5`}>
-            <div className="mx-auto aspect-square w-full max-w-[220px] overflow-hidden rounded-[20px] bg-jagung-muda">
+            <div className="mx-auto aspect-square w-full max-w-[220px] overflow-hidden rounded-kartu bg-jagung-muda">
               <div role="img" aria-label="Ilustrasi: teman makan tertawa, dikelilingi stiker." className="size-full"><AdeganSenang /></div>
             </div>
             <figcaption className="flex flex-col gap-2 sm:pr-4">
@@ -129,13 +129,13 @@ export function Landing() {
       {/* 4. Lepas layar bertahap */}
       <section className="flex flex-col gap-8">
         <Muncul className="mx-auto flex max-w-[640px] flex-col gap-3 text-center">
-          <h2 className="font-judul text-judul font-bold md:text-[34px] md:leading-[42px]">Tujuannya justru supaya layar tidak dibutuhkan lagi.</h2>
+          <h2 className="font-judul text-judul font-bold md:text-besar">Tujuannya justru supaya layar tidak dibutuhkan lagi.</h2>
         </Muncul>
         <ol className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {[1, 2, 3, 4].map((t, i) => (
             <li key={t}>
               <Muncul dari="skala" tunda={i * 120} className={`flex h-full flex-col gap-2 rounded-bento border border-garis/50 p-5 ${t === 3 ? "bg-black text-latar" : t === 4 ? "bg-ungu-tint" : "bg-permukaan"}`}>
-                <span className={`font-judul text-[34px] leading-10 font-bold tabular-nums ${t === 3 ? "text-jagung" : "text-ungu"}`}>{t}</span>
+                <span className={`font-judul text-besar font-bold tabular-nums ${t === 3 ? "text-jagung" : "text-ungu"}`}>{t}</span>
                 <p className={`text-kecil ${t === 3 ? "text-latar/90" : "text-ungu-muda"}`}>{kalimatTahap(t, "anak", "Pengasuh")}</p>
               </Muncul>
             </li>
@@ -150,7 +150,7 @@ export function Landing() {
       <Muncul dari="skala">
         <section className="grid gap-6 rounded-bento bg-ungu p-6 text-latar md:grid-cols-[1.4fr_1fr] md:p-10">
           <div className="flex flex-col gap-3">
-            <h2 className="font-judul text-judul font-bold md:text-[34px] md:leading-[42px]">Dokter menulis aturan seperti biasa. Sesi di rumah langsung mengikuti.</h2>
+            <h2 className="font-judul text-judul font-bold md:text-besar">Dokter menulis aturan seperti biasa. Sesi di rumah langsung mengikuti.</h2>
             <p className="text-isi text-latar/90">AI mengubah teks dokter menjadi aturan sesi dalam rentang aman. Dokter memeriksa dan mengonfirmasi sebelum aturan dipakai.</p>
           </div>
           <div className="flex flex-col justify-end gap-3">
@@ -163,7 +163,7 @@ export function Landing() {
         </section>
       </Muncul>
 
-      <footer className="flex flex-col gap-3 border-t border-garis/60 pt-6 text-[13px] text-ungu-muda">
+      <footer className="flex flex-col gap-3 border-t border-garis/60 pt-6 text-mini text-ungu-muda">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span>Prototipe lomba LOGICODIX 2026. Bukan alat diagnosis.</span>
           <button type="button" className="min-h-12 underline-offset-4 hover:underline"
@@ -182,7 +182,7 @@ function Adegan({ gambar, label, ikon, judul, alt, tunda, dari }: { gambar: Reac
     <Muncul tunda={tunda} dari={dari}>
       <figure className={`${bento} flex flex-col gap-3 p-3`}>
         <div className="relative">
-          <div role="img" aria-label={alt} className="overflow-hidden rounded-[20px]">{gambar}</div>
+          <div role="img" aria-label={alt} className="overflow-hidden rounded-kartu">{gambar}</div>
           <span className="absolute top-3 left-3 inline-flex min-h-10 items-center gap-2 rounded-full bg-permukaan px-4 text-kecil font-bold">
             {ikon} {label}
           </span>

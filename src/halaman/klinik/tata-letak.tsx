@@ -14,8 +14,9 @@ import { pesan } from "./format"
 import "./klinik.css"
 
 /** Kartu utama dan ubin di dalam kartu. */
-export const panel = "rounded-[28px] border border-garis/50 bg-permukaan p-5"
-export const ubin = "rounded-[20px] bg-latar p-4"
+import { bento } from "../../gaya/gaya.ts";
+export const panel = bento;
+export const ubin = "rounded-kartu bg-latar p-4"
 const fokus = "outline-none focus-visible:ring-4 focus-visible:ring-jagung"
 
 export function TataLetakPanel({ peran, nama, sub, children }: {
@@ -43,7 +44,7 @@ export function TataLetakPanel({ peran, nama, sub, children }: {
           <Avatar nama={nama} kecil />
           <span className="flex min-w-0 flex-col leading-tight">
             <span className="truncate text-kecil font-bold">{nama}</span>
-            {sub && <span className="truncate text-[12px] text-ungu-muda">{sub}</span>}
+            {sub && <span className="truncate text-mini text-ungu-muda">{sub}</span>}
           </span>
         </span>}
         <button type="button" disabled={sibuk} onClick={() => void keluar()} title="Keluar"
@@ -85,7 +86,7 @@ export function Angka({ label, nilai, ket, ikon, sorot = false }: { label: strin
 export function KartuProfil({ nama, sub, kiri, kanan }: {
   nama: string; sub?: string; kiri: { nilai: ReactNode; label: string }; kanan: { nilai: ReactNode; label: string }
 }) {
-  return <section className="flex flex-col justify-center rounded-[28px] bg-ungu p-5 text-permukaan sm:p-6" aria-label={`Profil ${nama}`}>
+  return <section className="flex flex-col justify-center rounded-bento bg-ungu p-5 text-permukaan sm:p-6" aria-label={`Profil ${nama}`}>
     <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3">
       <Sisi s={kiri} rata="items-start text-left" />
       <span aria-hidden="true" className="inline-flex size-20 items-center justify-center rounded-full bg-ungu-muda font-judul text-tampilan font-bold ring-4 ring-latar/15 sm:size-24">
@@ -142,8 +143,8 @@ export const chip = (aktif: boolean) =>
 
 /** Lencana tanggal ala kalender: hari kecil di atas, tanggal besar di bawah. */
 export function LencanaTanggal({ hari, tanggal, aktif = false }: { hari: string; tanggal: string; aktif?: boolean }) {
-  return <span className={`flex w-14 shrink-0 flex-col items-center justify-center self-start rounded-[16px] py-2 leading-tight ${aktif ? "bg-ungu text-permukaan" : "bg-latar text-ungu"}`}>
-    <span className={`text-[12px] font-semibold uppercase ${aktif ? "text-latar/80" : "text-ungu-muda"}`}>{hari}</span>
+  return <span className={`flex w-14 shrink-0 flex-col items-center justify-center self-start rounded-tombol py-2 leading-tight ${aktif ? "bg-ungu text-permukaan" : "bg-latar text-ungu"}`}>
+    <span className={`text-mini font-semibold uppercase ${aktif ? "text-latar/80" : "text-ungu-muda"}`}>{hari}</span>
     <span className="font-judul text-subjudul font-bold tabular-nums">{tanggal}</span>
   </span>
 }

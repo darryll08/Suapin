@@ -63,7 +63,7 @@ export function Mulai() {
               onChange={(e) => setLahir(e.target.value)} galat={galat.lahir} />
             {usia !== null && (usia < 36 || usia > 71) && !galat.lahir && (
               <p className="flex items-start gap-2 rounded-kartu bg-ungu-tint p-3 text-kecil">
-                <span aria-hidden="true" className="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-ungu text-[12px] font-bold">i</span>
+                <span aria-hidden="true" className="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-ungu text-mini font-bold">i</span>
                 Program dirancang untuk usia 3–5 tahun. Anda tetap bisa lanjut.
               </p>
             )}

@@ -48,7 +48,7 @@ export function ButuhKeluarga() {
 export function Logo({ ke = "/beranda", onClick }: { ke?: string; onClick?: () => void }) {
   return (
     <Link to={ke} onClick={onClick} className="inline-flex min-h-12 items-center gap-2 font-judul text-subjudul font-bold text-ungu">
-      <img src="/ikon/suapin-ikon-ungu-putih.svg" alt="" className="size-9 rounded-[10px]" />
+      <img src="/ikon/suapin-ikon-ungu-putih.svg" alt="" className="size-9 rounded-isian" />
       Suapin
     </Link>
   );

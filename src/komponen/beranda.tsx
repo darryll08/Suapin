@@ -14,7 +14,7 @@ export function KartuHero({ tahap, kalimat, children }: { tahap: number; kalimat
           <h2 className="font-judul text-judul font-bold">Tahap {tahap}</h2>
           <p className="text-isi text-latar/90">{kalimat}</p>
         </div>
-        <span className="font-judul text-[56px] leading-none font-bold tabular-nums text-jagung" aria-hidden="true">{tahap}</span>
+        <span className="font-judul text-raksasa font-bold tabular-nums text-jagung" aria-hidden="true">{tahap}</span>
       </div>
       <div className="flex gap-1.5" role="img" aria-label={`Tahap ${tahap} dari 4`}>
         {[1, 2, 3, 4].map((t) => (
@@ -31,7 +31,7 @@ export function KartuAngka({ label, angka, satuan, ket }: { label: string; angka
   return (
     <section className={`${bento} flex flex-col gap-1`}>
       <p className="text-kecil font-semibold text-ungu-muda">{label}</p>
-      <p className="font-judul text-[40px] leading-[48px] font-bold tabular-nums">
+      <p className="font-judul text-angka font-bold tabular-nums">
         {angka}{satuan && <span className="ml-1 text-isi font-semibold text-ungu-muda">{satuan}</span>}
       </p>
       {ket && <p className="text-kecil text-ungu-muda">{ket}</p>}
@@ -106,7 +106,7 @@ export function CincinProgres({ nilai, target, label }: { nilai: number; target:
           <circle cx="42" cy="42" r={r} fill="none" stroke="var(--color-ungu)" strokeWidth="10" strokeLinecap="round"
             strokeDasharray={`${k * isi} ${k}`} />
         </svg>
-        <p className="font-judul text-[32px] leading-none font-bold tabular-nums">
+        <p className="font-judul text-tampilan leading-none font-bold tabular-nums">
           {Math.min(nilai, target)}<span className="text-isi text-ungu-muda">/{target}</span>
         </p>
       </div>

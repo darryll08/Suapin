@@ -132,15 +132,15 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
   const sisiJauh = kanan ? "left-4" : "right-4";
   const tombolLanjut = (status === "JEDA_KUNYAH" || status === "GILIRAN_KARAKTER") && !hitam && (
     <button type="button" title="Lanjut (L)" disabled={status === "GILIRAN_KARAKTER"} onClick={() => tekan("lanjut")}
-      className="min-h-12 rounded-tombol border-2 border-ungu bg-permukaan px-4 text-kecil font-bold disabled:opacity-40">
+      className="min-h-12 rounded-full border-2 border-ungu bg-permukaan px-4 text-kecil font-bold disabled:opacity-40">
       Lanjut
     </button>
   );
   const koreksiTerakhir = gigitanAkhir && !hitam && status !== "PEMANASAN" && (
     // Dua baris disengaja: kolom samping Suap di HP 360 px hanya ±95 px.
     <button type="button" onClick={() => setKoreksi(true)} aria-label={`Koreksi suapan terakhir: tadi ${gigitanAkhir.hasil}`}
-      className="flex min-h-12 flex-col items-start justify-center rounded-tombol bg-permukaan/90 px-3 py-1 text-left leading-tight hover:bg-ungu-tint">
-      <span className="text-[12px] text-ungu-muda">Tadi</span>
+      className="flex min-h-12 flex-col items-start justify-center rounded-full bg-permukaan/90 px-4 py-1 text-left leading-tight hover:bg-ungu-tint">
+      <span className="text-mini text-ungu-muda">Tadi</span>
       <span className="whitespace-nowrap text-kecil font-semibold">{gigitanAkhir.hasil === "diterima" ? "diterima" : gigitanAkhir.hasil === "ngemut" ? "ngemut" : "ditolak"} ▾</span>
     </button>
   );
@@ -170,7 +170,7 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
 
       {/* Stop: pojok atas sisi jauh. Di panel bingkai, radius 24 = 40 (panel) − 16 (jarak tepi) supaya sudutnya sejajar. */}
       <button type="button" title="Stop (Esc)" onClick={() => setKonfirmStop(true)}
-        className={`absolute top-4 ${sisiJauh} min-h-12 rounded-tombol bingkai:rounded-[24px] border-2 px-4 text-kecil font-bold ${hitam ? "border-latar/40 text-latar opacity-35" : "border-ungu bg-permukaan"}`}>
+        className={`absolute top-4 ${sisiJauh} min-h-12 rounded-full border-2 px-4 text-kecil font-bold ${hitam ? "border-latar/40 text-latar opacity-35" : "border-ungu bg-permukaan"}`}>
         ■ Stop
       </button>
 
@@ -254,7 +254,7 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
           <p className="max-w-[480px] font-judul text-judul font-bold">
             Jika anak tersedak dan tidak bisa bernapas, segera minta bantuan medis atau hubungi 119.
           </p>
-          <a href="tel:119" className="inline-flex min-h-14 w-full max-w-[320px] items-center justify-center rounded-tombol bg-ungu px-5 text-tombol font-bold text-permukaan">Telepon 119</a>
+          <a href="tel:119" className="inline-flex min-h-14 w-full max-w-[320px] items-center justify-center rounded-full bg-ungu px-5 text-tombol font-bold text-permukaan">Telepon 119</a>
           <Tombol varian="teks" onClick={() => { setDarurat(false); setKonfirmStop(false); tekan("darurat"); }}>Tutup</Tombol>
         </div>
       )}
@@ -295,7 +295,7 @@ function LewatiPemanasan({ className, lewati }: { className: string; lewati: () 
   useEffect(() => { const t = window.setTimeout(() => setTampil(true), 5000); return () => window.clearTimeout(t); }, []);
   if (!tampil) return null;
   return (
-    <button type="button" onClick={lewati} className={`${className} pudar-masuk min-h-12 rounded-tombol bg-permukaan/90 px-4 text-kecil font-semibold`}>
+    <button type="button" onClick={lewati} className={`${className} pudar-masuk min-h-12 rounded-full bg-permukaan/90 px-4 text-kecil font-semibold`}>
       Lewati
     </button>
   );

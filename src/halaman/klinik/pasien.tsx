@@ -178,8 +178,8 @@ function DetailPasien({ id }: { id: string }) {
 
 /** Baris map yang bisa dibuka: ikon dalam lingkaran, judul + keterangan, panah. */
 function Map({ ikon, judul, ket, buka = false, children }: { ikon: NamaIkon; judul: string; ket: string; buka?: boolean; children: ReactNode }) {
-  return <details open={buka} className="group/map rounded-[20px] bg-latar">
-    <summary className="flex min-h-14 cursor-pointer list-none items-center gap-3 rounded-[20px] p-2 pr-3 outline-none focus-visible:ring-4 focus-visible:ring-jagung [&::-webkit-details-marker]:hidden">
+  return <details open={buka} className="group/map rounded-kartu bg-latar">
+    <summary className="flex min-h-14 cursor-pointer list-none items-center gap-3 rounded-kartu p-2 pr-3 outline-none focus-visible:ring-4 focus-visible:ring-jagung [&::-webkit-details-marker]:hidden">
       <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-permukaan text-ungu" aria-hidden="true"><Ikon nama={ikon} className="size-5" /></span>
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="font-semibold">{judul}</span>

@@ -25,6 +25,12 @@
   --text-kecil: 0.875rem;     --text-kecil--line-height: 1.25rem;
   --text-strip: 0.9375rem;    --text-strip--line-height: 1.375rem;
   --text-tombol: 1.125rem;    --text-tombol--line-height: 1.5rem;
+  /* Ditambah 13 Nov (audit konsistensi): angka besar dan judul landing, plus teks keterangan mini. */
+  --text-raksasa: 3.5rem;     --text-raksasa--line-height: 1;
+  --text-hero: 3.25rem;       --text-hero--line-height: 3.75rem;
+  --text-angka: 2.75rem;      --text-angka--line-height: 3.25rem;
+  --text-besar: 2.125rem;     --text-besar--line-height: 2.625rem;
+  --text-mini: 0.8125rem;     --text-mini--line-height: 1.125rem;
 
   --radius-kartu: 20px;
   --radius-bento: 28px;
@@ -32,6 +38,8 @@
   --radius-isian: 12px;
 
   --shadow-kartu: 0 1px 2px rgb(75 46 90 / 0.08), 0 4px 12px rgb(75 46 90 / 0.06);
+  --shadow-angkat: 0 10px 24px rgb(75 46 90 / 0.28);
+  --shadow-angkat-tipis: 0 10px 24px rgb(75 46 90 / 0.16);
   --shadow-lembar: 0 -4px 24px rgb(75 46 90 / 0.12);
 
   --ease-standar: cubic-bezier(0.2, 0, 0, 1);

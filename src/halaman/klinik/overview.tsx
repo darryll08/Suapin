@@ -42,7 +42,7 @@ export function OverviewKlinik() {
 
       {tampil === "dokter" ? <div className="grid items-start gap-4 md:grid-cols-2" role="tabpanel">
         {[...data.dokter].sort((a, b) => urutNama(a.nama).localeCompare(urutNama(b.nama), "id")).map((d) => <KartuDokter key={d.id} d={d} />)}
-        {!!data.tanpa_dokter.length && <section className="flex flex-col gap-3 rounded-[28px] border border-jagung bg-jagung-muda p-5">
+        {!!data.tanpa_dokter.length && <section className="flex flex-col gap-3 rounded-bento border border-jagung bg-jagung-muda p-5">
           <div className="flex items-center gap-3">
             <span className="inline-flex size-10 items-center justify-center rounded-full bg-permukaan text-jagung-tua" aria-hidden="true"><Ikon nama="bendera" className="size-5" /></span>
             <div>
@@ -69,8 +69,8 @@ function KartuDokter({ d }: { d: Dokter }) {
         <span className="truncate text-kecil text-ungu-muda">{d.spesialis ?? "Tenaga kesehatan"}</span>
       </div>
       <span className="flex shrink-0 gap-1.5">
-        <span className="flex flex-col items-center rounded-[14px] bg-latar px-3 py-1.5 leading-tight"><span className="font-judul text-subjudul font-bold tabular-nums">{d.pasien.length}</span><span className="text-[12px] text-ungu-muda">anak</span></span>
-        <span className="flex flex-col items-center rounded-[14px] bg-latar px-3 py-1.5 leading-tight"><span className="font-judul text-subjudul font-bold tabular-nums">{d.sesi_7_hari}</span><span className="text-[12px] text-ungu-muda">sesi/7 hr</span></span>
+        <span className="flex flex-col items-center rounded-isian bg-latar px-3 py-1.5 leading-tight"><span className="font-judul text-subjudul font-bold tabular-nums">{d.pasien.length}</span><span className="text-mini text-ungu-muda">anak</span></span>
+        <span className="flex flex-col items-center rounded-isian bg-latar px-3 py-1.5 leading-tight"><span className="font-judul text-subjudul font-bold tabular-nums">{d.sesi_7_hari}</span><span className="text-mini text-ungu-muda">sesi/7 hr</span></span>
       </span>
     </div>
     {!d.pasien.length ? <p className={`${ubin} text-kecil text-ungu-muda`}>Belum memegang pasien.</p> :

@@ -68,7 +68,7 @@ export function Lonceng() {
       <button type="button" onClick={alih} aria-expanded={buka} aria-haspopup="dialog"
         aria-label={belum ? `Notifikasi, ${belum} belum dibaca` : "Notifikasi"} title="Notifikasi" className={`${tombolIkon} relative`}>
         <IkonLonceng />
-        {belum > 0 && <span aria-hidden="true" className="absolute -top-0.5 -right-0.5 inline-flex min-w-5 items-center justify-center rounded-full bg-jagung px-1 text-[12px] leading-5 font-bold text-ungu">{belum > 9 ? "9+" : belum}</span>}
+        {belum > 0 && <span aria-hidden="true" className="absolute -top-0.5 -right-0.5 inline-flex min-w-5 items-center justify-center rounded-full bg-jagung px-1 text-mini font-bold text-ungu">{belum > 9 ? "9+" : belum}</span>}
       </button>
       {buka && (
         <div role="dialog" aria-label="Notifikasi"

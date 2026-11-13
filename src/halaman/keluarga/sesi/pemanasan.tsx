@@ -41,7 +41,7 @@ export function Pemanasan({ makanan, tokoh, panggilan, suara, onSelesai }: {
   return (
     <div className="karakter-masuk relative size-full">
       {babak.nama && (
-        <p className="pudar-masuk absolute inset-x-0 -top-2 z-10 text-center font-judul text-tampilan font-bold sm:text-[44px]">{panggilan}</p>
+        <p className="pudar-masuk absolute inset-x-0 -top-2 z-10 text-center font-judul text-tampilan font-bold sm:text-angka">{panggilan}</p>
       )}
       <Karakter pose={babak.pose} mulut={babak.pose === "enak" ? 0.15 : 0} makanan={{ id: makanan, tahap: babak.tahap }}
         pegang={babak.pegang} layar="terang" tokoh={tokoh} />

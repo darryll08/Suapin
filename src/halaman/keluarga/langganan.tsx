@@ -39,7 +39,7 @@ export function Langganan() {
           <p className="text-kecil font-semibold text-latar/80">Sekali bayar</p>
           <span className="rounded-full bg-jagung-muda px-3 py-1 text-kecil font-semibold text-jagung-tua">Harga uji coba</span>
         </div>
-        <p className="font-judul text-[44px] leading-[52px] font-bold tabular-nums">Rp 49.000</p>
+        <p className="font-judul text-angka font-bold tabular-nums">Rp 49.000</p>
         {aktif ? (
           <p className="rounded-full bg-latar/15 px-5 py-3 text-isi font-semibold">Program sudah aktif.</p>
         ) : (

@@ -53,7 +53,7 @@ export function DaftarPasien() {
             {data.jadwal.slice(0, 6).map((j, i) => {
               const t = bagianTanggal(j.waktu)
               return <li key={j.id}>
-                <Link to={"/dokter/pasien/" + j.child_id} className="group flex items-center gap-3 rounded-[20px] p-1.5 pr-3 outline-none hover:bg-latar focus-visible:ring-4 focus-visible:ring-jagung">
+                <Link to={"/dokter/pasien/" + j.child_id} className="group flex items-center gap-3 rounded-kartu p-1.5 pr-3 outline-none hover:bg-latar focus-visible:ring-4 focus-visible:ring-jagung">
                   <LencanaTanggal hari={t.hari} tanggal={t.tgl} aktif={i === 0} />
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate font-semibold">{j.panggilan}</span>

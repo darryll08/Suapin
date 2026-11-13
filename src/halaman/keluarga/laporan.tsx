@@ -49,7 +49,7 @@ export function Laporan() {
         <div className="flex flex-col gap-4">
           {lap.dokter_nama && (
             <p className="flex items-start gap-2 rounded-kartu bg-ungu-tint p-3 text-kecil">
-              <span aria-hidden="true" className="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-ungu text-[12px] font-bold">i</span>
+              <span aria-hidden="true" className="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-ungu text-mini font-bold">i</span>
               Laporan ini otomatis terlihat oleh {lap.dokter_nama}.
             </p>
           )}
