@@ -5,7 +5,7 @@
 // Panel "Akun demo" hanya muncul bila server berjalan dengan DEMO=1 (`GET /api/sehat`).
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
-import { Isian, PesanGalat, Tombol } from "../../komponen/dasar.tsx";
+import { Isian, Memuat, PesanGalat, Tombol } from "../../komponen/dasar.tsx";
 import { bento, tombolTeks, wadahKeluarga } from "../../gaya/gaya.ts";
 import { GalatApi, panggil } from "../../lib/panggil.ts";
 import { api } from "./data.ts";
@@ -17,7 +17,8 @@ export function Masuk() {
   const [param] = useSearchParams();
   const kembali = param.get("kembali");
   const memeriksa = useAlihkanBilaMasuk();
-  if (memeriksa) return null;
+  // Menunggu jawaban "sudah login sebagai siapa?" (bisa 2-3 dtk saat server Vercel baru bangun).
+  if (memeriksa) return <main className="flex min-h-dvh items-center justify-center"><Memuat /></main>;
 
   return (
     <main className={`${wadahKeluarga} flex min-h-dvh flex-col`}>
