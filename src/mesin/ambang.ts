@@ -20,7 +20,7 @@ export const AMBANG_AWAL = {
   kunyahPitchMaks: 4, // derajat; siklus rahang dengan perubahan pitch lebih besar = angguk, bukan kunyah
   timerJedaDetik: 15,
   ngemutDetik: 15,
-  menolakTungguDetik: 60,
+  menolakTungguDetik: 5, // jeda datar singkat, lalu karakter mengambil giliran ("Oke. Aku gigit dulu.")
   tidakPastiTungguDetik: 10,
   tidakTerlihatDetik: 1.5,
   fpsMaks: 20,

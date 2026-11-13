@@ -9,12 +9,12 @@ import { api } from "./data.ts";
 import { Logo, useSaya } from "./tata-letak.tsx";
 
 export function Skrining() {
-  const { saya, muatUlang } = useSaya();
+  const { muatUlang } = useSaya();
   const pindah = useNavigate();
   const [jawaban, setJawaban] = useState<(boolean | null)[]>(PERTANYAAN_SKRINING.map(() => null));
   const [memuat, setMemuat] = useState(false);
   const [galat, setGalat] = useState("");
-  const [bahaya, setBahaya] = useState(saya.alasan_terkunci === "tanda_bahaya");
+  const [bahaya, setBahaya] = useState(false);
   const terjawab = jawaban.filter((j) => j !== null).length;
 
   const simpan = async () => {
@@ -83,11 +83,11 @@ function TandaBahaya() {
       <section className="flex flex-col gap-4 rounded-bento bg-jagung-muda p-6">
         <span aria-hidden="true" className="inline-flex size-12 items-center justify-center rounded-full bg-permukaan font-judul text-subjudul font-bold text-jagung-tua">i</span>
         <h1 className="font-judul text-judul font-bold text-jagung-tua">Sebaiknya periksa ke dokter dulu</h1>
-        <p className="text-isi">Ada jawaban yang perlu dilihat dokter sebelum program makan dimulai.</p>
+        <p className="text-isi">Ada jawaban yang perlu dilihat dokter. Program makan tetap bisa dipakai, tapi konsultasikan ke dokter dulu.</p>
       </section>
       <section className={`${bento} flex flex-col gap-2`}>
         <h2 className="font-judul text-isi font-bold">Langkah berikutnya</h2>
-        <p className="text-isi">Setelah diperiksa, dokter bisa membuka program lewat link laporan dari aplikasi ini.</p>
+        <p className="text-isi">Bagikan laporan dari aplikasi ini ke dokter supaya dokter bisa ikut memantau dan mengatur program.</p>
       </section>
       <Tombol className="sm:w-full" onClick={() => void pindah("/beranda")}>Ke beranda</Tombol>
     </main>

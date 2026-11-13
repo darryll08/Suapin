@@ -50,10 +50,12 @@ export async function bacaAksesSesi(db: Kueri, anak: typeof children.$inferSelec
   const plan = trialHabis || paketHabis ? "expired" : anak.plan
   const skrining = await db.select().from(screenings).where(eq(screenings.child_id, anak.id))
     .orderBy(desc(screenings.tanggal), sql`rowid desc`).get()
+  // Tanda bahaya hanya peringatan (keputusan 13 Nov): sesi tetap dibuka, layar menampilkan saran periksa ke dokter.
   const alasan_terkunci = !skrining ? "skrining_belum" :
-    skrining.ada_tanda_bahaya && plan !== "klinik" ? "tanda_bahaya" :
-    paketHabis ? "paket_habis" : plan === "expired" ? "trial_habis" : null
-  return { plan, alasan_terkunci, sesi_dibuka: alasan_terkunci === null, paket_sampai } as const
+    paketHabis ? "paket_habis" : plan === "expired" ? "trial_habis" :
+    skrining.ada_tanda_bahaya && plan !== "klinik" ? "tanda_bahaya" : null
+  const sesi_dibuka = alasan_terkunci === null || alasan_terkunci === "tanda_bahaya"
+  return { plan, alasan_terkunci, sesi_dibuka, paket_sampai } as const
 }
 export function sesiSejak(db: Kueri, id: string, hari: number) {
   return db.select().from(sessions).where(and(eq(sessions.child_id, id), gte(sessions.mulai, lalu(hari))))

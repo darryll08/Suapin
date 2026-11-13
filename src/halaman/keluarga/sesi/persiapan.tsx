@@ -65,6 +65,11 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
   return (
     <main className={`${wadahKeluarga} flex flex-col gap-4`}>
       <KepalaHalaman judul="Siapkan makan" kembali="/beranda" />
+      {saya.alasan_terkunci === "tanda_bahaya" && (
+        <p className="mb-4 rounded-kartu bg-jagung-muda p-4 text-isi text-ungu">
+          <b className="text-jagung-tua">Pengingat:</b> ada jawaban skrining yang perlu dilihat dokter. Sebaiknya konsultasi ke dokter dulu.
+        </p>
+      )}
       <section className={`${bento} flex flex-col gap-4`}>
         <JudulLangkah n={1}>Pilih teman makan</JudulLangkah>
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">

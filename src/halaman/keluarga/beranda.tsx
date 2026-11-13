@@ -33,9 +33,12 @@ export function Beranda() {
             {saya.alasan_terkunci === "trial_habis" || saya.alasan_terkunci === "paket_habis" ? (
               <Link to="/langganan" className={tombolHero}>{saya.alasan_terkunci === "paket_habis" ? "Perpanjang program" : "Lanjutkan program"}</Link>
             ) : saya.alasan_terkunci === "tanda_bahaya" ? (
-              <div className="rounded-kartu bg-jagung-muda p-4 text-ungu">
-                <p className="font-judul text-subjudul font-bold text-jagung-tua">Sebaiknya periksa ke dokter dulu</p>
-                <p className="text-isi">Setelah diperiksa, dokter bisa membuka program lewat link laporan.</p>
+              <div className="flex flex-col gap-3">
+                <div className="rounded-kartu bg-jagung-muda p-4 text-ungu">
+                  <p className="font-judul text-subjudul font-bold text-jagung-tua">Sebaiknya konsultasi ke dokter</p>
+                  <p className="text-isi">Ada jawaban skrining yang perlu dilihat dokter. Bagikan laporan lewat menu Laporan.</p>
+                </div>
+                <Link to="/sesi" className={tombolHero}>Mulai makan</Link>
               </div>
             ) : (
               <Link to="/sesi" className={tombolHero}>Mulai makan</Link>

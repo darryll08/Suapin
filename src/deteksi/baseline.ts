@@ -28,9 +28,25 @@ export function buatBaseline(jendelaMs = 10_000): Baseline {
       return urut[Math.floor(0.2 * (urut.length - 1))];
     },
     getar: () => {
+      // Sama dengan penilai gerbang (getarDiamRekaman): persentil 10 simpangan baku per potongan ±1,5 detik.
+      // SD 10 detik penuh ikut menghitung geser kepala/bicara → ambang kunyah terlalu tinggi, kunyahan tidak terbaca.
       if (isi.length < 2) return 0;
-      const rata = isi.reduce((s, x) => s + x.v, 0) / isi.length;
-      return Math.sqrt(isi.reduce((s, x) => s + (x.v - rata) ** 2, 0) / (isi.length - 1));
+      const sd: number[] = [];
+      for (let i = 0; i < isi.length; ) {
+        let j = i;
+        while (j < isi.length && isi[j].t - isi[i].t < 1_500) j++;
+        if (j - i >= 2) sd.push(simpangan(isi.slice(i, j).map((x) => x.v)));
+        i = j;
+      }
+      if (!sd.length) return simpangan(isi.map((x) => x.v));
+      sd.sort((a, b) => a - b);
+      return sd[Math.floor(sd.length * 0.1)];
     },
   };
+}
+
+function simpangan(v: number[]): number {
+  if (v.length < 2) return 0;
+  const rata = v.reduce((s, x) => s + x, 0) / v.length;
+  return Math.sqrt(v.reduce((s, x) => s + (x - rata) ** 2, 0) / (v.length - 1));
 }

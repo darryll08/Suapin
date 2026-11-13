@@ -55,7 +55,7 @@ export function ruteKeluarga(daftar: Daftar, db: Db, env: Env) {
     const tanggal = new Date().toISOString()
     const ada_tanda_bahaya = data.jawaban.some(Boolean)
     await tx.insert(screenings).values({ child_id, tanggal, ada_tanda_bahaya, jawaban_json: data.jawaban })
-    if (!ada_tanda_bahaya && (await bacaAturan(tx, child_id)).confirmed_at === null) {
+    if ((await bacaAturan(tx, child_id)).confirmed_at === null) {
       await tx.insert(rules).values({ child_id, source: "default", rules_json: ATURAN_DEFAULT,
         stage: 1, confirmed_at: tanggal })
     }

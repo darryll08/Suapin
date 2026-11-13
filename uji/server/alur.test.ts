@@ -21,7 +21,7 @@ it("skrining membuka sesi, simpan dan retry tidak menggandakan paparan", async (
   expect(await (await keluarga("/api/saya")).json()).toMatchObject({ alasan_terkunci: "skrining_belum" })
   expect(await (await keluarga("/api/screenings", "POST", { jawaban: [true, ...Array(6).fill(false)] })).json())
     .toMatchObject({ ada_tanda_bahaya: true })
-  expect(await (await keluarga("/api/saya")).json()).toMatchObject({ alasan_terkunci: "tanda_bahaya" })
+  expect(await (await keluarga("/api/saya")).json()).toMatchObject({ alasan_terkunci: "tanda_bahaya", sesi_dibuka: true })
   expect((await keluarga("/api/screenings", "POST", { jawaban: Array(7).fill(false) })).status).toBe(200)
   expect(await (await keluarga("/api/saya")).json()).toMatchObject({ sesi_dibuka: true })
   const waktu = new Date(Math.floor(Date.now() / 1000) * 1000).toISOString()
