@@ -239,7 +239,7 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
       )}
 
       {sesi.galat && !galatKameraDitutup && (
-        <LembarBawah judul="Kamera tidak bisa dipakai">
+        <LembarBawah judul="Kamera Tidak Bisa Dipakai">
           <p className="text-isi">{sesi.galat}</p>
           <p className="text-kecil text-ungu-muda">Sesi tetap jalan. Setelah Suap, jawab "Tadi masuk?" dengan Ya atau Tidak.</p>
           <Tombol onClick={() => setGalatKameraDitutup(true)} className="sm:w-full">Lanjut tanpa kamera</Tombol>
@@ -251,7 +251,7 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
       )}
 
       {koreksi && (
-        <LembarBawah judul="Ubah suapan terakhir" tutup={() => setKoreksi(false)}>
+        <LembarBawah judul="Ubah Suapan Terakhir" tutup={() => setKoreksi(false)}>
           <div className="grid grid-cols-2 gap-3">
             <Tombol varian="kedua" className="sm:w-full" onClick={() => { tekan("koreksi_ditolak"); setKoreksi(false); }}>Ubah jadi ditolak</Tombol>
             <Tombol className="sm:w-full" onClick={() => { tekan("koreksi_diterima"); setKoreksi(false); }}>Ubah jadi diterima</Tombol>
@@ -260,9 +260,9 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
       )}
 
       {konfirmStop && !darurat && (
-        <LembarBawah judul="Makan dijeda" tutup={lanjutMakan}>
+        <LembarBawah judul="Makan Dijeda" tutup={lanjutMakan}>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Tombol className="sm:w-full" onClick={lanjutMakan}>Lanjut makan</Tombol>
+            <Tombol className="sm:w-full" onClick={lanjutMakan}>Lanjut Makan</Tombol>
             <Tombol varian="kedua" className="sm:w-full" onClick={() => akhiri("stop")}>Akhiri makan</Tombol>
           </div>
           <button type="button" onClick={() => setDarurat(true)}
@@ -274,13 +274,13 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
       )}
 
       {konfirmSelesai && (
-        <LembarBawah judul="Selesai makan?" tutup={batalSelesai}>
+        <LembarBawah judul="Selesai Makan?" tutup={batalSelesai}>
           <p className="text-isi text-ungu-muda">
             {jumlahDiterima > 0 ? `${jumlahDiterima} suapan diterima. Setelah ini isi catatan singkat.` : "Belum ada suapan diterima. Tidak apa-apa, coba lagi nanti."}
           </p>
           <div className="grid gap-3 sm:grid-cols-2">
             <Tombol className="sm:w-full" onClick={() => akhiri("stop")}>Ya, selesai</Tombol>
-            <Tombol varian="kedua" className="sm:w-full" onClick={batalSelesai}>Belum, lanjut makan</Tombol>
+            <Tombol varian="kedua" className="sm:w-full" onClick={batalSelesai}>Belum, Lanjut Makan</Tombol>
           </div>
         </LembarBawah>
       )}
@@ -296,7 +296,7 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
       )}
 
       {kembaliKeTab && (
-        <LembarBawah judul="Lanjutkan makan?">
+        <LembarBawah judul="Lanjutkan Makan?">
           <div className="grid grid-cols-2 gap-3">
             <Tombol varian="kedua" className="sm:w-full" onClick={() => { setKembaliKeTab(false); tekan("stop"); }}>Akhiri</Tombol>
             <Tombol className="sm:w-full" onClick={() => { setKembaliKeTab(false); void wakeLock(); }}>Lanjut</Tombol>

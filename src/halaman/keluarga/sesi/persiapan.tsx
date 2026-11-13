@@ -28,7 +28,7 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
     const kunci = saya.alasan_terkunci;
     return (
       <main className={wadahKeluarga}>
-        <KepalaHalaman judul="Sesi belum dibuka" kembali="/beranda" />
+        <KepalaHalaman judul="Sesi Belum Dibuka" kembali="/beranda" />
         <p className="mb-6 text-isi">
           {kunci === "trial_habis" ? "Trial 5 hari sudah selesai. Lanjutkan program untuk membuka sesi lagi."
             : kunci === "paket_habis" ? "Program 30 Hari sudah selesai. Perpanjang program untuk membuka sesi lagi."
@@ -45,11 +45,11 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
   if (tahap >= 4) {
     return (
       <main className={wadahKeluarga}>
-        <KepalaHalaman judul="Siapkan makan" kembali="/beranda" />
+        <KepalaHalaman judul="Siapkan Makan" kembali="/beranda" />
         <div className={`${bento} text-isi`}>
           Hari ini {sapaan} yang memimpin. Lakukan ritual makan seperti biasa, lalu catat hasilnya.
         </div>
-        <Link to="/sesi/catatan?catat=1" className={`${tombolUtama} mt-6`}>Catat hasil makan</Link>
+        <Link to="/sesi/catatan?catat=1" className={`${tombolUtama} mt-6`}>Catat Hasil Makan</Link>
       </main>
     );
   }
@@ -64,14 +64,14 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
 
   return (
     <main className={`${wadahKeluarga} flex flex-col gap-4`}>
-      <KepalaHalaman judul="Siapkan makan" kembali="/beranda" />
+      <KepalaHalaman judul="Siapkan Makan" kembali="/beranda" />
       {saya.alasan_terkunci === "tanda_bahaya" && (
         <p className="mb-4 rounded-kartu bg-jagung-muda p-4 text-isi text-ungu">
           <b className="text-jagung-tua">Pengingat:</b> ada jawaban skrining yang perlu dilihat dokter. Sebaiknya konsultasi ke dokter dulu.
         </p>
       )}
       <section className={`${bento} flex flex-col gap-4`}>
-        <JudulLangkah n={1}>Pilih teman makan</JudulLangkah>
+        <JudulLangkah n={1}>Pilih Teman Makan</JudulLangkah>
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
           {TOKOH.map((t) => (
             <button key={t.id} type="button" aria-pressed={tokoh === t.id} onClick={() => setTokoh(t.id)}
@@ -84,7 +84,7 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
       </section>
 
       <section className={`${bento} flex flex-col gap-4`}>
-        <JudulLangkah n={2}>Menu hari ini</JudulLangkah>
+        <JudulLangkah n={2}>Menu Hari Ini</JudulLangkah>
         {(Object.keys(NAMA_KELOMPOK) as KelompokMakanan[]).map((k) => (
           <div key={k} className="flex flex-col gap-2">
             <h3 className="text-kecil font-semibold text-ungu-muda">{NAMA_KELOMPOK[k]}</h3>

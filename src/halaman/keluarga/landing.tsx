@@ -13,11 +13,11 @@ import { api } from "./data.ts";
 
 const fokus = "outline-none focus-visible:ring-4 focus-visible:ring-jagung focus-visible:ring-offset-2 focus-visible:ring-offset-latar";
 const tombolPilUngu =
-  `group inline-flex min-h-14 items-center justify-between gap-3 rounded-full bg-ungu pl-6 pr-2 font-judul text-isi font-bold whitespace-nowrap text-latar sm:text-tombol ` +
+  `group inline-flex min-h-14 items-center justify-between gap-3 rounded-full bg-ungu pl-6 pr-2 font-isi text-isi font-bold whitespace-nowrap text-latar sm:text-tombol ` +
   `transition-[transform,box-shadow,background-color] duration-200 ease-standar hover:-translate-y-0.5 hover:bg-ungu-muda hover:shadow-angkat ` +
   `active:translate-y-0 active:scale-[0.97] motion-reduce:transform-none ${fokus}`;
 const tombolPilGaris =
-  `inline-flex min-h-14 items-center justify-center rounded-full border-2 border-ungu px-8 font-judul text-isi font-bold text-ungu sm:text-tombol ` +
+  `inline-flex min-h-14 items-center justify-center rounded-full border-2 border-ungu px-8 font-isi text-isi font-bold text-ungu sm:text-tombol ` +
   `transition-[transform,box-shadow,background-color] duration-200 ease-standar hover:-translate-y-0.5 hover:bg-ungu-tint hover:shadow-angkat-tipis ` +
   `active:translate-y-0 active:scale-[0.97] motion-reduce:transform-none ${fokus}`;
 
@@ -45,10 +45,11 @@ export function Landing() {
         {/* 1. Hook */}
         <section className="grid items-center gap-8 pt-6 md:grid-cols-[1.1fr_1fr] md:pt-12">
           <div className="flex flex-col gap-5">
+            <span className="masuk label-atas text-jagung-tua">Teman makan balita 3–5 tahun</span>
             <h1 className="masuk font-judul text-besar font-bold text-balance md:text-hero">
-              Makan jadi giliran main,{" "}
+              Makan Jadi Giliran Main,{" "}
               <span className="relative inline-block text-jagung-tua">
-                bukan tontonan.
+                Bukan Tontonan.
                 <svg viewBox="0 0 200 12" className="absolute -bottom-2 left-0 h-3 w-full" preserveAspectRatio="none" aria-hidden="true">
                   <path d="M2 8 Q100 0 198 7" fill="none" stroke="var(--color-jagung)" strokeWidth="5" strokeLinecap="round" />
                 </svg>
@@ -57,7 +58,7 @@ export function Landing() {
             <span className="masuk h-1 w-12 rounded-full bg-ungu" style={{ animationDelay: "100ms" }} aria-hidden="true" />
             <p className="masuk max-w-[460px] text-isi text-ungu-muda" style={{ animationDelay: "150ms" }}>Teman makan yang meniru mulut anak, lalu pelan-pelan pergi dari layar.</p>
             <div className="masuk flex flex-col gap-3 sm:flex-row" style={{ animationDelay: "250ms" }}>
-              <Link to="/mulai" className={tombolPilUngu}>Mulai gratis untuk keluarga <PanahJagung /></Link>
+              <Link to="/mulai" className={tombolPilUngu}>Mulai Gratis untuk Keluarga <PanahJagung /></Link>
               <Link to="/masuk" className={tombolPilGaris}>Masuk</Link>
             </div>
             <ul className="masuk flex flex-wrap gap-2 text-kecil font-semibold" style={{ animationDelay: "350ms" }}>
@@ -73,7 +74,8 @@ export function Landing() {
       <section className="flex flex-col gap-8">
         <div className="grid items-end gap-6 md:grid-cols-[1.3fr_1fr]">
           <Muncul dari="kiri" className="flex flex-col gap-4">
-            <h2 className="font-judul text-judul font-bold md:text-besar">Tanpa layar menolak, dengan layar tidak memperhatikan.</h2>
+            <span className="label-atas text-jagung-tua">Masalahnya</span>
+            <h2 className="font-judul text-judul font-bold md:text-besar">Tanpa Layar Menolak, dengan Layar Tidak Memperhatikan.</h2>
             <p className="text-isi text-ungu-muda">Dokter meminta makan tanpa layar, tapi di rumah tidak ada penggantinya.</p>
           </Muncul>
           <Muncul dari="kanan" tunda={150} className={`${bento} flex flex-col gap-1`}>
@@ -95,17 +97,18 @@ export function Landing() {
       {/* 3. Cara kerja */}
       <section className="flex flex-col gap-8">
         <Muncul className="mx-auto flex max-w-[640px] flex-col gap-3 text-center">
-          <h2 className="font-judul text-judul font-bold md:text-besar">Layar dipakai untuk makan bareng, bukan untuk ditonton.</h2>
+          <span className="label-atas text-jagung-tua">Cara kerja</span>
+          <h2 className="font-judul text-judul font-bold md:text-besar">Layar Dipakai untuk Makan Bareng, Bukan untuk Ditonton.</h2>
         </Muncul>
         <ol className="grid gap-4 md:grid-cols-3">
           {[
-            ["01", "Karakter menggigit duluan", "Anak melihat teman makannya menikmati makanan yang sama."],
-            ["02", "Pengasuh menekan Suap", "Satu tombol besar di bawah layar. Tidak perlu membaca layar."],
-            ["03", "Karakter meniru, lalu merayakan", "Mulut karakter mengikuti mulut anak. Perayaan hanya saat suapan diterima; saat menolak, karakter diam."],
+            ["01", "Karakter Menggigit Duluan", "Anak melihat teman makannya menikmati makanan yang sama."],
+            ["02", "Pengasuh Menekan Suap", "Satu tombol besar di bawah layar. Tidak perlu membaca layar."],
+            ["03", "Karakter Meniru, lalu Merayakan", "Mulut karakter mengikuti mulut anak. Perayaan hanya saat suapan diterima; saat menolak, karakter diam."],
           ].map(([n, judul, isi], i) => (
             <li key={n}>
               <Muncul tunda={i * 150} className={`${bento} flex h-full flex-col gap-2`}>
-                <span className="font-judul text-besar font-bold text-jagung-tua tabular-nums">{n}</span>
+                <span className="label-atas text-jagung-tua">Langkah {n}</span>
                 <h3 className="font-judul text-subjudul font-bold">{judul}</h3>
                 <p className="text-isi text-ungu-muda">{isi}</p>
               </Muncul>
@@ -118,7 +121,7 @@ export function Landing() {
               <div role="img" aria-label="Ilustrasi: teman makan tertawa, dikelilingi stiker." className="size-full"><AdeganSenang /></div>
             </div>
             <figcaption className="flex flex-col gap-2 sm:pr-4">
-              <p className="font-judul text-subjudul font-bold text-balance md:text-judul">Makan jadi momen yang ditunggu, bukan drama setiap hari.</p>
+              <p className="font-judul text-subjudul font-bold text-balance md:text-judul">Makan Jadi Momen yang Ditunggu, Bukan Drama Setiap Hari.</p>
               <p className="text-isi text-ungu-muda">Setiap suapan yang diterima dirayakan. Orang tua dan dokter melihat catatannya: diterima, ditolak, atau ngemut.</p>
             </figcaption>
           </figure>
@@ -131,13 +134,15 @@ export function Landing() {
       {/* 4. Lepas layar bertahap */}
       <section className="flex flex-col gap-8">
         <Muncul className="mx-auto flex max-w-[640px] flex-col gap-3 text-center">
-          <h2 className="font-judul text-judul font-bold md:text-besar">Tujuannya justru supaya layar tidak dibutuhkan lagi.</h2>
+          <span className="label-atas text-jagung-tua">Lepas layar bertahap</span>
+          <h2 className="font-judul text-judul font-bold md:text-besar">Tujuannya Justru supaya Layar Tidak Dibutuhkan Lagi.</h2>
         </Muncul>
         <ol className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {[1, 2, 3, 4].map((t, i) => (
             <li key={t}>
               <Muncul dari="skala" tunda={i * 120} className={`flex h-full flex-col gap-2 rounded-bento border border-garis/50 p-5 ${t === 3 ? "bg-black text-latar" : t === 4 ? "bg-ungu-tint" : "bg-permukaan"}`}>
-                <span className={`font-judul text-besar font-bold tabular-nums ${t === 3 ? "text-jagung" : "text-ungu"}`}>{t}</span>
+                <span className={`label-atas ${t === 3 ? "text-jagung" : "text-jagung-tua"}`}>Tahap {t}</span>
+                <span className={`font-judul text-subjudul font-bold ${t === 3 ? "text-latar" : "text-ungu"}`}>{["Karakter Memandu", "Pengasuh Jadi Contoh", "Layar Hitam", "Tanpa Layar"][t - 1]}</span>
                 <p className={`text-kecil ${t === 3 ? "text-latar/90" : "text-ungu-muda"}`}>{kalimatTahap(t, "anak", "Pengasuh")}</p>
               </Muncul>
             </li>
@@ -152,11 +157,12 @@ export function Landing() {
       <Muncul dari="skala">
         <section className="grid gap-6 rounded-bento bg-ungu p-6 text-latar md:grid-cols-[1.4fr_1fr] md:p-10">
           <div className="flex flex-col gap-3">
-            <h2 className="font-judul text-judul font-bold md:text-besar">Dokter menulis aturan seperti biasa. Sesi di rumah langsung mengikuti.</h2>
+            <span className="label-atas text-jagung">Untuk klinik dan dokter</span>
+            <h2 className="font-judul text-judul font-bold md:text-besar">Dokter Menulis Aturan seperti Biasa. Sesi di Rumah Langsung Mengikuti.</h2>
             <p className="text-isi text-latar/90">AI mengubah teks dokter menjadi aturan sesi dalam rentang aman. Dokter memeriksa dan mengonfirmasi sebelum aturan dipakai.</p>
           </div>
           <div className="flex flex-col justify-end gap-3">
-            <Link to="/masuk?sebagai=klinik" className={tombolHero}>Masuk untuk klinik</Link>
+            <Link to="/masuk?sebagai=klinik" className={tombolHero}>Masuk untuk Klinik</Link>
             <p className="flex items-start gap-2 text-kecil text-latar/90">
               <span className="mt-0.5 shrink-0"><IkonKamera /></span>
               Video kamera tidak pernah keluar dari HP. Yang disimpan hanya hasil suapan: diterima, ditolak, atau ngemut.
@@ -169,7 +175,7 @@ export function Landing() {
         <span>Suapin · 2026</span>
         <button type="button" className="min-h-12 underline-offset-4 hover:underline"
           onClick={() => void api.demoMasukDika().then(() => pindah("/beranda"))}>
-          Coba demo
+          Coba Demo
         </button>
       </footer>
     </main>
@@ -221,8 +227,8 @@ function IkonAnak() {
 export function TidakAda() {
   return (
     <main className={`${wadahKeluarga} flex min-h-dvh flex-col justify-center gap-4`}>
-      <h1 className="font-judul text-judul font-bold">Halaman tidak ditemukan</h1>
-      <Link to="/" className={tombolUtama}>Ke halaman awal</Link>
+      <h1 className="font-judul text-judul font-bold">Halaman Tidak Ditemukan</h1>
+      <Link to="/" className={tombolUtama}>Ke Halaman Awal</Link>
     </main>
   );
 }

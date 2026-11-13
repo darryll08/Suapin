@@ -10,20 +10,20 @@ export function ContohGaya() {
 
   return (
     <main className={wadahKeluarga}>
-      <KepalaHalaman judul="Contoh gaya" sub="Semua komponen dasar Suapin." kembali="/" />
+      <KepalaHalaman judul="Contoh Gaya" sub="Semua komponen dasar Suapin." kembali="/" />
       <div className="flex flex-col gap-4">
         <Kartu>
           <h2 className="mb-3 font-judul text-subjudul font-bold">Tombol</h2>
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <Tombol>Mulai sesi</Tombol>
-            <Tombol varian="kedua">Lihat laporan</Tombol>
+            <Tombol>Mulai Sesi</Tombol>
+            <Tombol varian="kedua">Lihat Laporan</Tombol>
             <Tombol varian="teks">Lewati</Tombol>
             <Tombol memuat>Menyimpan</Tombol>
             <Tombol disabled>Nonaktif</Tombol>
           </div>
         </Kartu>
         <Kartu>
-          <h2 className="mb-3 font-judul text-subjudul font-bold">Isian dan pil</h2>
+          <h2 className="mb-3 font-judul text-subjudul font-bold">Isian dan Pil</h2>
           <div className="flex flex-col gap-4">
             <Isian label="Nama panggilan anak" placeholder="Dika" bantuan="Dipakai karakter untuk menyapa." />
             <Isian label="Umur (tahun)" inputMode="numeric" galat="Umur harus 3 sampai 5 tahun." defaultValue="7" />
@@ -40,7 +40,7 @@ export function ContohGaya() {
           <PesanGalat pesan="Server belum bisa dihubungi." ulangi={() => {}} />
         </Kartu>
         <Kartu>
-          <h2 className="mb-3 font-judul text-subjudul font-bold">Strip dan lembar sesi</h2>
+          <h2 className="mb-3 font-judul text-subjudul font-bold">Strip dan Lembar Sesi</h2>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Tombol varian="kedua" onClick={() => setStrip((n) => n + 1)}>Tampilkan strip</Tombol>
             <Tombol varian="kedua" onClick={() => setTanya(true)}>Tampilkan lembar tanya</Tombol>

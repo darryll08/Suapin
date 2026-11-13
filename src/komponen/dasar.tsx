@@ -101,7 +101,7 @@ export function PesanGalat({ pesan, ulangi }: { pesan: string; ulangi?: () => vo
         <span aria-hidden="true" className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-jagung text-kecil text-ungu">!</span>
         {pesan}
       </p>
-      {ulangi && <Tombol varian="kedua" onClick={ulangi}>Coba lagi</Tombol>}
+      {ulangi && <Tombol varian="kedua" onClick={ulangi}>Coba Lagi</Tombol>}
     </div>
   );
 }

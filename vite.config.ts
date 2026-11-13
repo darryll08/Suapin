@@ -27,7 +27,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,webp,svg,png,mp3,task,wasm,json}"],
+        globPatterns: ["**/*.{js,css,html,webp,svg,png,mp3,task,wasm,json,woff2}"],
         // K19: file WASM MediaPipe ±14,6 MB; di bawah batas ini build PWA gagal.
         maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
         navigateFallbackDenylist: [/^\/api\//],

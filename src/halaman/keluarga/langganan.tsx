@@ -53,7 +53,7 @@ export function Langganan() {
       </section>
 
       <section className={`${bento} flex flex-col gap-3`}>
-        <h2 className="font-judul text-subjudul font-bold">Isi program</h2>
+        <h2 className="font-judul text-subjudul font-bold">Isi Program</h2>
         <ul className="flex flex-col gap-3">
           {ISI.map((x) => (
             <li key={x} className="flex items-center gap-3 text-isi">

@@ -89,15 +89,15 @@ export function Catatan() {
       )}
 
       <section className={`${bento} flex flex-col gap-5`}>
-        <PilihanPil judul="Berapa yang dimakan?" nilai={porsi} ubah={setPorsi}
+        <PilihanPil judul="Berapa yang Dimakan?" nilai={porsi} ubah={setPorsi}
           opsi={[["sedikit", "Sedikit"], ["setengah", "Setengah"], ["habis", "Habis"]]} />
-        <PilihanPil judul="Suasana makan?" nilai={mood} ubah={setMood}
+        <PilihanPil judul="Suasana Makan?" nilai={mood} ubah={setMood}
           opsi={[["senang", "Senang"], ["biasa", "Biasa"], ["rewel", "Rewel"]]} />
         <p className="text-kecil text-ungu-muda">Boleh dilewati.</p>
       </section>
 
       {galat && <PesanGalat pesan={galat} />}
-      <Tombol memuat={memuat} onClick={simpan} className="sm:w-full">Simpan catatan</Tombol>
+      <Tombol memuat={memuat} onClick={simpan} className="sm:w-full">Simpan Catatan</Tombol>
       {!catatSaja && <Link to="/beranda" onClick={muatUlang} className={`${tombolTeks} self-center`}>Lewati</Link>}
     </main>
   );

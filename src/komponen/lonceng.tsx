@@ -57,7 +57,7 @@ export function BagianNotifikasi() {
   return (
     <div className="flex flex-col gap-2">
       <KartuPush status={push} adaKunci={!!data?.kunci_publik} sibuk={sibuk} saklar={() => void saklar()} />
-      {sehat.data?.demo && <button type="button" disabled={sibuk} onClick={() => void contoh()} className={`${tombolTeks} -ml-3 self-start text-kecil`}>Kirim contoh pengingat (demo)</button>}
+      {sehat.data?.demo && <button type="button" disabled={sibuk} onClick={() => void contoh()} className={`${tombolTeks} -ml-3 self-start text-kecil`}>Kirim Contoh Pengingat (Demo)</button>}
       {data && !data.notifikasi.length && <p className="py-2 text-isi text-ungu-muda">Belum ada notifikasi.</p>}
       <ul className="-mx-3 flex flex-col gap-1">
         {data?.notifikasi.map((n) => (

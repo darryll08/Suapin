@@ -47,7 +47,7 @@ export function OverviewKlinik() {
           <div className="flex items-center gap-3">
             <span className="inline-flex size-10 items-center justify-center rounded-full bg-permukaan text-jagung-tua" aria-hidden="true"><Ikon nama="bendera" className="size-5" /></span>
             <div>
-              <h2 className="font-judul text-subjudul font-bold">Belum punya dokter</h2>
+              <h2 className="font-judul text-subjudul font-bold">Belum Punya Dokter</h2>
               <p className="text-kecil text-jagung-tua">Terdaftar di klinik, belum dipegang dokter mana pun.</p>
             </div>
           </div>

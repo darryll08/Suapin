@@ -46,7 +46,7 @@ export function DaftarPasien() {
 
         <section className={`${panel} flex flex-col gap-3 lg:h-full`} aria-labelledby="judul-jadwal">
           <div className="flex items-center justify-between gap-2">
-            <h2 id="judul-jadwal" className="font-judul text-subjudul font-bold">Jadwal terdekat</h2>
+            <h2 id="judul-jadwal" className="font-judul text-subjudul font-bold">Jadwal Terdekat</h2>
             <span className="inline-flex size-10 items-center justify-center rounded-full bg-ungu-tint text-ungu" aria-hidden="true"><Ikon nama="kalender" className="size-5" /></span>
           </div>
           {!data.jadwal.length && <p className="text-ungu-muda">Belum ada jadwal kontrol.</p>}
@@ -70,7 +70,7 @@ export function DaftarPasien() {
 
       <section className="flex flex-col gap-3" aria-labelledby="judul-pasien">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 id="judul-pasien" className="font-judul text-subjudul font-bold">Anak yang saya pegang</h2>
+          <h2 id="judul-pasien" className="font-judul text-subjudul font-bold">Anak yang Saya Pegang</h2>
           <div className="flex flex-wrap gap-2" role="group" aria-label="Saring pasien">
             {([["semua", "Semua"], ["perhatian", "Perlu ditinjau"], ["jadwal", "Kontrol"]] as const).map(([k, l]) =>
               <button key={k} type="button" aria-pressed={saring === k} onClick={() => setSaring(k)} className={chip(saring === k)}>{l}</button>)}

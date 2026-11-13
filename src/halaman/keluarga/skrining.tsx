@@ -36,7 +36,7 @@ export function Skrining() {
   return (
     <main className={`${wadahKeluarga} pb-28`}>
       <div className="pt-3"><Logo /></div>
-      <KepalaHalaman judul="Sebelum mulai" sub="Jawab 7 pertanyaan ini supaya program aman untuk anak." />
+      <KepalaHalaman judul="Sebelum Mulai" sub="Jawab 7 pertanyaan ini supaya program aman untuk anak." />
 
       <section className={`${bento} mb-4 flex flex-col gap-3`}>
         <p className="text-isi font-semibold tabular-nums" aria-live="polite">{terjawab} dari 7 terjawab</p>
@@ -69,7 +69,7 @@ export function Skrining() {
 
       <div className="fixed inset-x-0 bottom-0 border-t border-garis/40 bg-latar/80 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md">
         <div className="mx-auto max-w-[560px]">
-          <Tombol className="sm:w-full" disabled={terjawab < 7} memuat={memuat} onClick={simpan}>Simpan jawaban</Tombol>
+          <Tombol className="sm:w-full" disabled={terjawab < 7} memuat={memuat} onClick={simpan}>Simpan Jawaban</Tombol>
         </div>
       </div>
     </main>
@@ -82,11 +82,11 @@ function TandaBahaya() {
     <main className={`${wadahKeluarga} flex flex-col gap-4 pt-10`}>
       <section className="flex flex-col gap-4 rounded-bento bg-jagung-muda p-6">
         <span aria-hidden="true" className="inline-flex size-12 items-center justify-center rounded-full bg-permukaan font-judul text-subjudul font-bold text-jagung-tua">i</span>
-        <h1 className="font-judul text-judul font-bold text-jagung-tua">Sebaiknya periksa ke dokter dulu</h1>
+        <h1 className="font-judul text-judul font-bold text-jagung-tua">Sebaiknya Periksa ke Dokter Dulu</h1>
         <p className="text-isi">Ada jawaban yang perlu dilihat dokter. Program makan tetap bisa dipakai, tapi konsultasikan ke dokter dulu.</p>
       </section>
       <section className={`${bento} flex flex-col gap-2`}>
-        <h2 className="font-judul text-isi font-bold">Langkah berikutnya</h2>
+        <h2 className="font-judul text-isi font-bold">Langkah Berikutnya</h2>
         <p className="text-isi">Bagikan laporan dari aplikasi ini ke dokter supaya dokter bisa ikut memantau dan mengatur program.</p>
       </section>
       <Tombol className="sm:w-full" onClick={() => void pindah("/beranda")}>Ke beranda</Tombol>

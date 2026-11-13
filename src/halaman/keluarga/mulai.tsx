@@ -52,10 +52,10 @@ export function Mulai() {
 
   return (
     <main className={wadahKeluarga}>
-      <KepalaHalaman judul="Kenalan dulu" sub="Sekitar 1 menit. Data ini hanya untuk menyapa di aplikasi." kembali="/" />
+      <KepalaHalaman judul="Kenalan Dulu" sub="Sekitar 1 menit. Data ini hanya untuk menyapa di aplikasi." kembali="/" />
       <form onSubmit={kirim} noValidate className="flex flex-col gap-4 pb-24">
         <section className={`${bento} flex flex-col gap-5`}>
-          <h2 className="font-judul text-subjudul font-bold">Tentang anak</h2>
+          <h2 className="font-judul text-subjudul font-bold">Tentang Anak</h2>
           <Isian label="Panggilan anak" bantuan="Nama yang biasa dipakai di rumah" value={panggilan} maxLength={40}
             onChange={(e) => setPanggilan(e.target.value)} galat={galat.panggilan} autoComplete="off" />
           <div className="flex flex-col gap-2">
@@ -71,7 +71,7 @@ export function Mulai() {
         </section>
         <section className={`${bento} flex flex-col gap-5`}>
           <fieldset className="flex flex-col gap-2">
-            <legend className="mb-3 font-judul text-subjudul font-bold">Siapa yang menyuapi?</legend>
+            <legend className="mb-3 font-judul text-subjudul font-bold">Siapa yang Menyuapi?</legend>
             <div className={`${wadahSegmen} grid-cols-4`}>
               {(Object.keys(NAMA_SAPAAN) as Sapaan[]).map((s) => (
                 <button key={s} type="button" aria-pressed={sapaan === s} onClick={() => setSapaan(s)} className={tombolSegmen(sapaan === s)}>
@@ -105,7 +105,7 @@ export function Mulai() {
         {galatServer && <PesanGalat pesan={galatServer} />}
         <div className="fixed inset-x-0 bottom-0 border-t border-garis/40 bg-latar/80 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md">
           <div className="mx-auto max-w-[560px]">
-            <Tombol type="submit" memuat={memuat} className="sm:w-full">Lanjut ke skrining</Tombol>
+            <Tombol type="submit" memuat={memuat} className="sm:w-full">Lanjut ke Skrining</Tombol>
           </div>
         </div>
       </form>

@@ -30,7 +30,7 @@ function DetailPasien({ id }: { id: string }) {
   const [sukses, setSukses] = useState("")
   if (galat instanceof GalatApi && galat.status === 401) return <Navigate to={keMasuk(location.pathname + location.search)} replace />
   if (!data) return <TataLetakPanel peran="dokter">
-    <KepalaDetail kembali="/dokter" labelKembali="Kembali ke semua pasien" judul="Kartu pasien" />
+    <KepalaDetail kembali="/dokter" labelKembali="Kembali ke semua pasien" judul="Kartu Pasien" />
     {memuat ? <Memuat teks="Memuat pasien…" /> : <PesanGalat pesan={galat instanceof GalatApi && galat.status === 404
       ? "Pasien tidak ditemukan atau bukan pasien Anda." : galat?.message ?? "Gagal memuat"} ulangi={ulang} />}
   </TataLetakPanel>
@@ -58,7 +58,7 @@ function DetailPasien({ id }: { id: string }) {
   const lewat = data.jadwal.filter((j) => !mendatang.includes(j))
 
   return <TataLetakPanel peran="dokter" nama={data.dokter_nama}>
-    <KepalaDetail kembali="/dokter" labelKembali="Kembali ke semua pasien" judul="Kartu pasien" />
+    <KepalaDetail kembali="/dokter" labelKembali="Kembali ke semua pasien" judul="Kartu Pasien" />
 
     <section className={`${panel} flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between`} aria-label="Informasi anak">
       <div className="flex min-w-0 items-center gap-4">
@@ -96,7 +96,7 @@ function DetailPasien({ id }: { id: string }) {
         <section className={`${panel} flex flex-col gap-4`} aria-labelledby="judul-tren">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h2 id="judul-tren" className="font-judul text-subjudul font-bold">Suapan diterima</h2>
+              <h2 id="judul-tren" className="font-judul text-subjudul font-bold">Suapan Diterima</h2>
               <p className="text-kecil text-ungu-muda">7 hari terakhir</p>
             </div>
             <span className="font-judul text-tampilan leading-none font-bold tabular-nums">{persen(masuk7, tolak7)}%</span>
@@ -106,7 +106,7 @@ function DetailPasien({ id }: { id: string }) {
         </section>
 
         <section className={`${panel} flex flex-col gap-3`}>
-          <h2 className="font-judul text-subjudul font-bold">Ringkasan minggu ini</h2>
+          <h2 className="font-judul text-subjudul font-bold">Ringkasan Minggu Ini</h2>
           {data.ringkasan_dokter ? <>
             <span className="self-start"><Pil nada="netral">{labelRingkasan(data.ringkasan_sumber)}</Pil></span>
             <p className={`${ubin} text-isi`}>{data.ringkasan_dokter}</p>
@@ -118,7 +118,7 @@ function DetailPasien({ id }: { id: string }) {
         <div className="suapin-klinik flex flex-col gap-4">
           <FormResep id={id} aktif={aktif} selesai={() => { setSukses("Aturan baru berlaku di sesi berikutnya."); ulang() }} />
           <section className="suapin-kartu">
-            <h2>Riwayat sesi 28 hari</h2>
+            <h2>Riwayat Sesi 28 Hari</h2>
             <TabelSesi sesi={data.sesi} lengkap />
           </section>
         </div>
@@ -147,8 +147,8 @@ function DetailPasien({ id }: { id: string }) {
         </section>
 
         <section className={`${panel} flex flex-col gap-2`} aria-labelledby="judul-map">
-          <h2 id="judul-map" className="pb-1 font-judul text-subjudul font-bold">Map pasien</h2>
-          <Map ikon="aturan" judul="Aturan aktif" ket={data.aturan_aktif.source === "dokter" ? "Dari dokter" : "Default program"} buka>
+          <h2 id="judul-map" className="pb-1 font-judul text-subjudul font-bold">Map Pasien</h2>
+          <Map ikon="aturan" judul="Aturan Aktif" ket={data.aturan_aktif.source === "dokter" ? "Dari dokter" : "Default program"} buka>
             <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-kecil">
               <dt className="text-ungu-muda">Lama sesi</dt><dd>maks {aktif.max_minutes} menit</dd>
               <dt className="text-ungu-muda">Naik tahap</dt><dd>min {aktif.advance_rule.first_stage_sessions} sesi (tahap 1) / {aktif.advance_rule.sessions} sesi (tahap 2–3), {aktif.advance_rule.streak} sesi berturut ≥ {aktif.advance_rule.percent}%</dd>
@@ -156,7 +156,7 @@ function DetailPasien({ id }: { id: string }) {
               <dt className="text-ungu-muda">Saat ngemut</dt><dd>{aktif.ngemut_hint}</dd>
             </dl>
           </Map>
-          <Map ikon="daun" judul="Paparan makanan" ket={`${data.paparan.length} makanan baru`}>
+          <Map ikon="daun" judul="Paparan Makanan" ket={`${data.paparan.length} makanan baru`}>
             {!data.paparan.length && <p className="text-kecil text-ungu-muda">Belum ada makanan baru yang dicoba.</p>}
             {data.paparan.map((p) => <div key={p.makanan} className="flex flex-col gap-1">
               <span className="flex justify-between text-kecil"><span>{cariMakanan(p.makanan).nama}</span><span className="tabular-nums">{p.jumlah}/{p.target}</span></span>
@@ -166,7 +166,7 @@ function DetailPasien({ id }: { id: string }) {
           {data.skrining_terakhir && <Map ikon="perisai" judul="Skrining" ket={data.skrining_terakhir.ada_tanda_bahaya ? "Ada tanda bahaya" : "Tidak ada tanda bahaya"}>
             <p className="text-kecil text-ungu-muda">Terakhir diisi {tanggal(data.skrining_terakhir.tanggal)}</p>
           </Map>}
-          <Map ikon="map" judul="Riwayat aturan" ket={`${data.riwayat_aturan.length} perubahan`}>
+          <Map ikon="map" judul="Riwayat Aturan" ket={`${data.riwayat_aturan.length} perubahan`}>
             <ol className="flex flex-col gap-2">
               {data.riwayat_aturan.map((r, i) => <li key={r.confirmed_at + i} className="flex flex-col">
                 <span className="text-kecil font-semibold">{tanggal(r.confirmed_at)} · {r.source === "dokter" ? "Dokter" : "Default"}</span>
@@ -205,5 +205,5 @@ function Tren({ sesi }: { sesi: Detail["sesi"] }) {
     return { label: String(Number(d.slice(8, 10))), diterima: isi.reduce((n, s) => n + s.diterima, 0),
       ditolak: isi.reduce((n, s) => n + s.ditolak, 0), ada: isi.length > 0, sorot: d === hariIni }
   })
-  return <GrafikPil batang={batang} judul="Suapan per hari, 14 hari terakhir" tinggi={150} />
+  return <GrafikPil batang={batang} judul="Suapan per Hari, 14 Hari Terakhir" tinggi={150} />
 }

@@ -104,7 +104,7 @@ export function FormResep({ id, aktif, selesai }: { id: string; aktif: Aturan; s
         : <p className="suapin-pil">{hasil.sumber === "cache" ? "AI (tersimpan)" : "AI"} · Diubah oleh AI, periksa sebelum konfirmasi.</p>)}
       <div className="suapin-resep">
         <div><h3>Teks Anda</h3><p className="suapin-teks-asli">{teks || "Diisi manual."}</p></div>
-        <div><h3>Aturan untuk aplikasi</h3>
+        <div><h3>Aturan untuk Aplikasi</h3>
           {kolom.map((k) => {
             const masalah = hasil?.kolom_bermasalah.find((x) => x.kolom === k.id)
             const fieldId = "resep-" + k.id

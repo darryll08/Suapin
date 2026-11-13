@@ -1,5 +1,10 @@
 /* Pemilik: B (Satya). Token dari "Suapin - UI UX Guidelines.md" bagian 4.5. Tidak ada merah. */
 @import "tailwindcss";
+/* Huruf Suapin (13 Nov): Fraunces (judul, serif lembut yang hangat seperti merek makanan; sumbu SOFT dinaikkan
+   supaya ujung huruf membulat, tidak kaku) + Plus Jakarta Sans (isi, dirancang untuk Jakarta).
+   Dibundel lewat @fontsource supaya tetap jalan offline di localhost/PWA. */
+@import "@fontsource-variable/fraunces/full.css";
+@import "@fontsource-variable/plus-jakarta-sans";
 
 /* Layar cukup lebar DAN tinggi (laptop/tablet), bukan HP yang dimiringkan. Dipakai bingkai HP di layar makan. */
 @custom-variant bingkai (@media (min-width: 640px) and (min-height: 600px));
@@ -15,8 +20,8 @@
   --color-jagung-tua: #8A5F0B;
   --color-garis: #C9B79C;
 
-  --font-judul: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-isi: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  --font-judul: "Fraunces Variable", Georgia, "Times New Roman", serif;
+  --font-isi: "Plus Jakarta Sans Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
   --text-tampilan: 2rem;      --text-tampilan--line-height: 2.5rem;
   --text-judul: 1.625rem;     --text-judul--line-height: 2rem;
@@ -48,7 +53,19 @@
 }
 
 :root { color-scheme: light; }
-body { background: var(--color-latar); color: var(--color-ungu); font-family: var(--font-isi); }
+body {
+  background: var(--color-latar); color: var(--color-ungu); font-family: var(--font-isi);
+  font-feature-settings: "ss01", "cv11"; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+/* Tata teks: judul rapat dan seimbang, paragraf tanpa yatim di baris akhir. */
+h1, h2, h3, .font-judul {
+  letter-spacing: -0.015em; text-wrap: balance;
+  font-variation-settings: "SOFT" 100, "WONK" 0; font-optical-sizing: auto;
+}
+.font-judul.font-bold { font-weight: 650; }
+p, li, dd { text-wrap: pretty; }
+/* Label kecil di atas judul (eyebrow): huruf kapital berjarak. */
+.label-atas { font-family: var(--font-isi); font-size: 0.75rem; line-height: 1rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
 
 /* Gerak bersama (UI UX 12.2) */
 .lembar-masuk { animation: lembar-masuk 400ms var(--ease-standar) 1 both; }

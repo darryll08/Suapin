@@ -19,7 +19,7 @@ export function Beranda() {
     <Halaman>
       <header className="pt-4 pb-5">
         <p className="truncate text-isi text-ungu-muda">Halo {namaDenganSapaan(sapaan, c.nama_pengasuh)},</p>
-        <h1 className="font-judul text-judul font-bold">Siap makan bareng {c.panggilan}?</h1>
+        <h1 className="font-judul text-judul font-bold">Siap Makan Bareng {c.panggilan}?</h1>
         {lap && <div className="pt-3"><BarisPlan plan={c.plan} sisa={lap.trial_sisa_hari} terkunci={saya.alasan_terkunci === "trial_habis"} /></div>}
       </header>
 
@@ -36,13 +36,13 @@ export function Beranda() {
             ) : saya.alasan_terkunci === "tanda_bahaya" ? (
               <div className="flex flex-col gap-3">
                 <div className="rounded-kartu bg-jagung-muda p-4 text-ungu">
-                  <p className="font-judul text-subjudul font-bold text-jagung-tua">Sebaiknya konsultasi ke dokter</p>
+                  <p className="font-judul text-subjudul font-bold text-jagung-tua">Sebaiknya Konsultasi ke Dokter</p>
                   <p className="text-isi">Ada jawaban skrining yang perlu dilihat dokter. Bagikan laporan lewat menu Laporan.</p>
                 </div>
-                <Link to="/sesi" className={tombolHero}>Mulai makan</Link>
+                <Link to="/sesi" className={tombolHero}>Mulai Makan</Link>
               </div>
             ) : (
-              <Link to="/sesi" className={tombolHero}>Mulai makan</Link>
+              <Link to="/sesi" className={tombolHero}>Mulai Makan</Link>
             )}
           </KartuHero>
 
@@ -76,7 +76,7 @@ function Ringkas({ sesi, stiker, panggilan }: {
         <CincinProgres label="Hari makan" nilai={minggu.filter((h) => h.ada).length} target={7} ket="minggu ini" />
       </div>
       <section className={`${bento} flex flex-col gap-3`}>
-        <h2 className="font-judul text-subjudul font-bold">Minggu ini</h2>
+        <h2 className="font-judul text-subjudul font-bold">Minggu Ini</h2>
         <GrafikPil judul={`Suapan ${panggilan} yang diterima per hari minggu ini`} tampilDitolak={false} tinggi={110}
           batang={minggu.map((h, i) => ({ label: HARI_SEN_MIN[i], diterima: h.diterima, ditolak: h.ditolak, ada: h.ada, sorot: h.tanggal === hariIni, stiker: stiker[i] }))} />
       </section>

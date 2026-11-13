@@ -4,7 +4,7 @@ const fokus =
   "outline-none focus-visible:ring-4 focus-visible:ring-jagung focus-visible:ring-offset-2 focus-visible:ring-offset-latar";
 
 const dasarTombol =
-  `group inline-flex items-center justify-center gap-2 rounded-full px-5 font-judul text-tombol font-bold ` +
+  `group inline-flex items-center justify-center gap-2 rounded-full px-5 font-isi text-tombol font-bold ` +
   `transition-[transform,background-color,box-shadow] duration-200 ease-standar hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] ` +
   `motion-reduce:transform-none disabled:hover:translate-y-0 disabled:hover:shadow-none ` +
   `disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 ${fokus}`;
@@ -30,13 +30,13 @@ export const bento = "rounded-bento border border-garis/50 bg-permukaan p-5";
 
 /** Tombol pil jagung di atas kartu hero ungu (teks ungu di jagung 5,21:1). Isi kanan: <Panah />. */
 export const tombolHero =
-  "group inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-full bg-jagung px-6 font-judul text-isi sm:text-tombol font-bold text-ungu whitespace-nowrap " +
+  "group inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-full bg-jagung px-6 font-isi text-isi sm:text-tombol font-bold text-ungu whitespace-nowrap " +
   "transition-[transform,box-shadow,filter] duration-200 ease-standar hover:-translate-y-0.5 hover:brightness-105 hover:shadow-[0_10px_24px_rgb(0_0_0/0.22)] active:translate-y-0 active:scale-[0.97] " +
   "motion-reduce:transform-none outline-none focus-visible:ring-4 focus-visible:ring-latar";
 
 /** Tombol garis nasi di atas kartu hero ungu (10,6:1). */
 export const tombolHeroKedua =
-  "inline-flex min-h-14 w-full items-center justify-center rounded-full border-2 border-latar/70 px-6 font-judul text-tombol font-bold text-latar " +
+  "inline-flex min-h-14 w-full items-center justify-center rounded-full border-2 border-latar/70 px-6 font-isi text-tombol font-bold text-latar " +
   "transition-[transform,background-color] duration-200 ease-standar hover:-translate-y-0.5 hover:bg-latar/10 active:translate-y-0 active:scale-[0.97] motion-reduce:transform-none outline-none focus-visible:ring-4 focus-visible:ring-jagung";
 
 /** Pilihan pil bersegmen (Ya/Tidak, porsi, mood): wadah + tombol. */

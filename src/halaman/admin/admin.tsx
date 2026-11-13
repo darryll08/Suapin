@@ -51,7 +51,7 @@ export function Admin() {
 
       <section className="flex flex-col gap-4 rounded-bento bg-ungu p-5 text-permukaan sm:p-6">
         <div className="flex flex-col gap-1">
-          <h1 className="font-judul text-judul font-bold">Akun klinik</h1>
+          <h1 className="font-judul text-judul font-bold">Akun Klinik</h1>
           <p className="text-isi text-latar/85">
             Daftarkan klinik setelah kerja sama disepakati. Klinik dan dokter masuk dengan email + sandi sementara dari sini.
           </p>
@@ -70,7 +70,7 @@ export function Admin() {
 
         <section className="flex flex-col gap-4" aria-labelledby="judul-daftar-klinik">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 id="judul-daftar-klinik" className="font-judul text-subjudul font-bold">Klinik terdaftar</h2>
+            <h2 id="judul-daftar-klinik" className="font-judul text-subjudul font-bold">Klinik Terdaftar</h2>
             {data && <span className="text-kecil text-ungu-muda">{data.klinik.length} klinik · {totalDokter} dokter</span>}
           </div>
           {memuat && !data && <Memuat teks="Memuat akun…" />}
@@ -83,10 +83,10 @@ export function Admin() {
       {sehat.data?.demo && (
         <section className={`${bento} flex flex-wrap items-center justify-between gap-3`}>
           <div>
-            <h2 className="font-judul text-subjudul font-bold">Alat demo</h2>
+            <h2 className="font-judul text-subjudul font-bold">Alat Demo</h2>
             <p className="text-kecil text-ungu-muda">Panel ambang deteksi dan reset data demo.</p>
           </div>
-          <Link to="/dev/ambang" className={tombolTeks}>Buka panel ambang</Link>
+          <Link to="/dev/ambang" className={tombolTeks}>Buka Panel Ambang</Link>
         </section>
       )}
     </main>
@@ -100,12 +100,12 @@ function KotakRahasia({ data, tutup }: { data: Rahasia; tutup: () => void }) {
   };
   return (
     <section role="status" className="flex flex-col gap-3 rounded-bento border-2 border-jagung bg-jagung-muda p-5">
-      <h2 className="font-judul text-subjudul font-bold">Sandi sementara untuk {data.untuk}</h2>
+      <h2 className="font-judul text-subjudul font-bold">Sandi Sementara untuk {data.untuk}</h2>
       <p className="text-isi">{data.ket} Kirim lewat jalur aman. Hanya tampil sekali.</p>
       <div className="flex flex-wrap items-center gap-3">
         <code className="rounded-xl bg-permukaan px-4 py-3 font-mono text-subjudul tracking-wider">{data.nilai}</code>
         <Tombol varian="kedua" onClick={() => void salin()} className="min-h-12">{disalin ? "Tersalin" : "Salin"}</Tombol>
-        <button type="button" onClick={tutup} className={tombolTeks}>Sudah dicatat</button>
+        <button type="button" onClick={tutup} className={tombolTeks}>Sudah Dicatat</button>
       </div>
     </section>
   );
@@ -131,7 +131,7 @@ function FormKlinikBaru({ selesai }: { selesai: (s: Rahasia) => void }) {
 
   return (
     <form onSubmit={kirim} noValidate className={`${bento} flex flex-col gap-4`} aria-labelledby="judul-klinik-baru">
-      <h2 id="judul-klinik-baru" className="font-judul text-subjudul font-bold">Daftarkan klinik</h2>
+      <h2 id="judul-klinik-baru" className="font-judul text-subjudul font-bold">Daftarkan Klinik</h2>
       <Isian label="Nama klinik" value={klinik} onChange={(e) => setKlinik(e.target.value)} maxLength={80} />
       <Isian label="Kota" value={kota} onChange={(e) => setKota(e.target.value)} maxLength={80} />
       <Isian label="Email akun klinik" type="email" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={120} />
@@ -175,7 +175,7 @@ function KartuKlinik({ klinik, selesai, ulang }: { klinik: Klinik; selesai: (s: 
       </ul>}
       {tambah
         ? <FormDokterBaru clinicId={klinik.id} batal={() => setTambah(false)} selesai={(s) => { setTambah(false); selesai(s); }} />
-        : <button type="button" onClick={() => setTambah(true)} className={`${tombolTeks} -ml-3 self-start`}>Tambah dokter</button>}
+        : <button type="button" onClick={() => setTambah(true)} className={`${tombolTeks} -ml-3 self-start`}>Tambah Dokter</button>}
     </article>
   );
 }

@@ -34,7 +34,7 @@ export function Masuk() {
         </section>
 
         <div className="flex flex-col gap-1">
-          <Link to="/mulai" className={`${tombolTeks} -ml-3 self-start`}>Belum punya akun? Mulai gratis</Link>
+          <Link to="/mulai" className={`${tombolTeks} -ml-3 self-start`}>Belum Punya Akun? Mulai Gratis</Link>
         </div>
 
         <AkunDemo kembali={kembali} />
@@ -113,7 +113,7 @@ function AkunDemo({ kembali }: { kembali: string | null }) {
 
   return (
     <section className={`${bento} masuk flex flex-col gap-4`} aria-labelledby="judul-akun-demo">
-      <h2 id="judul-akun-demo" className="font-judul text-subjudul font-bold">Akun demo</h2>
+      <h2 id="judul-akun-demo" className="font-judul text-subjudul font-bold">Akun Demo</h2>
       <ul className="flex flex-col gap-2">
         {AKUN_DEMO.map((a) => (
           <li key={a.id}>

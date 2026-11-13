@@ -2,7 +2,7 @@
 // Bentuk tiap tokoh berupa string SVG tetap (tanpa masukan pengguna); hanya mulut yang dihitung ulang dari `mulut` 0..1.
 import "./karakter.css";
 
-export type IdTokoh = "raka" | "nara" | "mpe" | "pao" | "dino" | "tung";
+export type IdTokoh = "raka" | "nara" | "jeru" | "pao" | "dino" | "tung";
 
 const GARIS = "#3A2346";
 
@@ -54,15 +54,18 @@ export const TOKOH: Tokoh[] = [
       ${alis(100, 102, 1)}${alis(142, 102, -1)}${mata(100, 124)}${mata(142, 124)}${pipi(86, 146)}${pipi(156, 146)}`,
   },
   {
-    id: "mpe", nama: "Mpe", ket: "tempe", mulut: [120, 150, 30, 1],
+    id: "jeru", nama: "Jeru", ket: "jeruk", mulut: [120, 162, 30, 1],
     badan: `
-      <path class="tokoh-g" d="M84 226 V246 M156 226 V246" fill="none"/>
-      <path class="tokoh-g" d="M58 70 C58 56 66 50 82 50 H160 C176 50 184 58 183 72 L180 206 C180 222 172 228 158 228 H82 C68 228 61 220 61 206 Z" fill="#EADBB4"/>
-      ${[[78, 70], [108, 64], [140, 72], [166, 92], [76, 184], [100, 208], [146, 206], [170, 180], [70, 120]].map(([x, y]) =>
-        `<ellipse cx="${x}" cy="${y}" rx="7" ry="5" fill="#CDB98E" transform="rotate(${(x * 7) % 40 - 20} ${x} ${y})"/>`).join("")}
-      <path class="tokoh-g" d="M60 140 C44 136 38 150 44 160" fill="none"/>
-      <path class="tokoh-g" d="M182 140 C198 136 204 150 198 160" fill="none"/>
-      ${alis(98, 100, 2)}${alis(142, 100, -2)}${mata(98, 122)}${mata(142, 122)}${pipi(82, 144)}${pipi(158, 144)}`,
+      <path class="tokoh-g" d="M100 222 V246 M140 222 V246" fill="none"/>
+      <path class="tokoh-g" d="M42 150 C26 146 20 162 28 172" fill="none"/>
+      <path class="tokoh-g" d="M198 150 C214 146 220 162 212 172" fill="none"/>
+      <circle class="tokoh-g" cx="120" cy="142" r="86" fill="#F3A04A"/>
+      ${[[78, 96], [104, 80], [146, 84], [170, 108], [62, 140], [178, 150], [80, 196], [116, 212], [158, 194]].map(([x, y]) =>
+        `<circle cx="${x}" cy="${y}" r="3" fill="#E08A35"/>`).join("")}
+      <path d="M78 92 C88 76 102 68 116 66" fill="none" stroke="#FFF9EF" stroke-width="7" stroke-linecap="round" opacity=".55"/>
+      <path class="tokoh-g" d="M120 58 V44" fill="none" style="stroke-width:5"/>
+      <path class="tokoh-g" d="M122 48 C130 30 152 26 164 34 C156 50 136 56 122 48 Z" fill="#7DB35E" style="stroke-width:4"/>
+      ${alis(98, 112, 2)}${alis(142, 112, -2)}${mata(98, 134)}${mata(142, 134)}${pipi(80, 158, "#E8774E")}${pipi(160, 158, "#E8774E")}`,
   },
   {
     id: "pao", nama: "Pao", ket: "bakpao", mulut: [120, 172, 30, 1],

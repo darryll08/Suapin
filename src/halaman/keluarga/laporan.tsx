@@ -56,26 +56,26 @@ export function Laporan() {
           {tandaBahaya && kartuBagikan}
           {lap.sesi.length > 0 && <Angka14 sesi={lap.sesi} panggilan={c.panggilan} />}
           <section className={`${bento} flex flex-col gap-4`}>
-            <h2 className="font-judul text-subjudul font-bold">Perjalanan tahap</h2>
+            <h2 className="font-judul text-subjudul font-bold">Perjalanan Tahap</h2>
             <TrackerTahap tahap={lap.tahap} progres={lap.progres_tahap} />
             <RiwayatTahap tahap={lap.tahap} riwayat={lap.riwayat_tahap} />
           </section>
 
           <section className={`${bento} flex flex-col gap-3`}>
-            <h2 className="font-judul text-subjudul font-bold">Ringkasan minggu ini</h2>
+            <h2 className="font-judul text-subjudul font-bold">Ringkasan Minggu Ini</h2>
             {memuatR ? <Memuat teks="Menyusun ringkasan…" /> : teksRingkasan ? (
               <>
                 <LabelAI sumber={sumber} />
                 <p className="border-l-[3px] border-ungu-muda pl-3 text-isi">{teksRingkasan}</p>
               </>
             ) : (
-              <Tombol varian="kedua" onClick={buatRingkasan}>Buat ringkasan minggu ini</Tombol>
+              <Tombol varian="kedua" onClick={buatRingkasan}>Buat Ringkasan Minggu Ini</Tombol>
             )}
             {galatR && <PesanGalat pesan={galatR} ulangi={buatRingkasan} />}
           </section>
 
           <section className={`${bento} flex flex-col gap-4`}>
-            <h2 className="font-judul text-subjudul font-bold">Sesi 14 hari terakhir</h2>
+            <h2 className="font-judul text-subjudul font-bold">Sesi 14 Hari Terakhir</h2>
             {lap.sesi.length === 0 ? <p className="text-isi text-ungu-muda">Belum ada sesi. Setelah sesi pertama, grafik dan daftar sesi muncul di sini.</p> : <DaftarSesi sesi={lap.sesi} />}
           </section>
 
@@ -91,16 +91,16 @@ function KartuBagikan({ sorot, memuat, galat, bagikan }: { sorot: boolean; memua
   if (sorot) {
     return (
       <section className="flex flex-col gap-3 rounded-bento border-2 border-jagung bg-jagung-muda p-5">
-        <h2 className="font-judul text-subjudul font-bold text-jagung-tua">Periksa ke dokter dulu</h2>
+        <h2 className="font-judul text-subjudul font-bold text-jagung-tua">Periksa ke Dokter Dulu</h2>
         <p className="text-isi">Kirim laporan ini ke dokter anak. Setelah diperiksa, dokter bisa membuka program dari link ini.</p>
-        <Tombol memuat={memuat} onClick={bagikan} className="sm:w-full">Bagikan laporan ke dokter</Tombol>
+        <Tombol memuat={memuat} onClick={bagikan} className="sm:w-full">Bagikan Laporan ke Dokter</Tombol>
         {galat && <PesanGalat pesan={galat} />}
       </section>
     );
   }
   return (
     <section className={`${bento} flex flex-col gap-1`}>
-      <h2 className="text-isi font-semibold">Mau periksa ke dokter anak?</h2>
+      <h2 className="text-isi font-semibold">Mau Periksa ke Dokter Anak?</h2>
       <p className="text-kecil text-ungu-muda">Bagikan laporan ini. Dokter bisa melihat catatan makan dan menjadikan anak pasiennya.</p>
       <button type="button" onClick={bagikan} disabled={memuat} className={`${tombolTeks} -ml-3 self-start`}>
         {memuat ? "Membuat link…" : "Bagikan laporan"}
@@ -146,7 +146,7 @@ function LembarBagikan({ link, panggilan, tutup }: { link: string; panggilan: st
     setTimeout(() => setTersalin(false), 2000);
   };
   return (
-    <LembarBawah judul="Bagikan ke dokter" tutup={tutup}>
+    <LembarBawah judul="Bagikan ke Dokter" tutup={tutup}>
       <p className="truncate rounded-isian border-2 border-garis bg-latar px-3 py-3 font-mono text-kecil" title={link}>
         {link.length > 44 ? `${link.slice(0, 26)}…${link.slice(-14)}` : link}
       </p>
@@ -176,7 +176,7 @@ function Angka14({ sesi, panggilan }: { sesi: SesiLaporan[]; panggilan: string }
         <KartuAngka label="Rata-rata diterima" angka={rata.toFixed(1).replace(".", ",")} ket="suapan per sesi" />
       </div>
       <section className={`${bento} flex flex-col gap-3`}>
-        <h2 className="font-judul text-subjudul font-bold">Suapan per hari</h2>
+        <h2 className="font-judul text-subjudul font-bold">Suapan per Hari</h2>
         <GrafikPil judul={`Suapan ${panggilan} per hari, 14 hari terakhir`}
           batang={hari.map((h) => ({ label: String(Number(h.tanggal.slice(8, 10))), diterima: h.diterima, ditolak: h.ditolak, ada: h.ada, sorot: h.tanggal === hariIni }))} />
       </section>

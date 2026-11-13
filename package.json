@@ -19,6 +19,8 @@
     "postinstall": "node scripts/salin-mediapipe.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/fraunces": "5.3.0",
+    "@fontsource-variable/plus-jakarta-sans": "5.3.0",
     "@hono/node-server": "2.1.6",
     "@libsql/client": "0.18.0",
     "@mediapipe/tasks-vision": "1.2.2",

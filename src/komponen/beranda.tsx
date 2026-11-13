@@ -10,7 +10,7 @@ export function KartuHero({ tahap, kalimat, children }: { tahap: number; kalimat
     <section className="flex flex-col gap-5 rounded-bento bg-ungu p-6 text-latar">
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
-          <p className="text-kecil font-semibold text-latar/80">Program lepas layar</p>
+          <p className="label-atas text-jagung">Program lepas layar</p>
           <h2 className="font-judul text-judul font-bold">Tahap {tahap}</h2>
           <p className="text-isi text-latar/90">{kalimat}</p>
         </div>
@@ -30,7 +30,7 @@ export function KartuHero({ tahap, kalimat, children }: { tahap: number; kalimat
 export function KartuAngka({ label, angka, satuan, ket }: { label: string; angka: string | number; satuan?: string; ket?: string }) {
   return (
     <section className={`${bento} flex flex-col gap-1`}>
-      <p className="text-kecil font-semibold text-ungu-muda">{label}</p>
+      <p className="label-atas text-ungu-muda">{label}</p>
       <p className="font-judul text-angka font-bold tabular-nums">
         {angka}{satuan && <span className="ml-1 text-isi font-semibold text-ungu-muda">{satuan}</span>}
       </p>
@@ -138,7 +138,7 @@ export function TrackerTahap({ tahap, progres, gelap = false }: { tahap: number;
   const sesi = [...progres.sesi_terakhir].reverse();
   return (
     <div className={`grid grid-cols-[auto_1fr_auto] items-center gap-x-3 gap-y-2.5 rounded-kartu p-4 ${gelap ? "bg-latar/10" : "bg-ungu-tint/50"}`}>
-      <p className="col-span-3 text-isi font-bold">{progres.siap_naik ? `Siap naik ke tahap ${tahap + 1}` : `Menuju tahap ${tahap + 1}`}</p>
+      <p className="col-span-3 text-isi font-bold">{progres.siap_naik ? `Siap Naik ke Tahap ${tahap + 1}` : `Menuju Tahap ${tahap + 1}`}</p>
       <span className={`text-kecil ${redup}`}>Sesi</span>
       <div className={`h-2 rounded-full ${kosong}`}><div className="h-2 rounded-full bg-jagung" style={{ width: `${persenSesi}%` }} /></div>
       <span className="text-kecil font-semibold tabular-nums">{Math.min(progres.sesi, progres.sesi_target)}/{progres.sesi_target}</span>
