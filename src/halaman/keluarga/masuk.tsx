@@ -1,6 +1,7 @@
 // Pemilik: B (Satya). Halaman masuk `/masuk`: satu form email + kata sandi untuk semua peran.
 // Server menentukan perannya: keluarga → /beranda, dokter → /dokter, klinik → /klinik, admin → /admin.
-// `?kembali=/r/<token>` dipertahankan untuk dokter yang datang dari link laporan keluarga.
+// `?kembali=<link>` dipertahankan: setelah masuk kembali ke link itu bila milik peran yang masuk (lib/arah.ts).
+// Browser yang sudah login langsung dialihkan ke halaman perannya.
 // Panel "Akun demo" hanya muncul bila server berjalan dengan DEMO=1 (`GET /api/sehat`).
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
@@ -8,14 +9,15 @@ import { Isian, PesanGalat, Tombol } from "../../komponen/dasar.tsx";
 import { bento, tombolTeks, wadahKeluarga } from "../../gaya/gaya.ts";
 import { GalatApi, panggil } from "../../lib/panggil.ts";
 import { api } from "./data.ts";
+import { tujuanSetelahMasuk, useAlihkanBilaMasuk, type Peran } from "../../lib/arah.ts";
 import { Logo } from "./tata-letak.tsx";
 
-const kembaliAman = (k: string) => /^\/r\/[A-Za-z0-9_-]{43}$/.test(k) ? k : "";
-const TUJUAN = { keluarga: "/beranda", dokter: "/dokter", klinik: "/klinik", admin: "/admin" } as const;
 
 export function Masuk() {
   const [param] = useSearchParams();
-  const kembali = kembaliAman(param.get("kembali") ?? "");
+  const kembali = param.get("kembali");
+  const memeriksa = useAlihkanBilaMasuk();
+  if (memeriksa) return null;
 
   return (
     <main className={`${wadahKeluarga} flex min-h-dvh flex-col`}>
@@ -40,7 +42,7 @@ export function Masuk() {
   );
 }
 
-function FormMasuk({ kembali }: { kembali: string }) {
+function FormMasuk({ kembali }: { kembali: string | null }) {
   const pindah = useNavigate();
   const [email, setEmail] = useState("");
   const [sandi, setSandi] = useState("");
@@ -54,7 +56,7 @@ function FormMasuk({ kembali }: { kembali: string }) {
     setMemuat(true); setGalat("");
     try {
       const { peran } = await api.masuk(email.trim(), sandi);
-      void pindah(peran === "dokter" && kembali ? kembali : TUJUAN[peran], { replace: true });
+      void pindah(tujuanSetelahMasuk(peran, kembali), { replace: true });
     } catch (err) {
       setGalat(err instanceof GalatApi && err.status === 401 ? "Email atau kata sandi salah." : err instanceof Error ? err.message : String(err));
     } finally { setMemuat(false); }
@@ -76,16 +78,16 @@ function FormMasuk({ kembali }: { kembali: string }) {
   );
 }
 
-type Akun = { id: "keluarga_dika" | "dokter_demo" | "klinik_demo" | "admin_demo"; ke: string; peran: string; nama: string; ikon: ReactNode };
+type Akun = { id: "keluarga_dika" | "dokter_demo" | "klinik_demo" | "admin_demo"; ke: Peran; peran: string; nama: string; ikon: ReactNode };
 
 const AKUN_DEMO: Akun[] = [
-  { id: "keluarga_dika", ke: "/beranda", peran: "Keluarga", nama: "keluarga@demo.test · Dika (4 th)", ikon: <IkonRumah /> },
-  { id: "dokter_demo", ke: "/dokter", peran: "Dokter", nama: "dokter@demo.test · dr. Demo", ikon: <IkonStetoskop /> },
-  { id: "klinik_demo", ke: "/klinik", peran: "Klinik", nama: "klinik@demo.test", ikon: <IkonGedung /> },
-  { id: "admin_demo", ke: "/admin", peran: "Admin", nama: "admin@demo.test · Operator Suapin", ikon: <IkonGerigi /> },
+  { id: "keluarga_dika", ke: "keluarga", peran: "Keluarga", nama: "keluarga@demo.test · Dika (4 th)", ikon: <IkonRumah /> },
+  { id: "dokter_demo", ke: "dokter", peran: "Dokter", nama: "dokter@demo.test · dr. Demo", ikon: <IkonStetoskop /> },
+  { id: "klinik_demo", ke: "klinik", peran: "Klinik", nama: "klinik@demo.test", ikon: <IkonGedung /> },
+  { id: "admin_demo", ke: "admin", peran: "Admin", nama: "admin@demo.test · Operator Suapin", ikon: <IkonGerigi /> },
 ];
 
-function AkunDemo({ kembali }: { kembali: string }) {
+function AkunDemo({ kembali }: { kembali: string | null }) {
   const pindah = useNavigate();
   const [aktif, setAktif] = useState(false);
   const [sibuk, setSibuk] = useState<Akun["id"] | null>(null);
@@ -102,7 +104,7 @@ function AkunDemo({ kembali }: { kembali: string }) {
     setSibuk(a.id); setGalat("");
     try {
       await panggil("demoMasuk", { body: { sebagai: a.id } });
-      void pindah(a.id === "dokter_demo" && kembali ? kembali : a.ke, { replace: true });
+      void pindah(tujuanSetelahMasuk(a.ke, kembali), { replace: true });
     } catch (e) {
       setGalat(e instanceof Error ? e.message : String(e));
     } finally { setSibuk(null); }

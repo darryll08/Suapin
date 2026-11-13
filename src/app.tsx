@@ -23,6 +23,7 @@ const router = createBrowserRouter([
       { path: "/sesi", lazy: async () => ({ Component: (await import("./halaman/keluarga/sesi/halaman-sesi.tsx")).HalamanSesiMakan }) },
       { path: "/sesi/catatan", lazy: async () => ({ Component: (await import("./halaman/keluarga/sesi/catatan.tsx")).Catatan }) },
       { path: "/laporan", lazy: async () => ({ Component: (await import("./halaman/keluarga/laporan.tsx")).Laporan }) },
+      { path: "/profil", lazy: async () => ({ Component: (await import("./halaman/keluarga/profil.tsx")).Profil }) },
       { path: "/langganan", lazy: async () => ({ Component: (await import("./halaman/keluarga/langganan.tsx")).Langganan }) },
     ],
   },

@@ -9,6 +9,7 @@ import { bento, tombolTeks } from "../../gaya/gaya.ts";
 import { GalatApi, panggil, usePanggil } from "../../lib/panggil.ts";
 import { Logo } from "../keluarga/tata-letak.tsx";
 import { Angka, Avatar, Ikon, panel, ubin } from "../klinik/tata-letak.tsx";
+import { keMasuk } from "../../lib/arah.ts";
 
 type Klinik = Keluaran<"adminAkun">["klinik"][number];
 type Dokter = Klinik["dokter"][number];
@@ -24,7 +25,7 @@ export function Admin() {
   const [rahasia, setRahasia] = useState<Rahasia | null>(null);
   const [keluar, setKeluar] = useState(false);
 
-  if (galat instanceof GalatApi && galat.status === 401) return <Navigate to="/masuk" replace />;
+  if (galat instanceof GalatApi && galat.status === 401) return <Navigate to={keMasuk(location.pathname + location.search)} replace />;
 
   const selesai = (s: Rahasia) => { setRahasia(s); ulang(); window.scrollTo({ top: 0 }); };
   const keluarAdmin = async () => {

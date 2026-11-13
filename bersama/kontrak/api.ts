@@ -63,6 +63,11 @@ export const API = {
   masuk: endpoint("POST", "/api/masuk", "publik",
     z.strictObject({ email, kata_sandi: z.string().min(1).max(256) }),
     z.object({ peran: z.enum(["keluarga", "dokter", "klinik", "admin"]) }), 400, 401),
+  // Peran yang sedang login di browser ini (satu peran per browser), supaya / dan /masuk langsung ke halaman perannya.
+  peranAktif: endpoint("GET", "/api/peran", "publik", kosong,
+    z.object({ peran: z.enum(["keluarga", "dokter", "klinik", "admin"]).nullable() })),
+  // Keluar dari peran apa pun di browser ini.
+  keluar: endpoint("POST", "/api/keluar", "publik", kosong, kosong),
   saya: endpoint("GET", "/api/saya", "keluarga", kosong,
     z.object({ child: dataKeluarga, sesi_dibuka: bool,
       alasan_terkunci: z.enum(["skrining_belum", "tanda_bahaya", "trial_habis", "paket_habis"]).nullable(),

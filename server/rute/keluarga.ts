@@ -1,7 +1,8 @@
 import { and, eq, isNull } from "drizzle-orm"
+import { getSignedCookie } from "hono/cookie"
 import { ATURAN_DEFAULT } from "../../bersama/kontrak/aturan"
 import { hash } from "bcryptjs"
-import { anakMilikKeluarga, masukSebagai } from "../akses"
+import { anakMilikKeluarga, bacaAdmin, bacaDokter, bacaKlinik, hapusCookie, masukSebagai, SEMUA_PERAN } from "../akses"
 import { cariAkun, pastikanEmailBebas } from "../akun"
 import type { Db } from "../db/klien"
 import { children, doctors, rules, screenings, shared_reports } from "../db/skema"
@@ -32,6 +33,15 @@ export function ruteKeluarga(daftar: Daftar, db: Db, env: Env) {
     await masukSebagai(c, env, akun.peran, akun.id)
     return { peran: akun.peran }
   })
+  daftar("peranAktif", async (c) => {
+    if (await bacaAdmin(c, env)) return { peran: "admin" as const }
+    if (await bacaKlinik(c, db, env)) return { peran: "klinik" as const }
+    if (await bacaDokter(c, db, env)) return { peran: "dokter" as const }
+    const id = await getSignedCookie(c, env.SESI_RAHASIA, "tm_keluarga")
+    if (id && await db.select({ id: children.id }).from(children).where(eq(children.id, id)).get()) return { peran: "keluarga" as const }
+    return { peran: null }
+  })
+  daftar("keluar", (c) => { for (const p of SEMUA_PERAN) hapusCookie(c, env, p) })
   daftar("saya", async (c) => {
     const anak = await bacaAnak(db, c.var.childId!)
     const { plan, ...akses } = await bacaAksesSesi(db, anak)

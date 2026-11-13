@@ -44,7 +44,7 @@ export function Laporan() {
 
   return (
     <main className={wadahKeluarga}>
-      <KepalaHalaman judul={`Laporan makan ${c.panggilan}`} kembali="/beranda" />
+      <KepalaHalaman judul={`Laporan makan ${c.panggilan}`} />
       {memuat && !lap ? <Memuat /> : galat ? <PesanGalat pesan={galat} ulangi={ulangi} /> : lap && (
         <div className="flex flex-col gap-4">
           {lap.dokter_nama && (

@@ -4,6 +4,8 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router";
 import { Memuat, PesanGalat } from "../../komponen/dasar.tsx";
 import { wadahKeluarga } from "../../gaya/gaya.ts";
 import { useMuat } from "./bantu.ts";
+import { keMasuk } from "../../lib/arah.ts";
+import { adaNavKeluarga, NavKeluarga, ruangNav } from "../../komponen/nav-keluarga.tsx";
 import { api, GalatApi, type Saya } from "./data.ts";
 
 type KonteksKeluarga = { saya: Saya; muatUlang: () => void };
@@ -16,7 +18,7 @@ export function useSaya(): KonteksKeluarga {
 }
 
 /** Rute yang tetap bisa dibuka saat trial habis. */
-const BOLEH_SAAT_TRIAL_HABIS = ["/beranda", "/laporan", "/langganan"];
+const BOLEH_SAAT_TRIAL_HABIS = ["/beranda", "/laporan", "/langganan", "/profil"];
 
 export function ButuhKeluarga() {
   const { data, galat, memuat, ulangi } = useMuat(() => api.saya().catch((e: unknown) => {
@@ -28,18 +30,19 @@ export function ButuhKeluarga() {
 
   useEffect(() => {
     if (memuat) return;
-    if (data === null && !galat) { void pindah("/", { replace: true }); return; }
+    if (data === null && !galat) { void pindah(keMasuk(lokasi.pathname + lokasi.search), { replace: true }); return; }
     if (!data) return;
     const p = lokasi.pathname;
     if (data.alasan_terkunci === "skrining_belum" && p !== "/mulai/skrining") void pindah("/mulai/skrining", { replace: true });
     else if (data.alasan_terkunci === "trial_habis" && !BOLEH_SAAT_TRIAL_HABIS.includes(p)) void pindah("/langganan", { replace: true });
-  }, [data, galat, memuat, lokasi.pathname, pindah]);
+  }, [data, galat, memuat, lokasi.pathname, lokasi.search, pindah]);
 
   if (galat) return <div className={`${wadahKeluarga} pt-10`}><PesanGalat pesan={galat} ulangi={ulangi} /></div>;
   if (!data) return <Memuat />;
   return (
     <Konteks value={{ saya: data, muatUlang: ulangi }}>
-      <Outlet />
+      <div className={adaNavKeluarga(lokasi.pathname) ? ruangNav : undefined}><Outlet /></div>
+      <NavKeluarga />
     </Konteks>
   );
 }

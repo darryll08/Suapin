@@ -3,6 +3,7 @@
 // Ketuk logo 5× dalam 3 detik → /dev/ambang (tanpa umpan balik).
 import { useRef, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router";
+import { useAlihkanBilaMasuk } from "../../lib/arah.ts";
 import { DemoMeniru } from "../../karakter/demo-meniru.tsx";
 import { AdeganDenganLayar, AdeganSenang, AdeganTanpaLayar } from "../../karakter/adegan-landing.tsx";
 import { AngkaNaik, Muncul } from "../../komponen/muncul.tsx";
@@ -22,6 +23,7 @@ const tombolPilGaris =
 
 export function Landing() {
   const pindah = useNavigate();
+  useAlihkanBilaMasuk();
   const ketukan = useRef<number[]>([]);
   const ketukLogo = () => {
     const t = Date.now();

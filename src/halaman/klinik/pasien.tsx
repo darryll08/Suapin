@@ -12,6 +12,7 @@ import { Memuat, PesanGalat, Pil, Tombol } from "../../komponen/dasar"
 import { GalatApi, panggil, usePanggil } from "../../lib/panggil"
 import { bagianTanggal, hariRelatif, jam, LABEL_JADWAL, LABEL_STATUS, labelRingkasan, persen, pesan, tanggal, usia } from "./format"
 import { Angka, Avatar, BilahTerima, Ikon, KepalaDetail, LencanaTanggal, panel, TataLetakPanel, ubin, type NamaIkon } from "./tata-letak"
+import { keMasuk } from "../../lib/arah.ts"
 
 type Detail = Keluaran<"pasienDetail">
 const NAMA_TAHAP = ["Karakter memandu", "Pengasuh jadi contoh", "Layar hitam", "Tanpa layar"]
@@ -27,7 +28,7 @@ function DetailPasien({ id }: { id: string }) {
   const [aksi, setAksi] = useState<"ringkasan" | "tahap" | null>(null)
   const [galatAksi, setGalatAksi] = useState("")
   const [sukses, setSukses] = useState("")
-  if (galat instanceof GalatApi && galat.status === 401) return <Navigate to="/masuk" replace />
+  if (galat instanceof GalatApi && galat.status === 401) return <Navigate to={keMasuk(location.pathname + location.search)} replace />
   if (!data) return <TataLetakPanel peran="dokter">
     <KepalaDetail kembali="/dokter" labelKembali="Kembali ke semua pasien" judul="Kartu pasien" />
     {memuat ? <Memuat teks="Memuat pasien…" /> : <PesanGalat pesan={galat instanceof GalatApi && galat.status === 404

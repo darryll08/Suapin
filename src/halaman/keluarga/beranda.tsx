@@ -4,8 +4,7 @@ import { Link, useSearchParams } from "react-router";
 import { cariMakanan } from "../../../bersama/konten/makanan.ts";
 import { CincinProgres, GrafikPil, KartuAngka, KartuHero } from "../../komponen/beranda.tsx";
 import { Memuat, PesanGalat } from "../../komponen/dasar.tsx";
-import { Lonceng } from "../../komponen/lonceng.tsx";
-import { bento, tombolHero, tombolIkon } from "../../gaya/gaya.ts";
+import { bento, tombolHero } from "../../gaya/gaya.ts";
 import { HARI_SEN_MIN, kalimatTahap, NAMA_SAPAAN, namaDenganSapaan, tanggalLokal, tanggalMingguIni, totalPerHari, useMuat } from "./bantu.ts";
 import { api } from "./data.ts";
 import { Halaman, useSaya } from "./tata-letak.tsx";
@@ -18,7 +17,7 @@ export function Beranda() {
   const sapaan = NAMA_SAPAAN[c.sapaan];
 
   return (
-    <Halaman kanan={<div className="flex items-center gap-2"><Lonceng /><Link to="/laporan" aria-label="Laporan" title="Laporan" className={tombolIkon}><IkonGrafik /></Link></div>}>
+    <Halaman>
       <header className="pt-4 pb-5">
         <p className="truncate text-isi text-ungu-muda">Halo {namaDenganSapaan(sapaan, c.nama_pengasuh)},</p>
         <h1 className="font-judul text-judul font-bold">Siap makan bareng {c.panggilan}?</h1>
@@ -96,13 +95,5 @@ function BarisPlan({ plan, sisa, terkunci }: { plan: string; sisa: number | null
       {sisa <= 0 ? "Trial berakhir hari ini" : `Sisa trial ${sisa} hari`}
       <span aria-hidden="true" className="text-ungu">· Lihat program ›</span>
     </Link>
-  );
-}
-
-function IkonGrafik() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
-      <path d="M6 20V12M12 20V5M18 20v-9" />
-    </svg>
   );
 }

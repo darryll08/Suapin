@@ -7,6 +7,7 @@ import { Memuat, PesanGalat, Pil } from "../../komponen/dasar"
 import { GalatApi, usePanggil } from "../../lib/panggil"
 import { bagianTanggal, hariRelatif, jam, LABEL_JADWAL, persen, usia } from "./format"
 import { Angka, Avatar, BilahTerima, chip, Ikon, KartuProfil, LencanaTanggal, PanahBulat, panel, TataLetakPanel } from "./tata-letak"
+import { keMasuk } from "../../lib/arah.ts"
 
 type Pasien = Keluaran<"pasienDaftar">["pasien"][number]
 type Saring = "semua" | "perhatian" | "jadwal"
@@ -15,7 +16,7 @@ const perluPerhatian = (p: Pasien) => p.siap_naik_tahap || p.saran_turun_tahap
 export function DaftarPasien() {
   const { data, galat, memuat, ulang } = usePanggil("pasienDaftar")
   const [saring, setSaring] = useState<Saring>("semua")
-  if (galat instanceof GalatApi && galat.status === 401) return <Navigate to="/masuk" replace />
+  if (galat instanceof GalatApi && galat.status === 401) return <Navigate to={keMasuk(location.pathname + location.search)} replace />
 
   const semua = [...(data?.pasien ?? [])].sort((a, b) =>
     Number(perluPerhatian(b)) - Number(perluPerhatian(a)) || a.panggilan.localeCompare(b.panggilan, "id"))

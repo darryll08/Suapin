@@ -8,6 +8,7 @@ import { Memuat, PesanGalat, Pil } from "../../komponen/dasar"
 import { GalatApi, usePanggil } from "../../lib/panggil"
 import { bagianTanggal, hariRelatif, jam, LABEL_JADWAL, usia } from "./format"
 import { Angka, Avatar, chip, Ikon, KartuProfil, LencanaTanggal, panel, TataLetakPanel, ubin } from "./tata-letak"
+import { keMasuk } from "../../lib/arah.ts"
 
 type Overview = Keluaran<"klinikOverview">
 type Dokter = Overview["dokter"][number]
@@ -16,7 +17,7 @@ const urutNama = (n: string) => n.replace(/^dr\.?\s*/i, "")
 export function OverviewKlinik() {
   const { data, galat, memuat, ulang } = usePanggil("klinikOverview")
   const [tampil, setTampil] = useState<"dokter" | "jadwal">("dokter")
-  if (galat instanceof GalatApi && galat.status === 401) return <Navigate to="/masuk" replace />
+  if (galat instanceof GalatApi && galat.status === 401) return <Navigate to={keMasuk(location.pathname + location.search)} replace />
 
   return <TataLetakPanel peran="klinik" nama={data?.klinik.nama} sub={data?.klinik.kota ?? undefined}>
     {memuat && !data && <Memuat teks="Memuat overview…" />}
