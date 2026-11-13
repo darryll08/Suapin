@@ -17,6 +17,7 @@ import type { AturanSesi, Tombol as TombolEngine } from "../../../mesin/sesi.ts"
 import { useKlip } from "../../../suara/use-klip.ts";
 import { api, type Saya } from "../data.ts";
 import { beritahu } from "../../../komponen/notifikasi.tsx";
+import { KenalanMakanan, StikerLingkar } from "./panel-samping.tsx";
 import { Pemanasan } from "./pemanasan.tsx";
 import type { PilihanSesi } from "./persiapan.tsx";
 
@@ -125,6 +126,9 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
   }
 
   const status = v?.status;
+  // Hiasan kenalan + stiker hanya tahap 1: tahap berikutnya mengurangi layar (program lepas layar).
+  const hiasan = !!v && !hitam && aturan.stage === 1 && status !== "PEMANASAN";
+  const jumlahDiterima = v?.gigitan.filter((g) => g.hasil === "diterima").length ?? 0;
   const tampilKarakter = !hitam && (saklar.layar !== "giliran_saja" || status === "GILIRAN_KARAKTER" || status === "DITERIMA" || status === "PEMANASAN");
   const teks = v?.teks ? (v.teks.id === "saran_ngemut" ? aturan.ngemut_hint : TEKS[v.teks.id].isi) : null;
   const gigitanAkhir = v?.gigitan.at(-1);
@@ -154,7 +158,7 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
     <main className={`relative size-full overflow-hidden [container-type:size] [transform:translateZ(0)] bingkai:h-full bingkai:w-full bingkai:max-w-[max(560px,76dvh)] bingkai:rounded-[40px] ${hitam ? "bg-black text-latar" : "bg-latar text-ungu bingkai:shadow-[0_20px_60px_rgb(75_46_90/0.25)]"}`}>
       {/* Karakter di tengah, ≥ 60% tinggi layar */}
       <div className="absolute inset-0 flex items-center justify-center pt-6 pb-36">
-        <div className="aspect-square h-[min(70cqh,92cqw)] max-h-full">
+        <div className="relative aspect-square h-[min(70cqh,92cqw)] max-h-full">
           {!v ? <Memuat teks="Menyiapkan teman makan…" />
             : status === "PEMANASAN" ? (
               <Pemanasan makanan={pilihan.menu} tokoh={pilihan.tokoh} panggilan={saya.child.panggilan} suara={saklar.suara} onSelesai={sesi.selesaiPemanasan} />
@@ -162,11 +166,14 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
               <Karakter pose={v.pose} mulut={v.mulutKarakter} layar="terang" tokoh={pilihan.tokoh}
                 makanan={{ id: pilihan.menu, tahap: v.makananTahap }} />
             ) : !hitam && <div className="size-full rounded-full bg-jagung-muda/70" style={{ transform: "scale(0.86)" }} />}
+          {hiasan && <StikerLingkar diterima={jumlahDiterima} makanan={pilihan.menu} />}
         </div>
       </div>
 
       {/* Lapisan redup layar penuh (JEDA_KUNYAH, KEMUNGKINAN_NGEMUT) */}
       <div aria-hidden="true" className={`pointer-events-none absolute inset-0 bg-black transition-opacity duration-[400ms] ${v?.layar === "redup" ? "opacity-60" : "opacity-0"}`} />
+
+      {hiasan && <KenalanMakanan makanan={pilihan.menu} diterima={jumlahDiterima} suara={saklar.suara} />}
 
       {/* Stop: pojok atas sisi jauh. Di panel bingkai, radius 24 = 40 (panel) − 16 (jarak tepi) supaya sudutnya sejajar. */}
       <button type="button" title="Stop (Esc)" onClick={() => setKonfirmStop(true)}
