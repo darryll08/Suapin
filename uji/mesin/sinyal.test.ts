@@ -34,6 +34,19 @@ describe("rumus sinyal", () => {
   it("rahang = jarak dagu-hidung / jarak dahi-dagu", () => {
     expect(rahangMentah(landmark(0.3, 0.5, 0.7), 640, 480)).toBeCloseTo(0.2 / 0.4);
   });
+  it("rahang tidak berubah saat kepala mengangguk (rotasi pitch 3D)", () => {
+    // Hidung menonjol ke depan (z), jadi di 2D rasionya berubah saat angguk; di 3D tetap.
+    const wajah = { dahi: [0, -0.2, 0], hidung: [0, 0, -0.08], dagu: [0, 0.2, 0] };
+    const angguk = (derajat: number) => {
+      const r = (derajat * Math.PI) / 180;
+      const putar = ([x, y, z]: number[]) => ({ x: 0.5 + x, y: 0.5 + y * Math.cos(r) - z * Math.sin(r), z: y * Math.sin(r) + z * Math.cos(r) });
+      const lm = Array.from({ length: 478 }, () => ({ x: 0.5, y: 0.5, z: 0 }));
+      lm[10] = putar(wajah.dahi); lm[1] = putar(wajah.hidung); lm[152] = putar(wajah.dagu);
+      return rahangMentah(lm, 640, 640);
+    };
+    expect(angguk(20)).toBeCloseTo(angguk(0), 6);
+    expect(angguk(-20)).toBeCloseTo(angguk(0), 6);
+  });
   it("yaw dari matriks transformasi", () => {
     expect(yawMentah(matriksYaw(30))).toBeCloseTo(30);
     expect(yawMentah(matriksYaw(-20))).toBeCloseTo(-20);

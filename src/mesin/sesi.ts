@@ -236,24 +236,30 @@ function mulaiMenilai(k: Keadaan, t: number, kx: Konteks, p: Perintah[]) {
 function cariDiterima(k: Keadaan, a: Ambang): number | null {
   const dariT = k.tSuap! - a.bufferSebelumSuapDetik * 1000;
   let buka: number | null = null;
+  let diatasTutup = 0; // sampel terakhir dengan mulut ≥ `tutup`; acuan yang sama dengan mulutSedangTerbuka
+  let atas = 0; // sampel terakhir di atas `terbuka`: lama buka diukur sampai sini, bukan sampai `tutup`
   let nangis = false;
   for (const s of k.buffer) {
     if (s.t < dariT || !s.terlihat) continue;
-    if (s.mulut > a.terbuka) {
-      if (buka === null) { buka = s.t; nangis = false; }
-      nangis ||= s.nangis;
-    } else if (buka !== null) {
-      const lama = s.t - buka;
-      if (lama >= a.minBukaDetik * 1000 && lama <= a.batasBukaDetik * 1000 && !nangis) return s.t;
-      buka = null;
+    if (buka === null) {
+      if (s.mulut > a.terbuka) { buka = atas = diatasTutup = s.t; nangis = s.nangis; }
+      continue;
     }
+    nangis ||= s.nangis;
+    if (s.mulut > a.terbuka) atas = s.t;
+    if (s.mulut >= a.tutup) { diatasTutup = s.t; continue; }
+    if (s.t - diatasTutup < a.tutupDetik * 1000) continue;
+    const lama = atas - buka;
+    if (lama >= a.minBukaDetik * 1000 && lama <= a.batasBukaDetik * 1000 && !nangis) return s.t;
+    buka = null;
   }
   return null;
 }
 
+/** Masih terbuka sampai mulut di bawah `tutup` selama `tutupDetik` (sama dengan histeresis di cariDiterima). */
 function mulutSedangTerbuka(k: Keadaan, a: Ambang) {
-  for (let i = k.buffer.length - 1; i >= 0; i--) if (k.buffer[i].terlihat) return k.buffer[i].mulut > a.terbuka;
-  return false;
+  const akhir = k.buffer.at(-1)?.t ?? 0;
+  return k.buffer.some((s) => s.terlihat && s.t >= akhir - a.tutupDetik * 1000 && s.mulut >= a.tutup);
 }
 
 function pernahTerbuka(k: Keadaan, a: Ambang) {
@@ -409,7 +415,8 @@ export function next(lama: Keadaan, e: Kejadian, kx: Konteks): { keadaan: Keadaa
       if (t >= k.akhirJendela!) {
         const batasMaks = k.tSuap! + a.jendelaMaksDetik * 1000;
         if (mulutSedangTerbuka(k, a) && t < batasMaks) break; // diperpanjang sampai mulut tertutup
-        if (!pernahTerbuka(k, a) && k.siklusSejakSuap === 0) {
+        const kePengasuh = k.buffer.some((s) => s.t >= k.tSuap! && s.terlihat && s.yaw > a.yawKePengasuhDerajat);
+        if (!pernahTerbuka(k, a) && k.siklusSejakSuap === 0 && !kePengasuh) {
           catat(k, "ditolak", t, false);
           ke(k, "MENOLAK", t, kx, p);
         } else {

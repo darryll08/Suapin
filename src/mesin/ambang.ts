@@ -4,16 +4,20 @@
 
 export const AMBANG_AWAL = {
   terbuka: 0.3, // mulut (0..1) dianggap terbuka
+  tutup: 0.15, // histeresis: bukaan baru selesai bila mulut di bawah ini...
+  tutupDetik: 0.5, // ...selama ini (tangisan naik-turun tidak terpecah jadi bukaan pendek)
   minBukaDetik: 0.3, // lama buka minimal untuk suapan
-  batasBukaDetik: 4, // lama buka maksimal; final = persentil 90 uji sendok + 1 detik
+  batasBukaDetik: 6.5, // lama buka maksimal; gerbang 12 Nov: 4 terlalu ketat untuk suapan pelan (uji 1, 6)
   jendelaDetik: 6, // jendela penilaian sejak Suap
   jendelaMaksDetik: 12, // batas perpanjangan jendela selama mulut masih terbuka
   bufferSebelumSuapDetik: 3, // sinyal sebelum Suap yang ikut dinilai
   yawMenolakDerajat: 25, // menoleh menjauhi pengasuh
   yawMenolakDetik: 1,
+  yawKePengasuhDerajat: 20, // condong ke pengasuh: tanpa bukaan terbaca → tidak pasti, bukan ditolak (jawOpen melemah saat menoleh)
   nangis: 0.5, // rata-rata eyeSquint + browDown
   kunyahKaliGetar: 3, // ambang satu siklus = kelipatan getar rahang saat diam
   kunyahMinimal: 0.01, // batas bawah ambang siklus
+  kunyahPitchMaks: 4, // derajat; siklus rahang dengan perubahan pitch lebih besar = angguk, bukan kunyah
   timerJedaDetik: 15,
   ngemutDetik: 15,
   menolakTungguDetik: 60,

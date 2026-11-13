@@ -98,11 +98,22 @@ const simpangan = (v: number[]) => {
  * (kunyahan, penolakan) tidak ikut memengaruhi. Mengembalikan hasil engine dan apakah kunyah aktif terdeteksi
  * dalam 12 detik setelah Suap.
  */
+/**
+ * Getar rahang saat diam: persentil 10 simpangan baku jendela 1,5 detik di seluruh rekaman. Di aplikasi nilai ini
+ * dari kalibrasi diam 3 detik; rekaman gerbang dimulai setelah kalibrasi, jadi diambil dari momen paling tenang.
+ */
+export function getarDiamRekaman(sinyal: Sinyal[]): number {
+  const v = sinyal.filter((s) => s.terlihat).map((s) => s.rahang);
+  const sd: number[] = [];
+  for (let i = 0; i + 30 <= v.length; i += 15) sd.push(simpangan(v.slice(i, i + 30)));
+  sd.sort((a, b) => a - b);
+  return sd.length ? sd[Math.floor(sd.length * 0.1)] : 0;
+}
+
 export function nilaiSuap(sinyal: Sinyal[], tSuap: number, ambang: Ambang): { hasil: HasilSuap; kunyah: boolean } {
-  const tenang = sinyal.filter((s) => s.terlihat && s.t >= tSuap - 13_000 && s.t < tSuap - 3000).map((s) => s.rahang);
   const kx: Konteks = {
     aturan: { max_minutes: 30, end_after_refusal_minutes: 15, stage: 1, ngemut_hint: "" },
-    saklar: saklarTahap(1), ambang, getarDiam: simpangan(tenang),
+    saklar: saklarTahap(1), ambang, getarDiam: getarDiamRekaman(sinyal),
   };
   // Siapkan engine sampai MENUNGGU_SUAP dengan sinyal diam sebelum buffer Suap.
   let t = tSuap - 15_000;

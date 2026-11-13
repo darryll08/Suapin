@@ -18,15 +18,21 @@ export const TANDA_YAW_KANAN_ANAK: 1 | -1 = -1;
 
 export const skor = (kategori: Kategori[], nama: string) => kategori.find((c) => c.categoryName === nama)?.score ?? 0;
 
-/** Jarak dagu-hidung dibagi tinggi wajah (dahi-dagu). x,y dikali ukuran video supaya rasio tidak terdistorsi. */
+/**
+ * Jarak dagu-hidung dibagi tinggi wajah (dahi-dagu), dalam 3D. Rasio dua jarak 3D tidak berubah saat kepala
+ * berputar (angguk/menoleh), jadi gerak kepala tidak terbaca kunyah (gerbang uji angguk). z MediaPipe berskala lebar.
+ */
 export function rahangMentah(lm: Titik[], lebar: number, tinggi: number): number {
-  const jarak = (a: Titik, b: Titik) => Math.hypot((a.x - b.x) * lebar, (a.y - b.y) * tinggi);
+  const jarak = (a: Titik, b: Titik) => Math.hypot((a.x - b.x) * lebar, (a.y - b.y) * tinggi, ((a.z ?? 0) - (b.z ?? 0)) * lebar);
   const wajah = jarak(lm[DAHI], lm[DAGU]);
   return wajah > 0 ? jarak(lm[DAGU], lm[HIDUNG]) / wajah : 0;
 }
 
 /** Derajat dari matriks transformasi wajah (16 angka, kolom-mayor). */
 export const yawMentah = (m: number[]) => (Math.atan2(m[8], m[10]) * 180) / Math.PI;
+
+/** Derajat angguk dari matriks yang sama. Tanda tidak penting: kunyah hanya memakai perubahannya. */
+export const pitchMentah = (m: number[]) => (Math.asin(Math.max(-1, Math.min(1, -m[9]))) * 180) / Math.PI;
 
 export const nangisMentah = (k: Kategori[]) =>
   (skor(k, "eyeSquintLeft") + skor(k, "eyeSquintRight") + skor(k, "browDownLeft") + skor(k, "browDownRight")) / 4;
@@ -55,6 +61,7 @@ export function buatPengolahSinyal(opsi: {
   const baseRahang = buatBaseline();
   let mulutHalus: number | null = null;
   let rahangHalus: number | null = null;
+  let pitchHalus: number | null = null;
   let yawDasar = 0;
   let kumpulanYaw: number[] | null = null;
   // Positif selalu berarti menoleh KE pengasuh.
@@ -73,7 +80,7 @@ export function buatPengolahSinyal(opsi: {
     },
     olah: (t, wajah) => {
       if (!wajah) {
-        mulutHalus = rahangHalus = null; // jangan campur nilai lama saat wajah muncul lagi
+        mulutHalus = rahangHalus = pitchHalus = null; // jangan campur nilai lama saat wajah muncul lagi
         return { t, mulut: 0, rahang: 0, yaw: 0, nangis: false, terlihat: false };
       }
       const { lebar, tinggi } = opsi.ukuranVideo();
@@ -87,6 +94,7 @@ export function buatPengolahSinyal(opsi: {
 
       const yawRaw = wajah.matriks ? yawMentah(wajah.matriks) : yawDasar;
       kumpulanYaw?.push(yawRaw);
+      if (wajah.matriks) pitchHalus = haluskan(pitchMentah(wajah.matriks), pitchHalus);
       const a = opsi.ambang();
       return {
         t,
@@ -95,6 +103,7 @@ export function buatPengolahSinyal(opsi: {
         yaw: (yawRaw - yawDasar) * arah,
         nangis: nangisMentah(wajah.kategori) > a.nangis && mulut > a.terbuka,
         terlihat: true,
+        ...(pitchHalus === null ? {} : { pitch: pitchHalus }),
       };
     },
   };

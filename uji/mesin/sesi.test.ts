@@ -77,15 +77,15 @@ describe("penilaian suapan", () => {
     s.keGiliranAnak();
     s.sinyal(2000, buka(1, 2)); // terbuka sejak 1 detik sebelum Suap
     s.tekan("suap");
-    s.sinyal(1000, buka(0, 0.5));
+    s.sinyal(1100, buka(0, 0.5)); // tutup ≥ tutupDetik (histeresis)
     expect(s.hasil()).toEqual(["diterima"]);
   });
 
-  it("buka 6 detik (lewat batasBukaDetik) → tidak pasti, bukan diterima", () => {
+  it("buka 7 detik (lewat batasBukaDetik) → tidak pasti, bukan diterima", () => {
     const s = new Sim();
     s.keGiliranAnak();
     s.tekan("suap");
-    s.sinyal(8000, buka(0, 6.2));
+    s.sinyal(9000, buka(0, 7.2));
     expect(s.k.status).toBe("TIDAK_PASTI");
     expect(s.k.teks?.id).toBe("tadi_masuk");
     expect(s.hasil()).toEqual([]);
@@ -148,7 +148,7 @@ describe("penilaian suapan", () => {
     s.keGiliranAnak();
     s.tekan("suap");
     s.sinyal(5000);
-    s.sinyal(3000, buka(0, 2.5)); // terbuka 5-7,5 detik setelah Suap, lewat akhir jendela 6 detik
+    s.sinyal(3100, buka(0, 2.5)); // terbuka 5-7,5 detik setelah Suap, lewat akhir jendela 6 detik
     expect(s.hasil()).toEqual(["diterima"]);
   });
 });
@@ -214,7 +214,7 @@ describe("jeda kunyah dan ngemut", () => {
     const s = new Sim();
     s.keGiliranAnak();
     s.tekan("suap");
-    s.sinyal(1500, buka(0.2, 1));
+    s.sinyal(1600, buka(0.2, 1));
     s.sinyal(2100);
     expect(s.k.status).toBe("JEDA_KUNYAH");
     expect(tampilan(s.k, s.kx).layar).toBe("redup");
@@ -227,7 +227,7 @@ describe("jeda kunyah dan ngemut", () => {
     const s = new Sim();
     s.keGiliranAnak();
     s.tekan("suap");
-    s.sinyal(1500, buka(0.2, 1));
+    s.sinyal(1600, buka(0.2, 1));
     s.sinyal(2100);
     s.sinyal(15_100);
     expect(s.k.status).toBe("KEMUNGKINAN_NGEMUT");
@@ -241,7 +241,7 @@ describe("jeda kunyah dan ngemut", () => {
     const s = new Sim(konteks({ kunyahDariKamera: false }));
     s.keGiliranAnak();
     s.tekan("suap");
-    s.sinyal(1500, buka(0.2, 1));
+    s.sinyal(1600, buka(0.2, 1));
     s.sinyal(2100);
     s.sinyal(15_100);
     expect(s.status).not.toContain("KEMUNGKINAN_NGEMUT");
@@ -310,7 +310,7 @@ describe("saklar tahap", () => {
     s.keGiliranAnak();
     expect(tampilan(s.k, s.kx).layar).toBe("hitam");
     s.tekan("suap");
-    s.sinyal(1500, buka(0.2, 1));
+    s.sinyal(1600, buka(0.2, 1));
     s.sinyal(2100);
     expect(s.k.status).toBe("JEDA_KUNYAH");
     expect(tampilan(s.k, s.kx).layar).toBe("hitam");
@@ -329,7 +329,7 @@ describe("keluaran", () => {
     s.keGiliranAnak();
     expect(() => TampilanSesiSchema.parse(tampilan(s.k, s.kx))).not.toThrow();
     s.tekan("suap");
-    s.sinyal(1500, buka(0.2, 1));
+    s.sinyal(1600, buka(0.2, 1));
     expect(() => TampilanSesiSchema.parse(tampilan(s.k, s.kx))).not.toThrow();
     s.tekan("stop");
     const h = hasilSesi(s.k, s.kx, {
@@ -379,7 +379,7 @@ describe("teks saat diterima", () => {
     s.sinyal(1500, (d) => ({ yaw: d < 1.2 ? -35 : 0 }));
     expect(s.k.teks?.id).toBe("jangan_dibujuk");
     s.tekan("suap");
-    s.sinyal(1500, buka(0.2, 1));
+    s.sinyal(1600, buka(0.2, 1));
     expect(s.k.status).toBe("DITERIMA");
     expect(s.k.teks).toBeNull();
   });

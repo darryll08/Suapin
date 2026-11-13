@@ -8,14 +8,14 @@ const FPS = 20;
 const GETAR_DIAM = 0.0017; // ±0,003 derau seragam
 
 /** Jalankan deret rahang; kembalikan waktu (ms) pertama kali aktif dan selesai, serta aktif di akhir. */
-function jalankan(rahang: (detik: number) => number, durasiDetik: number, benih = 7) {
+function jalankan(rahang: (detik: number) => number, durasiDetik: number, benih = 7, pitch?: (detik: number) => number) {
   let acak = benih;
   const derau = () => (((acak = (acak * 1103515245 + 12345) % 2 ** 31) / 2 ** 31) * 2 - 1) * 0.003;
   let k = kunyahAwal();
   let aktifPertama: number | null = null, selesaiPertama: number | null = null, aktif = false;
   for (let i = 0; i < durasiDetik * FPS; i++) {
     const t = (i * 1000) / FPS;
-    const s: Sinyal = { t, mulut: 0, rahang: rahang(t / 1000) + derau(), yaw: 0, nangis: false, terlihat: true };
+    const s: Sinyal = { t, mulut: 0, rahang: rahang(t / 1000) + derau(), yaw: 0, nangis: false, terlihat: true, ...(pitch ? { pitch: pitch(t / 1000) } : {}) };
     const h = langkahKunyah(k, s, GETAR_DIAM, AMBANG_AWAL);
     k = h.k;
     aktif = h.aktif;
@@ -28,6 +28,16 @@ function jalankan(rahang: (detik: number) => number, durasiDetik: number, benih 
 const sinus = (hz: number, amp = 0.04) => (d: number) => amp * Math.sin(2 * Math.PI * hz * d);
 
 describe("penghitung kunyahan", () => {
+  it("angguk: rahang bergerak bersama pitch ±10° tidak terbaca kunyah", () => {
+    const h = jalankan(sinus(1.5), 6, 7, (d) => 10 * Math.sin(2 * Math.PI * 1.5 * d));
+    expect(h.aktifPertama).toBeNull();
+  });
+
+  it("kunyah dengan kepala diam (pitch ±0,5°) tetap aktif", () => {
+    const h = jalankan(sinus(1.5), 6, 7, (d) => 12 + 0.5 * Math.sin(2 * Math.PI * 0.3 * d));
+    expect(h.aktif).toBe(true);
+  });
+
   it("kunyah 1,5 Hz amplitudo 0,04 di atas derau 0,003 aktif dalam ≤ 3 detik", () => {
     for (const benih of [1, 7, 99]) {
       const h = jalankan(sinus(1.5), 6, benih);

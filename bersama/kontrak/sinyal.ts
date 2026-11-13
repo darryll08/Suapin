@@ -10,6 +10,9 @@ export const SinyalSchema = z.object({
   yaw: z.number(), // derajat; positif = menoleh KE sisi pengasuh, negatif = menjauh
   nangis: z.boolean(), // dugaan dari eyeSquint + browDown, belum tervalidasi
   terlihat: z.boolean(), // wajah anak ditemukan dan titik mulut stabil
+  // Opsional (ditambah 13 Nov, gerbang uji angguk): derajat angguk kepala, dihaluskan. Rekaman lama dan
+  // sumber palsu tanpa pitch tetap sah; tanpa pitch, kunyah tidak menyaring angguk.
+  pitch: z.number().optional(),
 });
 export type Sinyal = z.infer<typeof SinyalSchema>;
 

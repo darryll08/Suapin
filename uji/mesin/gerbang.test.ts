@@ -44,7 +44,7 @@ describe("alat gerbang", () => {
     const menoleh = nilaiSuap(deret((d) => ({ yaw: d >= 10.2 && d < 12 ? -35 : 0 })), tSuap, AMBANG_AWAL);
     expect(menoleh.hasil).toBe("ditolak");
     expect(cocok("bukan_ditolak", menoleh)).toBe(false);
-    const lama = nilaiSuap(deret((d) => ({ mulut: d >= 10.2 && d < 16.5 ? 0.6 : 0 })), tSuap, AMBANG_AWAL);
+    const lama = nilaiSuap(deret((d) => ({ mulut: d >= 10.2 && d < 17.5 ? 0.6 : 0 })), tSuap, AMBANG_AWAL);
     expect(lama.hasil).toBe("tidak_pasti");
     expect(cocok("bukan_diterima", lama)).toBe(true);
   });

@@ -1,7 +1,7 @@
 // Pemilik: A (Darryl). A1.2: memilih wajah anak bila ada dua wajah di kamera (pengasuh ikut masuk). Fungsi murni.
 // Semua koordinat ternormalisasi 0..1 seperti keluaran FaceLandmarker (frame asli, tidak dicerminkan).
 
-export type Titik = { x: number; y: number };
+export type Titik = { x: number; y: number; z?: number };
 export type Kotak = { x0: number; y0: number; x1: number; y1: number; cx: number; cy: number; luas: number };
 /** Acuan wajah anak yang dilacak antar-frame. */
 export type Acuan = { cx: number; cy: number; luas: number };

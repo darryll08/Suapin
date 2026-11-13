@@ -132,6 +132,7 @@ export function HalamanKamera() {
     ["mulut", s ? s.mulut.toFixed(3) : "-"],
     ["rahang", s ? s.rahang.toFixed(4) : "-"],
     ["yaw (+ = ke pengasuh)", s ? s.yaw.toFixed(1) : "-"],
+    ["pitch / angguk (derajat)", s?.pitch?.toFixed(1) ?? "-"],
     ["nangis / terlihat", s ? `${s.nangis} / ${s.terlihat}` : "-"],
     ["Kunyah aktif", tampil.kunyah ? "ya" : "tidak"],
   ];
