@@ -34,3 +34,4 @@ coverage
 public/mediapipe/wasm/
 # Catatan lokal agen AI (tidak di-commit)
 CLAUDE.local.md
+api/index.mjs
