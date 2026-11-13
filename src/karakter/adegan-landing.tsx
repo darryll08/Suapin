@@ -9,10 +9,10 @@ const GARIS = "#3A2346";
 function Sendok({ x, y, sudut, makanan = "brokoli" }: { x: number; y: number; sudut: number; makanan?: string }) {
   return (
     <g transform={`translate(${x} ${y}) rotate(${sudut})`}>
-      <path d="M30 0 L190 -6" stroke={GARIS} strokeWidth={20} strokeLinecap="round" />
-      <path d="M30 0 L190 -6" stroke="#C9B79C" strokeWidth={11} strokeLinecap="round" />
-      <ellipse cx={0} cy={0} rx={40} ry={22} fill="#C9B79C" stroke={GARIS} strokeWidth={5} />
-      <image href={`/aset/makanan/${makanan}_0.svg`} x={-34} y={-58} width={68} height={68} />
+      <path d="M26 0 L160 -5" stroke={GARIS} strokeWidth={17} strokeLinecap="round" />
+      <path d="M26 0 L160 -5" stroke="#C9B79C" strokeWidth={9} strokeLinecap="round" />
+      <ellipse cx={0} cy={0} rx={34} ry={18} fill="#C9B79C" stroke={GARIS} strokeWidth={5} />
+      <image href={`/aset/makanan/${makanan}_0.svg`} x={-48} y={-84} width={96} height={96} />
     </g>
   );
 }
@@ -67,7 +67,7 @@ export function AdeganTanpaLayar() {
       <rect width={600} height={400} fill="#FBEFD2" />
       <circle cx={232} cy={176} r={150} fill="#F6E2B4" />
       <Meja warna="#E9D9BE" />
-      <Tokoh id="nara" x={100} y={36} skala={1.1} putar={-12} cermin tutupMulut />
+      <Tokoh id="nara" x={100} y={46} skala={1.1} cermin tutupMulut />
       <Sendok x={440} y={200} sudut={-8} />
       <path d="M392 150 q-14 -16 -6 -34 M410 140 q-6 -18 6 -30" stroke={GARIS} strokeWidth={4} strokeLinecap="round" fill="none" opacity={0.5} />
     </svg>
