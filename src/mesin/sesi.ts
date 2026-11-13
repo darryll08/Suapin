@@ -217,7 +217,14 @@ function selesai(k: Keadaan, alasan: AlasanSelesai, t: number, kx: Konteks, p: P
 }
 
 function mulaiMenilai(k: Keadaan, t: number, kx: Konteks, p: Perintah[]) {
-  if (k.kunyahAktif) {
+  // Kunyahan nyata tidak selalu berirama rapi, jadi `kunyahAktif` sering padam sesaat. Untuk menahan Suap cukup:
+  // ≥ 2 siklus dalam 3 detik terakhir dan siklus terakhir ≤ 1,5 detik lalu.
+  // Hanya saat mulut tertutup dan kepala hampir lurus: buka mulut (aaa) atau menoleh juga menggeser rahang.
+  const sejenak = k.buffer.filter((s) => s.t > t - 1_500);
+  const baruKunyah = sejenak.length > 0 && sejenak.every((s) => s.terlihat && s.mulut < kx.ambang.tutup && Math.abs(s.yaw) < 15) &&
+    k.kunyah.terakhir !== null && t - k.kunyah.terakhir <= 1_500 &&
+    k.kunyah.siklus.filter((x) => x > t - 3_000).length >= 3;
+  if (k.kunyahAktif || baruKunyah) {
     tampilkanTeks(k, "masih_ngunyah_tunggu", t);
     return;
   }

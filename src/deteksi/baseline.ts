@@ -15,6 +15,7 @@ export type Baseline = {
 export function buatBaseline(jendelaMs = 10_000): Baseline {
   const isi: { t: number; v: number }[] = [];
   let izin = true;
+  let getarTerendah = Infinity;
   return {
     boleh: (b) => { izin = b; },
     tambah: (t, v) => {
@@ -38,9 +39,11 @@ export function buatBaseline(jendelaMs = 10_000): Baseline {
         if (j - i >= 2) sd.push(simpangan(isi.slice(i, j).map((x) => x.v)));
         i = j;
       }
-      if (!sd.length) return simpangan(isi.map((x) => x.v));
-      sd.sort((a, b) => a - b);
-      return sd[Math.floor(sd.length * 0.1)];
+      const kini = sd.length ? sd.sort((a, b) => a - b)[Math.floor(sd.length * 0.1)] : simpangan(isi.map((x) => x.v));
+      // Diam terendah sejak awal sesi (kalibrasi): anak yang mengunyah terus 10 detik tidak boleh menaikkan
+      // patokan "diam" sampai kunyahannya sendiri tidak terbaca.
+      getarTerendah = Math.min(getarTerendah, kini);
+      return getarTerendah;
     },
   };
 }

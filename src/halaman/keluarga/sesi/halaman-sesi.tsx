@@ -74,7 +74,7 @@ export function HalamanSesiMakan() {
     );
   }
   // key: ganti tahap di tengah sesi = layar makan dimulai ulang dengan saklar tahap baru.
-  return <LayarMakan key={aturan.stage} saya={saya} aturan={aturan} pilihan={pilihan} sumber={sumber} wakeLock={pasangWakeLock} />;
+  return <>{param.get("debug") === "1" && <PanelDebug />}<LayarMakan key={aturan.stage} saya={saya} aturan={aturan} pilihan={pilihan} sumber={sumber} wakeLock={pasangWakeLock} /></>;
 }
 
 const NAMA_TAHAP = ["Karakter memandu", "Pengasuh jadi contoh", "Layar hitam", "Tanpa layar"];
@@ -95,4 +95,16 @@ function PilihTahapDemo({ tahap, pilih }: { tahap: number; pilih: (t: number) =>
       </div>
     </div>
   );
+}
+
+function PanelDebug() {
+  const [isi, setIsi] = useState("");
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      const d = (window as { __suapinDebug?: Record<string, unknown> }).__suapinDebug;
+      setIsi(d ? Object.entries(d).map(([k, v]) => `${k}: ${typeof v === "number" ? v.toFixed(4) : String(v)}`).join(" · ") : "menunggu");
+    }, 250);
+    return () => window.clearInterval(id);
+  }, []);
+  return <pre className="pointer-events-none fixed top-2 inset-x-2 z-40 rounded bg-black/70 p-2 whitespace-pre-wrap font-mono text-[11px] leading-tight text-white">{isi}</pre>;
 }

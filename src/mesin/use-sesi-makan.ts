@@ -71,6 +71,12 @@ export function useSesiMakan(o: OpsiSesiMakan) {
     terapkan(r.perintah);
     const k = r.keadaan;
     const t = performance.now();
+    // Diagnosis lapangan (/sesi?debug=1): angka kunyah terakhir dibaca layar debug.
+    (window as { __suapinDebug?: unknown }).__suapinDebug = {
+      status: k.status, kunyahAktif: k.kunyahAktif, siklus3s: k.kunyah.siklus.filter((x) => x > t - 3_000).length,
+      sejakSiklus: k.kunyah.terakhir === null ? null : Math.round(t - k.kunyah.terakhir), getar: kx.getarDiam,
+      rahang: k.buffer.at(-1)?.rahang ?? null, pitch: k.buffer.at(-1)?.pitch ?? null,
+    };
     const penting = k.status !== lama.status || k.klip !== lama.klip || k.teks !== lama.teks || k.gigitan !== lama.gigitan;
     if (penting || t - renderTerakhir.current >= RENDER_MS) {
       renderTerakhir.current = t;
