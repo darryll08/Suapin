@@ -39,8 +39,8 @@ type Profil = {
 // siap naik tahap, saran turun tahap, pasien baru, dan pasien tanpa dokter.
 const PASIEN: Profil[] = [
   { panggilan: "Alya", bulan: 44, sapaan: "bu", pengasuh: "Bu Wulan", stage: 2, dokter: DOKTER_DEMO, pola: "naik",
-    menu: ["brokoli", "wortel", "nasi"], resep: { teks: "Sesi maksimal 20 menit. Naik tahap setelah 5 sesi dengan minimal 6 suapan diterima.",
-      aturan: { max_minutes: 20, advance_rule: { sessions: 5, min_accepted_bites: 6 } } } },
+    menu: ["brokoli", "wortel", "nasi"], resep: { teks: "Sesi maksimal 20 menit. Naik tahap setelah minimal 5 sesi, 3 sesi terakhir berturut-turut minimal 75% suapan diterima.",
+      aturan: { max_minutes: 20, advance_rule: { sessions: 5, first_stage_sessions: 8, percent: 75, streak: 3 } } } },
   { panggilan: "Gilang", bulan: 53, sapaan: "ayah", pengasuh: "Ayah Doni", stage: 2, dokter: DOKTER_DEMO, pola: "sulit",
     menu: ["bayam", "ikan", "nasi"] },
   { panggilan: "Kirana", bulan: 61, sapaan: "mbak", pengasuh: "Mbak Sri", stage: 3, dokter: DOKTER_DEMO, pola: "baik",
@@ -53,8 +53,8 @@ const PASIEN: Profil[] = [
   { panggilan: "Fikri", bulan: 57, sapaan: "mbak", pengasuh: "Mbak Yuni", stage: 1, dokter: DOKTER_SARI, pola: "naik",
     menu: ["tahu", "kembang_kol", "pisang"] },
   { panggilan: "Salsa", bulan: 41, sapaan: "bu", pengasuh: "Bu Ratna", stage: 3, dokter: DOKTER_SARI, pola: "baik",
-    menu: ["ikan", "pakcoy", "apel"], resep: { teks: "Sesi 25 menit, naik tahap setelah 4 sesi minimal 7 suapan.",
-      aturan: { max_minutes: 25, advance_rule: { sessions: 4, min_accepted_bites: 7 } } } },
+    menu: ["ikan", "pakcoy", "apel"], resep: { teks: "Sesi 25 menit, naik tahap setelah minimal 4 sesi dan 2 sesi berturut-turut minimal 80% suapan diterima.",
+      aturan: { max_minutes: 25, advance_rule: { sessions: 4, first_stage_sessions: 8, percent: 80, streak: 2 } } } },
   { panggilan: "Rafa", bulan: 50, sapaan: "ayah", pengasuh: "Ayah Hendra", stage: 1, dokter: TERAPIS_NADIA, pola: "sulit",
     menu: ["wortel", "nasi"] },
   { panggilan: "Tiara", bulan: 65, sapaan: "mbak", pengasuh: "Mbak Ani", stage: 4, dokter: TERAPIS_NADIA, pola: "baik",

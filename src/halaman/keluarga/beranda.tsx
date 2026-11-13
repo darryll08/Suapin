@@ -1,7 +1,7 @@
 // Pemilik: B (Satya). Beranda `/beranda` (B3.4, UI UX 10.6), tata letak bento (inspo 11 Nov):
 // kartu hero tahap + Mulai makan → angka minggu ini + cincin hari makan → grafik pil 7 hari dengan stiker.
 import { Link, useSearchParams } from "react-router";
-import { CincinProgres, GrafikPil, KartuAngka, KartuHero } from "../../komponen/beranda.tsx";
+import { CincinProgres, GrafikPil, KartuAngka, KartuHero, TrackerTahap } from "../../komponen/beranda.tsx";
 import { Memuat, PesanGalat } from "../../komponen/dasar.tsx";
 import { bento, tombolHero } from "../../gaya/gaya.ts";
 import { HARI_SEN_MIN, kalimatTahap, NAMA_SAPAAN, namaDenganSapaan, tanggalLokal, tanggalMingguIni, totalPerHari, useMuat } from "./bantu.ts";
@@ -30,6 +30,7 @@ export function Beranda() {
       {memuat && !lap ? <Memuat /> : galat ? <PesanGalat pesan={galat} ulangi={ulangi} /> : lap && (
         <div className="flex flex-col gap-4">
           <KartuHero tahap={lap.tahap} kalimat={kalimatTahap(lap.tahap, c.panggilan, sapaan)}>
+            <TrackerTahap tahap={lap.tahap} progres={lap.progres_tahap} gelap />
             {saya.alasan_terkunci === "trial_habis" || saya.alasan_terkunci === "paket_habis" ? (
               <Link to="/langganan" className={tombolHero}>{saya.alasan_terkunci === "paket_habis" ? "Perpanjang program" : "Lanjutkan program"}</Link>
             ) : saya.alasan_terkunci === "tanda_bahaya" ? (

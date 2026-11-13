@@ -9,9 +9,10 @@ import { children, doctors, rules, screenings, shared_reports } from "../db/skem
 import type { Env } from "../env"
 import { buatKodeAkses, buatToken, hashKode } from "../kode"
 import {
-  awalHari, bacaAksesSesi, bacaAnak, bacaAturan, bacaPaparan, bacaRingkasan,
+  awalHari, bacaAksesSesi, bacaAnak, bacaAturan, bacaPaparan, bacaRingkasan, riwayatTahap, sesiUntukTahap,
   MS_HARI, sesiSejak, tanggalWib, tampilSesi, usiaBulan,
 } from "../logika/data"
+import { cekNaikTahap } from "../logika/tahap"
 import { gagal, type Daftar } from "./daftar"
 
 export function ruteKeluarga(daftar: Daftar, db: Db, env: Env) {
@@ -70,10 +71,12 @@ export function ruteKeluarga(daftar: Daftar, db: Db, env: Env) {
     const id = c.req.param("id")!
     anakMilikKeluarga(c, id)
     const anak = await bacaAnak(db, id)
-    const [sesi, paparan, ringkasan, akses, dokter] = await Promise.all([
+    const [sesi, paparan, ringkasan, akses, dokter, aktif, sesiTahap, riwayat_tahap] = await Promise.all([
       sesiSejak(db, id, 14), bacaPaparan(db, id), bacaRingkasan(db, id), bacaAksesSesi(db, anak),
       anak.doctor_id ? db.select({ nama: doctors.nama }).from(doctors).where(eq(doctors.id, anak.doctor_id)).get() : undefined,
+      bacaAturan(db, id), sesiUntukTahap(db, id, anak.stage), riwayatTahap(db, id),
     ])
+    const progres_tahap = cekNaikTahap(sesiTahap, { ...aktif.aturan, stage: anak.stage }).progres
     const hariDapatStiker = new Set(sesi.filter((row) => row.diterima > 0).map((row) => tanggalWib(new Date(row.mulai))))
     const sekarang = new Date()
     const hariIni = tanggalWib(sekarang)
@@ -86,7 +89,7 @@ export function ruteKeluarga(daftar: Daftar, db: Db, env: Env) {
         i <= hariKe && hariDapatStiker.has(tanggalWib(new Date(senin + i * MS_HARI)))),
       plan: akses.plan, trial_sisa_hari: akses.plan === "trial" && anak.trial_until ?
         Math.max(0, Math.ceil((Date.parse(anak.trial_until) - +sekarang) / MS_HARI)) : null,
-      dokter_nama: dokter?.nama ?? null }
+      dokter_nama: dokter?.nama ?? null, progres_tahap, riwayat_tahap }
   })
   daftar("laporanBagikan", async (c) => {
     const token = buatToken()

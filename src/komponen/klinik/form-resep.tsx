@@ -9,8 +9,10 @@ const kolom = [
   { id: "max_minutes", label: "Lama makan maksimal", satuan: "menit", min: 10, max: 30 },
   { id: "end_after_refusal_minutes", label: "Akhiri setelah menolak terus", satuan: "menit", min: 5, max: 15 },
   { id: "stage", label: "Tahap", satuan: "", min: 1, max: 4 },
-  { id: "advance_rule.sessions", label: "Naik tahap setelah", satuan: "sesi berturut-turut", min: 1, max: 7 },
-  { id: "advance_rule.min_accepted_bites", label: "Dengan minimal", satuan: "suapan diterima per sesi", min: 1, max: 15 },
+  { id: "advance_rule.first_stage_sessions", label: "Minimal sesi di tahap 1", satuan: "sesi", min: 1, max: 20 },
+  { id: "advance_rule.sessions", label: "Minimal sesi di tahap 2–3", satuan: "sesi", min: 1, max: 20 },
+  { id: "advance_rule.percent", label: "Suapan diterima per sesi", satuan: "% minimal", min: 50, max: 90 },
+  { id: "advance_rule.streak", label: "Berturut-turut", satuan: "sesi terakhir", min: 1, max: 7 },
   { id: "ngemut_hint", label: "Saran saat ngemut", satuan: "Maks. 100 karakter", min: 0, max: 100 },
 ] as const
 type Id = (typeof kolom)[number]["id"]
@@ -21,7 +23,9 @@ function datar(aturan: Hasil["aturan"]): Record<Id, string> {
     end_after_refusal_minutes: String(aturan.end_after_refusal_minutes ?? ""),
     stage: String(aturan.stage ?? ""),
     "advance_rule.sessions": String(aturan.advance_rule?.sessions ?? ""),
-    "advance_rule.min_accepted_bites": String(aturan.advance_rule?.min_accepted_bites ?? ""),
+    "advance_rule.first_stage_sessions": String(aturan.advance_rule?.first_stage_sessions ?? ""),
+    "advance_rule.percent": String(aturan.advance_rule?.percent ?? ""),
+    "advance_rule.streak": String(aturan.advance_rule?.streak ?? ""),
     ngemut_hint: aturan.ngemut_hint ?? "",
   }
 }
@@ -36,7 +40,8 @@ export function FormResep({ id, aktif, selesai }: { id: string; aktif: Aturan; s
   const valid = nilai && AturanSchema.safeParse({
     max_minutes: Number(nilai.max_minutes), end_after_refusal_minutes: Number(nilai.end_after_refusal_minutes),
     stage: Number(nilai.stage), advance_rule: {
-      sessions: Number(nilai["advance_rule.sessions"]), min_accepted_bites: Number(nilai["advance_rule.min_accepted_bites"]),
+      sessions: Number(nilai["advance_rule.sessions"]), first_stage_sessions: Number(nilai["advance_rule.first_stage_sessions"]),
+      percent: Number(nilai["advance_rule.percent"]), streak: Number(nilai["advance_rule.streak"]),
     }, ngemut_hint: nilai.ngemut_hint,
   })
   const belumDiisi = hasil?.kolom_bermasalah.length ?? 0

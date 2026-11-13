@@ -5,7 +5,7 @@ import { useState, type ReactNode } from "react"
 import { Navigate, useParams } from "react-router"
 import { cariMakanan } from "../../../bersama/konten/makanan"
 import type { Keluaran } from "../../../bersama/kontrak/api"
-import { GrafikPil, type BatangPil } from "../../komponen/beranda"
+import { GrafikPil, RiwayatTahap, TrackerTahap, type BatangPil } from "../../komponen/beranda"
 import { FormResep } from "../../komponen/klinik/form-resep"
 import { TabelSesi } from "../../komponen/klinik/tabel-sesi"
 import { Memuat, PesanGalat, Pil, Tombol } from "../../komponen/dasar"
@@ -75,6 +75,10 @@ function DetailPasien({ id }: { id: string }) {
       </div>
       {data.siap_naik_tahap && aktif.stage < 4 &&
         <Tombol memuat={aksi === "tahap"} disabled={!!aksi} onClick={() => void jalankan("tahap")}>Naikkan ke tahap {aktif.stage + 1}</Tombol>}
+    </section>
+    <section className={`${panel} grid gap-4 sm:grid-cols-2`} aria-label="Perjalanan tahap">
+      <TrackerTahap tahap={data.child.stage} progres={data.progres_tahap} />
+      <RiwayatTahap tahap={data.child.stage} riwayat={data.riwayat_tahap} />
     </section>
     {sukses && <p className={`${panel} border-ungu bg-ungu-tint font-semibold`} role="status">{sukses}</p>}
     {galatAksi && <PesanGalat pesan={galatAksi} />}
@@ -147,7 +151,7 @@ function DetailPasien({ id }: { id: string }) {
           <Map ikon="aturan" judul="Aturan aktif" ket={data.aturan_aktif.source === "dokter" ? "Dari dokter" : "Default program"} buka>
             <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-kecil">
               <dt className="text-ungu-muda">Lama sesi</dt><dd>maks {aktif.max_minutes} menit</dd>
-              <dt className="text-ungu-muda">Naik tahap</dt><dd>{aktif.advance_rule.sessions} sesi × min {aktif.advance_rule.min_accepted_bites} suapan</dd>
+              <dt className="text-ungu-muda">Naik tahap</dt><dd>min {aktif.advance_rule.first_stage_sessions} sesi (tahap 1) / {aktif.advance_rule.sessions} sesi (tahap 2–3), {aktif.advance_rule.streak} sesi berturut ≥ {aktif.advance_rule.percent}%</dd>
               <dt className="text-ungu-muda">Akhiri bila</dt><dd>menolak {aktif.end_after_refusal_minutes} menit</dd>
               <dt className="text-ungu-muda">Saat ngemut</dt><dd>{aktif.ngemut_hint}</dd>
             </dl>

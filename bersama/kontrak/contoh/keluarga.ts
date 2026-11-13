@@ -77,11 +77,16 @@ export const CONTOH_LAPORAN: Laporan = {
     "Minggu ini Dika paling mudah menerima suapan saat sarapan (rata-rata 5 suapan). Di makan malam, Dika lebih sering menolak. Coba tawarkan makan malam lebih awal, sebelum Dika terlalu lelah.",
   plan: "trial",
   trial_sisa_hari: 3,
+  progres_tahap: { sesi: 6, sesi_target: 8, streak: 2, streak_target: 3, persen_target: 70, diterima: 38, siap_naik: false, min_ditawarkan: 5,
+    sesi_terakhir: [{ diterima: 8, ditawarkan: 10, bagus: true }, { diterima: 7, ditawarkan: 10, bagus: true }, { diterima: 4, ditawarkan: 9, bagus: false }] },
+  riwayat_tahap: [{ tahap: 1, sesi: 6, diterima: 38, mulai: "2026-11-06T00:00:00.000Z", terakhir: "2026-11-12T11:30:00.000Z" }],
 };
 
 export const CONTOH_LAPORAN_KOSONG: Laporan = {
   tahap: 1, stiker_minggu_ini: [false, false, false, false, false, false, false],
   paparan: [], sesi: [], ringkasan_keluarga: null, plan: "trial", trial_sisa_hari: 5,
+  progres_tahap: { sesi: 0, sesi_target: 8, streak: 0, streak_target: 3, persen_target: 70, diterima: 0, siap_naik: false, min_ditawarkan: 5, sesi_terakhir: [] },
+  riwayat_tahap: [],
 };
 
 export const CONTOH_SIMPAN_SESI: HasilSimpanSesi = {

@@ -27,7 +27,7 @@ it.each([
   }
 
   const awal = Date.now() - 10 * 60_000
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 8; i++) {
     const mulai = awal + i * 60_000
     const sesi: SesiSelesai = {
       child_id, menu: "umum", makanan_baru: false, mulai: new Date(mulai).toISOString(),
@@ -37,7 +37,7 @@ it.each([
     const respons = await keluarga("/api/sessions", "POST", sesi)
     expect(respons.status).toBe(200)
     expect(API.sesiSimpan.res.parse(await respons.json())).toMatchObject({
-      naik_tahap: !klinik && i === 4, tahap_baru: i === 4 ? tahapAkhir : 1,
+      naik_tahap: !klinik && i === 7, tahap_baru: i === 7 ? tahapAkhir : 1,
     })
   }
 

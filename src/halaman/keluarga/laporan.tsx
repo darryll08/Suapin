@@ -4,7 +4,7 @@
 // Keluarga mandiri: kartu kecil di bawah; ditonjolkan di atas hanya bila skrining menemukan tanda bahaya.
 import { useState } from "react";
 import { cariMakanan } from "../../../bersama/konten/makanan.ts";
-import { GrafikPil, KartuAngka, LabelAI } from "../../komponen/beranda.tsx";
+import { GrafikPil, KartuAngka, LabelAI, RiwayatTahap, TrackerTahap } from "../../komponen/beranda.tsx";
 import { KepalaHalaman, Memuat, PesanGalat, Tombol } from "../../komponen/dasar.tsx";
 import { LembarBawah } from "../../komponen/lembar.tsx";
 import { bento, tombolTeks, wadahKeluarga } from "../../gaya/gaya.ts";
@@ -55,6 +55,11 @@ export function Laporan() {
           )}
           {tandaBahaya && kartuBagikan}
           {lap.sesi.length > 0 && <Angka14 sesi={lap.sesi} panggilan={c.panggilan} />}
+          <section className={`${bento} flex flex-col gap-4`}>
+            <h2 className="font-judul text-subjudul font-bold">Perjalanan tahap</h2>
+            <TrackerTahap tahap={lap.tahap} progres={lap.progres_tahap} />
+            <RiwayatTahap tahap={lap.tahap} riwayat={lap.riwayat_tahap} />
+          </section>
 
           <section className={`${bento} flex flex-col gap-3`}>
             <h2 className="font-judul text-subjudul font-bold">Ringkasan minggu ini</h2>

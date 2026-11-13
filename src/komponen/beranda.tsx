@@ -124,3 +124,66 @@ export function LabelAI({ sumber }: { sumber: "ai" | "cache" | "template" }) {
     </p>
   );
 }
+
+type Progres = { sesi: number; sesi_target: number; streak: number; streak_target: number; persen_target: number; diterima: number;
+  siap_naik: boolean; min_ditawarkan: number; sesi_terakhir: { diterima: number; ditawarkan: number; bagus: boolean }[] };
+
+/** Tracker menuju tahap berikutnya: cukup sesi (paparan) + sesi bagus berturut-turut (>= persen diterima). */
+export function TrackerTahap({ tahap, progres, gelap = false }: { tahap: number; progres: Progres | null; gelap?: boolean }) {
+  const redup = gelap ? "text-latar/75" : "text-ungu-muda";
+  const kosong = gelap ? "bg-latar/20" : "bg-ungu-tint";
+  if (!progres) return <p className={`text-kecil ${redup}`}>Tahap terakhir: makan bersama tanpa layar.</p>;
+  const persenSesi = Math.min(100, Math.round((progres.sesi / Math.max(1, progres.sesi_target)) * 100));
+  // Sesi terakhir, terlama di kiri.
+  const sesi = [...progres.sesi_terakhir].reverse();
+  return (
+    <div className={`grid grid-cols-[auto_1fr_auto] items-center gap-x-3 gap-y-2.5 rounded-kartu p-4 ${gelap ? "bg-latar/10" : "bg-ungu-tint/50"}`}>
+      <p className="col-span-3 text-isi font-bold">{progres.siap_naik ? `Siap naik ke tahap ${tahap + 1}` : `Menuju tahap ${tahap + 1}`}</p>
+      <span className={`text-kecil ${redup}`}>Sesi</span>
+      <div className={`h-2 rounded-full ${kosong}`}><div className="h-2 rounded-full bg-jagung" style={{ width: `${persenSesi}%` }} /></div>
+      <span className="text-kecil font-semibold tabular-nums">{Math.min(progres.sesi, progres.sesi_target)}/{progres.sesi_target}</span>
+      <span className={`text-kecil ${redup}`}>≥ {progres.persen_target}%</span>
+      <ol className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${progres.streak_target}, minmax(0, 1fr))` }} aria-label={`Sesi terakhir, bagus bila minimal ${progres.persen_target}% suapan diterima`}>
+        {Array.from({ length: progres.streak_target }, (_, i) => {
+          const x = sesi[i];
+          const persen = x && x.ditawarkan > 0 ? Math.round((x.diterima / x.ditawarkan) * 100) : null;
+          return (
+            <li key={i} title={x ? `${x.diterima}/${x.ditawarkan} suapan` : "belum ada sesi"}
+              className={`inline-flex h-6 items-center justify-center rounded-full text-[11px] font-bold tabular-nums ${x?.bagus ? "bg-jagung text-ungu" : `${kosong} ${redup}`}`}>
+              {persen === null ? "–" : `${persen}%`}
+            </li>
+          );
+        })}
+      </ol>
+      <span className="text-kecil font-semibold tabular-nums">{progres.streak}/{progres.streak_target}</span>
+    </div>
+  );
+}
+
+const NAMA_TAHAP_TRACKER = ["Karakter memandu", "Pengasuh jadi contoh", "Layar hitam", "Tanpa layar"];
+const tglPendek = (iso: string) => new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "short" });
+
+/** Riwayat perjalanan tahap 1–4: selesai, sedang berjalan, belum. */
+export function RiwayatTahap({ tahap, riwayat }: { tahap: number; riwayat: { tahap: number; sesi: number; diterima: number; mulai: string; terakhir: string }[] }) {
+  return (
+    <ol className="flex flex-col gap-2">
+      {[1, 2, 3, 4].map((t) => {
+        const r = riwayat.find((x) => x.tahap === t);
+        const status = t < tahap ? "selesai" : t === tahap ? "sekarang" : "belum";
+        return (
+          <li key={t} className="flex items-center gap-3">
+            <span className={`inline-flex size-7 shrink-0 items-center justify-center rounded-full text-kecil font-bold ${status === "selesai" ? "bg-ungu text-latar" : status === "sekarang" ? "bg-jagung text-ungu" : "bg-ungu-tint text-ungu-muda"}`}>
+              {status === "selesai" ? "✓" : t}
+            </span>
+            <div className="flex min-w-0 flex-1 flex-col">
+              <span className={`text-isi font-semibold ${status === "belum" ? "text-ungu-muda" : ""}`}>Tahap {t} · {NAMA_TAHAP_TRACKER[t - 1]}</span>
+              <span className="text-kecil text-ungu-muda">
+                {r ? `${tglPendek(r.mulai)}${status === "sekarang" ? " – sekarang" : ` – ${tglPendek(r.terakhir)}`} · ${r.sesi} sesi · ${r.diterima} suapan` : status === "sekarang" ? "Sedang berjalan" : "Belum"}
+              </span>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}

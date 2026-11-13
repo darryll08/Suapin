@@ -15,6 +15,12 @@ const jumlah = z.number().int().nonnegative()
 const anak = z.object({ id, panggilan: nama, usia_bulan: jumlah, stage: tahap })
 const aturanAktif = z.object({ aturan: AturanSchema, source: sumberAturan, confirmed_at: waktu.nullable() })
 const paparan = z.object({ makanan: id, jumlah, target: z.literal(10) })
+// Tracker tahap: progres menuju tahap berikutnya (null di tahap 4) dan riwayat per tahap.
+const progresTahap = z.object({ sesi: jumlah, sesi_target: jumlah, streak: jumlah, streak_target: jumlah,
+  persen_target: jumlah, diterima: jumlah, siap_naik: bool, min_ditawarkan: jumlah,
+  // Sesi terakhir di tahap ini (terbaru dulu, sebanyak streak_target) untuk tracker per sesi.
+  sesi_terakhir: z.array(z.object({ diterima: jumlah, ditawarkan: jumlah, bagus: bool })) })
+const riwayatTahap = z.array(z.object({ tahap, sesi: jumlah, diterima: jumlah, mulai: waktu, terakhir: waktu }))
 const sesi = z.object({
   tanggal: z.string(), jam: z.string(), menu: id, diterima: jumlah, ditolak: jumlah,
   ngemut: jumlah, durasi: jumlah,
@@ -87,6 +93,7 @@ export const API = {
   laporanKeluarga: endpoint("GET", "/api/children/:id/report", "keluarga", kosong,
     z.object({ tahap, stiker_minggu_ini: z.array(bool).length(7), paparan: z.array(paparan),
       sesi: z.array(sesi.extend({ id })), ringkasan_keluarga: z.string().nullable(), plan,
+      progres_tahap: progresTahap.nullable(), riwayat_tahap: riwayatTahap,
       trial_sisa_hari: jumlah.nullable(),
       // Nama dokter yang memegang anak ini (pasien klinik); null = keluarga mandiri.
       dokter_nama: z.string().nullable().optional() }), 401, 404),
@@ -120,6 +127,7 @@ export const API = {
         rules_json: AturanSchema, confirmed_at: waktu })),
       sesi: z.array(sesi.extend({ alasan_selesai: AlasanSelesai })), ngemut_dikonfirmasi: jumlah,
       paparan: z.array(paparan), siap_naik_tahap: bool, saran_turun_tahap: bool,
+      progres_tahap: progresTahap.nullable(), riwayat_tahap: riwayatTahap,
       ringkasan_dokter: z.string().nullable(), ringkasan_sumber: sumberRingkasan.optional(),
       pengasuh: z.object({ sapaan, nama: nama }), jadwal: z.array(jadwal),
       skrining_terakhir: z.object({ tanggal: waktu, ada_tanda_bahaya: bool }).nullable() }), 401, 404),

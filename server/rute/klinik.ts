@@ -5,7 +5,7 @@ import { appointments, bites, children, clinics, doctors, rules, screenings, ses
 import type { Env } from "../env"
 import {
   bacaAnak, bacaAturan, bacaPaparan, bacaRingkasan, lalu, MS_HARI, sesiSejak,
-  sesiUntukTahap, tampilSesi, usiaBulan,
+  riwayatTahap, sesiUntukTahap, tampilSesi, usiaBulan,
 } from "../logika/data"
 import { cekNaikTahap } from "../logika/tahap"
 import { gagal, type Daftar } from "./daftar"
@@ -145,10 +145,12 @@ export function ruteKlinik(daftar: Daftar, db: Db, env: Env) {
         .orderBy(desc(appointments.waktu)).all(),
       db.select().from(screenings).where(eq(screenings.child_id, id)).orderBy(desc(screenings.tanggal)).get(),
     ])
-    const hasil = cekNaikTahap(terakhir, aturan_aktif.aturan)
+    const hasil = cekNaikTahap(terakhir, { ...aturan_aktif.aturan, stage: anak.stage })
+    const riwayat_tahap = await riwayatTahap(db, id)
     return { dokter_nama: c.var.dokter!.nama, child: { ...anak, usia_bulan: usiaBulan(anak.tanggal_lahir) }, aturan_aktif, riwayat_aturan,
       sesi: sesi.map(tampilSesi), paparan, ngemut_dikonfirmasi: ngemut?.n ?? 0,
       siap_naik_tahap: hasil.siapNaik, saran_turun_tahap: hasil.saranTurun,
+      progres_tahap: hasil.progres, riwayat_tahap,
       ringkasan_dokter: ringkasan?.dokter ?? null, ringkasan_sumber: ringkasan?.sumber,
       pengasuh: { sapaan: anak.sapaan, nama: anak.nama_pengasuh }, jadwal: jadwal.map(tampilJadwal),
       skrining_terakhir: skrining ? { tanggal: skrining.tanggal, ada_tanda_bahaya: skrining.ada_tanda_bahaya } : null }

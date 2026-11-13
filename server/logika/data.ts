@@ -76,7 +76,17 @@ export function bacaRingkasan(db: Kueri, id: string, minggu = mingguIni()) {
     .where(and(eq(weekly_summaries.child_id, id), eq(weekly_summaries.minggu, minggu))).get()
 }
 export function sesiUntukTahap(db: Kueri, id: string, stage: number) {
-  return db.select({ stage: sessions.stage, diterima: sessions.diterima }).from(sessions)
+  // Semua sesi di tahap ini (akumulasi paparan), terbaru dulu.
+  return db.select({ stage: sessions.stage, diterima: sessions.diterima, ditolak: sessions.ditolak }).from(sessions)
     .where(and(eq(sessions.child_id, id), eq(sessions.stage, stage)))
-    .orderBy(desc(sessions.mulai), desc(sessions.id)).limit(7).all()
+    .orderBy(desc(sessions.mulai), desc(sessions.id)).all()
+}
+/** Riwayat per tahap untuk tracker: jumlah sesi, suapan diterima, sesi pertama dan terakhir. */
+export async function riwayatTahap(db: Kueri, id: string) {
+  const baris = await db.select({ tahap: sessions.stage, sesi: sql<number>`count(*)`.mapWith(Number),
+    diterima: sql<number>`coalesce(sum(${sessions.diterima}), 0)`.mapWith(Number),
+    mulai: sql<string>`min(${sessions.mulai})`, terakhir: sql<string>`max(${sessions.mulai})` })
+    .from(sessions).where(eq(sessions.child_id, id)).groupBy(sessions.stage).all()
+  return baris.map((b) => ({ ...b, mulai: new Date(b.mulai).toISOString(), terakhir: new Date(b.terakhir).toISOString() }))
+    .sort((a, b) => a.tahap - b.tahap)
 }
