@@ -5,10 +5,27 @@
 //   karakter. Diam saat menolak, tanpa target "habis".
 import { useRef, useState, type CSSProperties } from "react";
 import { cariMakanan, MAKANAN, STIKER } from "../../../../bersama/konten/makanan.ts";
-import { pilihKata } from "./kata-makanan.ts";
+import { KATA_MAKANAN, pilihKata } from "./kata-makanan.ts";
 import "./panel-samping.css";
 
 const JEDA_KETUK_MS = 2500;
+let audioKata: HTMLAudioElement | null = null;
+
+// Suara ElevenLabs yang sama dengan karakter (public/klip/kata, `npm run klip`); file belum ada → suara HP.
+function ucapkanKata(id: string, k: string) {
+  const kunci = KATA_MAKANAN[id] ? id : "umum";
+  const n = KATA_MAKANAN[kunci].indexOf(k) + 1;
+  audioKata?.pause();
+  audioKata = new Audio(`/klip/kata/${kunci}__${n}.mp3`);
+  audioKata.play().catch(() => {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(k);
+    u.lang = "id-ID";
+    u.pitch = 1.3;
+    window.speechSynthesis.speak(u);
+  });
+}
 
 export function KenalanMakanan({ makanan, diterima, suara }: { makanan: string; diterima: number; suara: boolean }) {
   const m = cariMakanan(makanan);
@@ -22,13 +39,7 @@ export function KenalanMakanan({ makanan, diterima, suara }: { makanan: string; 
     const k = pilihKata(m.id, kata);
     setKata(k);
     setKetuk((n) => n + 1);
-    if (suara && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(k);
-      u.lang = "id-ID";
-      u.pitch = 1.3;
-      window.speechSynthesis.speak(u);
-    }
+    if (suara) ucapkanKata(m.id, k);
   };
   return (
     <button type="button" onClick={sapa} aria-label={`${m.nama}. Ketuk untuk mendengar namanya`}

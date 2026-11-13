@@ -1,9 +1,10 @@
 // Pemilik: B (Satya). B1.4: buat klip suara karakter dari bersama/konten/klip.ts lewat ElevenLabs.
-// Pakai: `npm run klip` (hanya file yang belum ada), `npm run klip -- --paksa <id>`, atau `npm run klip -- --semua`.
+// Pakai: `npm run klip` (hanya file yang belum ada), `npm run klip -- --paksa <id>` (`--paksa kata` = ulang bank kata), atau `npm run klip -- --semua`.
 // Butuh ELEVENLABS_API_KEY dan ELEVENLABS_VOICE_ID di .env.local. Kunci tidak pernah ditulis ke repo.
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { KLIP, type IdKlip } from "../bersama/konten/klip.ts";
+import { KATA_MAKANAN } from "../src/halaman/keluarga/sesi/kata-makanan.ts";
 
 function bacaEnv(): Record<string, string> {
   const env: Record<string, string> = { ...process.env } as Record<string, string>;
@@ -46,34 +47,47 @@ const KODE_BAHASA = MODEL === "eleven_multilingual_v2"
 let adaFfmpeg = true;
 try { execFileSync("ffmpeg", ["-version"], { stdio: "ignore" }); } catch { adaFfmpeg = false; }
 
-mkdirSync("public/klip", { recursive: true });
+mkdirSync("public/klip/kata", { recursive: true });
+
+async function buat(teks: string, file: string, datar: boolean): Promise<void> {
+  const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${suara}`, {
+    method: "POST",
+    headers: { "xi-api-key": kunci, "content-type": "application/json", accept: "audio/mpeg" },
+    body: JSON.stringify({ text: teks, model_id: MODEL, ...KODE_BAHASA,
+      voice_settings: datar ? SUARA_DATAR : SUARA_HIDUP }),
+  });
+  if (!r.ok) {
+    console.error(`Gagal ${file} (${r.status}): ${await r.text()}`);
+    process.exitCode = 1;
+    return;
+  }
+  const data = Buffer.from(await r.arrayBuffer());
+  if (adaFfmpeg) {
+    const mentah = `${file}.mentah.mp3`;
+    writeFileSync(mentah, data);
+    execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-i", mentah, "-af", "loudnorm=I=-16:TP=-1.5", "-b:a", "64k", file]);
+    unlinkSync(mentah);
+  } else {
+    writeFileSync(file, data);
+  }
+  console.log(`✓ ${file}`);
+}
 
 for (const id of Object.keys(KLIP) as IdKlip[]) {
   const semua = [KLIP[id].kalimat, ...KLIP[id].variasi];
   for (let i = 0; i < semua.length; i++) {
     const file = i === 0 ? `public/klip/${id}.mp3` : `public/klip/${id}__${i + 1}.mp3`;
     if (existsSync(file) && paksa !== id && !semuaUlang) continue;
-    const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${suara}`, {
-      method: "POST",
-      headers: { "xi-api-key": kunci, "content-type": "application/json", accept: "audio/mpeg" },
-      body: JSON.stringify({ text: semua[i], model_id: MODEL, ...KODE_BAHASA,
-        voice_settings: id === "nanti_lagi" ? SUARA_DATAR : SUARA_HIDUP }),
-    });
-    if (!r.ok) {
-      console.error(`Gagal ${id} (${r.status}): ${await r.text()}`);
-      process.exitCode = 1;
-      continue;
-    }
-    const data = Buffer.from(await r.arrayBuffer());
-    if (adaFfmpeg) {
-      const mentah = `${file}.mentah.mp3`;
-      writeFileSync(mentah, data);
-      execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-i", mentah, "-af", "loudnorm=I=-16:TP=-1.5", "-b:a", "64k", file]);
-      unlinkSync(mentah);
-    } else {
-      writeFileSync(file, data);
-    }
-    console.log(`✓ ${file}`);
+    await buat(semua[i], file, id === "nanti_lagi");
+  }
+}
+
+// Bank kata kapsul kenalan makanan (panel-samping.tsx): public/klip/kata/<makanan>__<n>.mp3, suara sama dengan karakter.
+for (const [id, daftar] of Object.entries(KATA_MAKANAN)) {
+  for (let i = 0; i < daftar.length; i++) {
+    const file = `public/klip/kata/${id}__${i + 1}.mp3`;
+    if (existsSync(file) && paksa !== "kata" && !semuaUlang) continue;
+    await buat(daftar[i], file, false);
   }
 }
 if (!adaFfmpeg) console.log("ffmpeg tidak ada: volume belum disamakan (catat di docs/klip.md).");
