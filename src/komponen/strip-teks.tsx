@@ -34,7 +34,7 @@ export function LembarTanya({ pertanyaan, jawab }: { pertanyaan: string; jawab: 
     <div
       role="dialog"
       aria-label={pertanyaan}
-      className="fixed inset-x-0 bottom-0 mx-auto flex max-w-[560px] flex-col gap-4 rounded-t-kartu bg-permukaan p-5 pb-6 shadow-lembar"
+      className="fixed inset-x-0 bottom-0 mx-auto flex max-w-[560px] flex-col gap-4 rounded-t-kartu bg-permukaan p-5 pb-6 text-ungu shadow-lembar"
     >
       <p className="text-center font-judul text-subjudul font-bold">{pertanyaan}</p>
       <div className="grid grid-cols-2 gap-3">

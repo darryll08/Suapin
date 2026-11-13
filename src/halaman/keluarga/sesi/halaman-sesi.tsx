@@ -77,22 +77,62 @@ export function HalamanSesiMakan() {
   return <>{param.get("debug") === "1" && <PanelDebug />}<LayarMakan key={aturan.stage} saya={saya} aturan={aturan} pilihan={pilihan} sumber={sumber} wakeLock={pasangWakeLock} /></>;
 }
 
-const NAMA_TAHAP = ["Karakter memandu", "Pengasuh jadi contoh", "Layar hitam", "Tanpa layar"];
+const NAMA_TAHAP = ["Karakter Memandu", "Pengasuh Jadi Contoh", "Layar Hitam", "Tanpa Layar"];
+
+/** Layar mini per tahap: terang + karakter, karakter samar, hitam, lalu tanpa layar (piring saja). */
+function LayarMini({ t, aktif }: { t: number; aktif: boolean }) {
+  const garis = aktif ? "#FAF6EE" : "#4B2E5A";
+  return (
+    <svg viewBox="0 0 48 40" className="h-9 w-11" aria-hidden="true">
+      {t < 4 ? (
+        <>
+          <rect x="4" y="3" width="40" height="28" rx="6" fill={t === 3 ? "#1d1220" : aktif ? "#6E5A78" : "#FFFDF8"} stroke={garis} strokeWidth="2.5" />
+          {t < 3 && <circle cx="24" cy="17" r="7" fill="#E0A526" opacity={t === 1 ? 1 : 0.35} />}
+          {t < 3 && <path d="M21 18 q3 3 6 0" stroke="#4B2E5A" strokeWidth="1.8" fill="none" strokeLinecap="round" opacity={t === 1 ? 1 : 0.35} />}
+          <path d="M18 36 h12" stroke={garis} strokeWidth="2.5" strokeLinecap="round" />
+        </>
+      ) : (
+        <>
+          <ellipse cx="24" cy="26" rx="18" ry="7" fill={aktif ? "#6E5A78" : "#FFFDF8"} stroke={garis} strokeWidth="2.5" />
+          <circle cx="24" cy="22" r="5" fill="#E0A526" />
+        </>
+      )}
+    </svg>
+  );
+}
 
 function PilihTahapDemo({ tahap, pilih }: { tahap: number; pilih: (t: number) => void }) {
   return (
     <div className={`${wadahKeluarga} pt-4`}>
-      <div className="rounded-2xl border border-dashed border-garis bg-permukaan p-3">
-        <p className="mb-2 text-kecil text-ungu-muda">Mode demo: simulasi tahap lepas layar (di layar makan: tombol 1-4)</p>
-        <div className="flex flex-wrap gap-2">
-          {NAMA_TAHAP.map((nama, i) => (
-            <button key={nama} type="button" onClick={() => pilih(i + 1)} aria-pressed={tahap === i + 1}
-              className={`rounded-full px-3 py-1.5 text-kecil font-bold ${tahap === i + 1 ? "bg-ungu text-latar" : "bg-ungu-tint text-ungu"}`}>
-              {i + 1}. {nama}
-            </button>
-          ))}
+      <section className="relative overflow-hidden rounded-bento bg-ungu-tint/60 p-4 ring-1 ring-ungu/10">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="label-atas rounded-full bg-jagung px-2.5 py-1 text-ungu">Mode Demo</span>
+            <h2 className="font-judul text-isi font-bold">Simulasi Lepas Layar</h2>
+          </div>
+          <span className="flex items-center gap-1 text-mini text-ungu-muda">
+            Di layar makan tekan
+            {[1, 2, 3, 4].map((n) => <kbd key={n} className="rounded-md bg-permukaan px-1.5 font-isi text-mini font-bold text-ungu shadow-[0_1px_0_var(--color-garis)]">{n}</kbd>)}
+          </span>
         </div>
-      </div>
+        <ol className="relative grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {/* Garis penghubung: layar makin redup dari kiri ke kanan. */}
+          <span aria-hidden="true" className="absolute top-1/2 right-6 left-6 hidden h-0.5 -translate-y-1/2 bg-gradient-to-r from-jagung via-ungu-muda to-ungu/20 sm:block" />
+          {NAMA_TAHAP.map((nama, i) => {
+            const t = i + 1, aktif = tahap === t;
+            return (
+              <li key={nama} className="relative">
+                <button type="button" onClick={() => pilih(t)} aria-pressed={aktif}
+                  className={`flex w-full flex-col items-center gap-1 rounded-kartu px-2 py-3 text-center transition-transform active:translate-y-0.5 ${aktif ? "bg-ungu text-latar shadow-[0_3px_0_#2E1B38]" : "bg-permukaan text-ungu shadow-[0_2px_0_var(--color-garis)] hover:-translate-y-0.5"}`}>
+                  <LayarMini t={t} aktif={aktif} />
+                  <span className={`label-atas ${aktif ? "text-jagung" : "text-jagung-tua"}`}>Tahap {t}</span>
+                  <span className="text-kecil leading-tight font-semibold">{nama}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
     </div>
   );
 }

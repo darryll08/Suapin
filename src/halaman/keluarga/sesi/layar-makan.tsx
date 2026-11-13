@@ -198,8 +198,9 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
         <span aria-hidden="true" className={`inline-flex size-9 items-center justify-center rounded-full text-[11px] ${hitam ? "" : "bg-ungu-tint"}`}>❚❚</span> Jeda
       </button>
 
-      {/* Pratinjau kamera: pojok atas sisi pengasuh. Video tetap terpasang (kamera jalan) walau disembunyikan di tahap 3. */}
-      <div className={`absolute top-4 ${sisiP} ${hitam || !pakaiKamera ? "pointer-events-none opacity-0" : ""}`}>
+      {/* Pratinjau kamera: pojok atas sisi pengasuh. Di tahap 3 (layar hitam) tetap tampil terang penuh,
+          supaya pengasuh bisa memastikan wajah anak terbaca. */}
+      <div className={`absolute top-4 ${sisiP} ${!pakaiKamera ? "pointer-events-none opacity-0" : ""}`}>
         <video ref={videoRef} muted playsInline aria-label="Pratinjau kamera, ketuk wajah anak bila salah pilih"
           className={`h-32 w-24 rounded-tombol bingkai:rounded-[24px] border-2 bg-ungu-tint object-cover sm:h-[120px] sm:w-40 ${status === "TIDAK_TERLIHAT" ? "border-jagung" : "border-latar"}`}
           style={{ transform: "scaleX(-1)" }}
