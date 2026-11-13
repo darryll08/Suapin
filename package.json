@@ -13,7 +13,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrasi": "drizzle-kit migrate",
     "db:seed": "tsx server/db/seed.ts",
-    "deploy:vercel": "esbuild scripts/vercel-entri.ts --bundle --platform=node --format=esm --packages=external --tsconfig=tsconfig.server.json --outfile=api/index.mjs && vercel deploy --prod --yes",
+    "bundel:api": "esbuild scripts/vercel-entri.ts --bundle --platform=node --format=esm --packages=external --tsconfig=tsconfig.server.json --outfile=api/index.mjs",
+    "deploy:vercel": "npm run bundel:api && vercel deploy --prod --yes",
     "klip": "tsx scripts/buat-klip.ts",
     "postinstall": "node scripts/salin-mediapipe.mjs"
   },
