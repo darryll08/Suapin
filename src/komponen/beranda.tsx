@@ -178,7 +178,7 @@ export function RiwayatTahap({ tahap, riwayat }: { tahap: number; riwayat: { tah
             <div className="flex min-w-0 flex-1 flex-col">
               <span className={`text-isi font-semibold ${status === "belum" ? "text-ungu-muda" : ""}`}>Tahap {t} · {NAMA_TAHAP_TRACKER[t - 1]}</span>
               <span className="text-kecil text-ungu-muda">
-                {r ? `${tglPendek(r.mulai)}${status === "sekarang" ? " – sekarang" : ` – ${tglPendek(r.terakhir)}`} · ${r.sesi} sesi · ${r.diterima} suapan` : status === "sekarang" ? "Sedang berjalan" : "Belum"}
+                {r ? `${tglPendek(r.mulai)}${status === "sekarang" ? " – sekarang" : ` – ${tglPendek(r.terakhir)}`} · ${r.sesi} sesi · ${r.diterima} suapan` : status === "sekarang" ? "Sedang berjalan" : status === "selesai" ? "Selesai" : "Belum"}
               </span>
             </div>
           </li>

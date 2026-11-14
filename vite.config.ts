@@ -28,6 +28,8 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,webp,svg,png,mp3,task,wasm,json,woff2}"],
+        // Varian ES module MediaPipe tidak dipakai (pelacak.ts memakai vision_wasm_internal); hemat ±15 MB unduhan.
+        globIgnores: ["**/*_module_internal.*"],
         // K19: file WASM MediaPipe ±14,6 MB; di bawah batas ini build PWA gagal.
         maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
         navigateFallbackDenylist: [/^\/api\//],
