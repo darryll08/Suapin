@@ -4,7 +4,8 @@
 // Keluarga mandiri: kartu kecil di bawah; ditonjolkan di atas hanya bila skrining menemukan tanda bahaya.
 import { useState } from "react";
 import { cariMakanan } from "../../../bersama/konten/makanan.ts";
-import { GrafikPil, KartuAngka, LabelAI, RiwayatTahap, TrackerTahap, rentangTanggal } from "../../komponen/beranda.tsx";
+import { GrafikPil, KartuAngka, LabelAI, RiwayatTahap, TrackerTahap } from "../../komponen/beranda.tsx";
+import { rentangTanggal } from "../../lib/tanggal.ts";
 import { KepalaHalaman, Memuat, PesanGalat, Tombol } from "../../komponen/dasar.tsx";
 import { LembarBawah } from "../../komponen/lembar.tsx";
 import { bento, tombolTeks, wadahKeluarga } from "../../gaya/gaya.ts";
