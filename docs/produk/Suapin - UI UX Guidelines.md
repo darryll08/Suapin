@@ -2,12 +2,37 @@
 
 | | |
 |---|---|
-| Versi | 1.0 |
-| Tanggal | 10 November 2026 |
+| Versi | 1.1 |
+| Tanggal | 14 November 2026 (v1.0: 10 November 2026) |
 | Dipakai oleh | B Satya (aplikasi keluarga, karakter, aset), C Adit (dashboard klinik, `/r/:token`), A Darryl (halaman dev, panel ambang) |
 | Acuan | `brand/README.md` (logo, palet, dikunci 10 Nov), `Suapin - PRD.md` (fitur dan aturan), `jobdesk/Prompt_Orang_B_*.md` (kartu build B) |
 
 **Status isi.** Logo, lima warna palet, aturan "tanpa merah", tombol utama ≥ 56 px, target sentuh ≥ 48 px, tombol Suap ≥ 96 px, radius kartu 20 px, strip teks 15–16 px yang hilang dalam 8 detik, dan spesifikasi mulut SVG sudah **dikunci** di dokumen sebelumnya. Nilai lain di dokumen ini (skala huruf, spasi, warna turunan, durasi gerak, tata letak tiap layar, teks UI) **ditetapkan di sini** supaya B dan C membangun tampilan yang sama. Mengubahnya cukup lewat token di `src/gaya/token.css`.
+
+---
+
+## Pembaruan v1.1: tampilan yang sudah dibangun (14 November 2026)
+
+v1.1 menyesuaikan pedoman dengan aplikasi di repo (`main`, commit `7b384a0`). Bagian 5, 6, 7.3, dan 9.10 sudah ditulis ulang langsung. Perbedaan lain:
+
+| Topik | v1.0 | Sekarang | Bagian |
+|---|---|---|---|
+| Huruf | Font sistem (`ui-rounded`), tanpa font dari luar | **Fraunces Variable** (judul, `SOFT 100`, berat 650) + **Plus Jakarta Sans Variable** (isi), disajikan lokal lewat `@fontsource-variable` (tetap offline). Judul memakai **Title Case** | 5 |
+| Skala huruf | 8 token | Ditambah `raksasa` 56, `hero` 52/60, `angka` 44/52, `besar` 34/42, `mini` 13 (label atas kapital) | 5.1 |
+| Gaya kartu | Kartu 20 px dengan bayangan | Gaya **bento**: radius 28 px (`radius-bento`), tanpa bayangan, latar permukaan. Bayangan hover memakai `shadow-angkat` | 6 |
+| Tombol | Radius 16 px | **Semua tombol pil** (`rounded-full`), termasuk Lanjut, Selesai, Jeda, koreksi "Tadi", telepon 119 | 6.2, 9.1 |
+| Navigasi keluarga | Tanpa tab bar | Menu bawah tetap **Beranda · Laporan · Profil** (`nav-keluarga.tsx`), titik jagung = notifikasi belum dibaca; disembunyikan di `/sesi*` dan skrining | 7.3 |
+| Tombol Suap | Pojok bawah sisi pengasuh | **Tengah bawah**, bulat jagung datar, ikon 40 px, label di dalam. Desain dikunci 12 Nov; usulan restyle tidak diterima lagi | 9.10, 10.8 |
+| Tombol lain di sesi | Lanjut + pratinjau di sisi pengasuh, Stop di sisi jauh | Lanjut + **Selesai** + pratinjau di sisi pengasuh; **Jeda** (pil) di pojok atas sisi jauh (Lanjut Makan · Akhiri · Darurat 119); koreksi "Tadi" di sisi jauh. Esc = Jeda | 10.8 |
+| Layar makan di laptop | Layar penuh | Mode **bingkai HP** bila lebar ≥ 640 dan tinggi ≥ 600 (radius 40, Jeda radius 24); HP miring tetap layar penuh | 10.8 |
+| Karakter | PNG berlapis (badan/kepala/mata) + mulut SVG | **SVG flat** seluruhnya. 6 teman makan di sesi (Raka, Nara, Jeru, Pao, Dino, Tung) + **Ubi** hanya di landing. Karakter tetap tanpa gambar AI | 11 |
+| Landing | Ilustrasi karakter | Hero "Demo meniru": Raka besar meniru mulut dari rekaman, Ubi melompat saat diterima; adegan SVG statis (menolak, tablet, stiker). Footer hanya "Suapin · 2026" + Coba demo; klaim keterbatasan pindah ke README | 10.1 |
+| `/masuk` | Isian kode keluarga | Email + kata sandi semua peran, panel **Akun Demo** (Keluarga, Dokter, Klinik, Admin); layar `Memuat` berputar saat memeriksa login | 10.4 |
+| Kode akses (10.3) | Ditampilkan sekali setelah daftar | Tidak dipakai lagi; daftar meminta email + kata sandi | 10.2, 10.3 |
+| Beranda | Stiker + pelacak "Brokoli 4/10" | Cincin "Hari makan x/7 minggu ini", tracker tahap, grafik suapan per hari, stiker harian | 10.6 |
+| Halaman baru | — | `/profil` (data anak, Program, Notifikasi, Akun, Keluar dari HP ini), `/dokter`, `/dokter/pasien/:id`, `/klinik` (ringkasan klinik), `/admin` | 10 |
+| Notifikasi | — | Toast galat (`beritahu()`), lonceng di Profil, Web Push | 16 |
+| Teks penjelasan | Banyak catatan kecil ("draf", "mode demo") | UI sebersih mungkin: catatan draf/uji dewasa hanya di README dan video | 14 |
 
 ---
 
@@ -234,15 +259,22 @@ body { background: var(--color-latar); color: var(--color-ungu); font-family: va
 | `kecil` | 14 / 20 | 14 / 20 | 400–500 | Keterangan, label tabel, label AI |
 | `strip` | 15 / 22 | 16 / 24 | 500 | Strip teks pengasuh di layar sesi |
 | `tombol` | 18 / 24 | 18 / 24 | 600 | Teks tombol utama dan kedua |
-| `angka besar` | 40 / 44 | 48 / 52 | 800, `tabular-nums` | Kode akses, angka paparan "4/10" |
+| `angka besar` | 40 / 44 | 48 / 52 | 800, `tabular-nums` | Angka statistik |
+| `raksasa` | 56 / 56 | 56 / 56 | font judul | Angka utama kartu bento |
+| `hero` | 52 / 60 | 52 / 60 | font judul | Judul hero landing |
+| `angka` | 44 / 52 | 44 / 52 | `tabular-nums` | Angka kartu (Hari makan, tahap) |
+| `besar` | 34 / 42 | 34 / 42 | font judul | Judul bagian besar |
+| `mini` | 13 / 18 | 13 / 18 | 700, kapital, `letter-spacing 0.12em` | Label atas (`label-atas`) |
+
+Font judul: **Fraunces Variable** (`font-variation-settings: "SOFT" 100, "WONK" 0`, tebal 650). Font isi: **Plus Jakarta Sans Variable**. Keduanya disajikan dari paket lokal, tanpa Google Fonts.
 
 ### 5.2 Aturan
 
 - Tidak ada teks di bawah 14 px, kecuali catatan kaki hukum di landing (13 px, tetap ≥ 4,5:1).
 - Panjang baris isi maksimal 65 karakter (`max-width: 65ch`).
 - Angka di tabel dan statistik memakai `font-variant-numeric: tabular-nums` dan rata kanan.
-- Huruf kapital semua hanya untuk singkatan (AI, PWA, GTM). Judul memakai huruf kapital di awal kalimat saja: "Laporan minggu ini", bukan "Laporan Minggu Ini".
-- Kode akses ditampilkan dengan `font-family: ui-monospace, monospace`, `letter-spacing: 0.12em`, dikelompokkan 4-4-4 dengan spasi tipis ("K7QM 2XPA 9RHT"). Saat disalin, spasi dibuang.
+- Huruf kapital semua hanya untuk singkatan (AI, PWA, GTM) dan label atas kecil. Judul dan tombol memakai **Title Case** (diubah 13 Nov): "Laporan Minggu Ini", "Mulai Makan".
+- Kode akses tidak lagi ditampilkan (login memakai email + kata sandi).
 - Teks di layar sesi untuk anak tidak ada. Anak tidak membaca. Nama panggilan anak boleh tampil besar di pemanasan sebagai hiasan.
 
 ---
@@ -266,8 +298,9 @@ body { background: var(--color-latar); color: var(--color-ungu); font-family: va
 
 | Elemen | Radius |
 |---|---|
-| Kartu, lembar bawah (sudut atas) | 20 px (dikunci) |
-| Tombol utama dan kedua | 16 px |
+| Kartu bento (`kartu`, `bento`) | 28 px |
+| Kartu kecil, lembar bawah (sudut atas) | 20 px |
+| Semua tombol | Pil (999 px), keputusan 13 Nov |
 | Isian, textarea | 12 px |
 | Pil, lencana | 999 px |
 | Tombol Suap | Lingkaran penuh |
@@ -276,8 +309,8 @@ body { background: var(--color-latar); color: var(--color-ungu); font-family: va
 
 ### 6.3 Bayangan
 
-- Hanya dua: `shadow-kartu` untuk kartu yang bisa diketuk, `shadow-lembar` untuk lembar bawah.
-- Kartu informasi yang tidak bisa diketuk memakai garis tepi 1 px ungu muda opasitas 0,25, tanpa bayangan.
+- Token: `shadow-kartu`, `shadow-lembar`, `shadow-angkat` dan `shadow-angkat-tipis` (hover kartu yang bisa diketuk).
+- Kartu bento tidak memakai bayangan; dibedakan dengan latar permukaan di atas nasi.
 - Tidak ada bayangan di layar sesi kecuali tombol Suap (`0 6px 16px rgb(0 0 0 / 0.18)`), supaya karakter tetap fokus.
 
 ---
@@ -318,7 +351,7 @@ body { background: var(--color-latar); color: var(--color-ungu); font-family: va
 ```
 
 - Tombol utama form menempel di bawah (`position: sticky; bottom: 0`) dengan latar nasi bergradasi 16 px di atasnya, supaya tidak menutupi isian terakhir.
-- Tidak ada navigasi bawah (tab bar). Alur keluarga linear: beranda adalah pusat, laporan dan sesi dibuka dari beranda.
+- **Menu bawah** (diubah 13 Nov): Beranda · Laporan · Profil, titik jagung di Profil bila ada notifikasi belum dibaca. Disembunyikan di `/sesi*` dan `/mulai/skrining`. Sesi tetap dibuka dari tombol Mulai Makan di beranda.
 - Tidak boleh ada scroll ke samping di 360 px. Cek `document.documentElement.scrollWidth === innerWidth`.
 
 ---
@@ -438,8 +471,9 @@ Aturan: satu tombol `utama` per layar. Teks tombol adalah kata kerja + objek: "M
 |---|---|
 | Bentuk | Lingkaran |
 | Ukuran | 112 px di HP, 128 px di laptop, tidak pernah < 96 px |
-| Posisi | Pojok bawah di **sisi pengasuh**, 16 px dari tepi + safe-area |
-| Isi | Ikon `sendok` 40 px + teks "Suap" 16 px 700 di bawah ikon |
+| Posisi | **Tengah bawah** (diubah 12 Nov, terjangkau dari kedua sisi), 16 px dari tepi + safe-area. Desain dikunci |
+| Isi | Ikon `sendok` 40 px + label "Suap" di dalam lingkaran |
+| Saat anak masih mengunyah | Penilaian ditahan, strip teks "tunggu, masih mengunyah" |
 | Warna | Latar jagung, ikon dan teks ubi ungu (5,21:1), bayangan `0 6px 16px rgb(0 0 0 / 0.18)` |
 | Tahap 3 | Latar jagung opasitas 0,35, teks tetap. Masih bisa ditekan |
 | Tekan | `scale(0.94)` 120 ms, cincin ubi ungu 4 px berkedip sekali 300 ms, getar `navigator.vibrate(20)` bila didukung |

@@ -2,7 +2,36 @@
 
 Tim BOOMERANG, Universitas Airlangga  
 LOGICODIX Hackathon 2026, cabang Web App, subtema Inclusive Health & Well-being  
-Versi 3.4, 10 November 2026. Status: konsep dan infrastruktur dikunci Darryl, belum dibangun. Versi 3.1 memasukkan masukan Wayan (sinyal deteksi, potongan scope, gerbang go/no-go) dan analisis celah teknis (II.19). Versi 3.2 menambal hasil review lanjutan: syarat buka-lalu-tutup, tanpa deteksi oklusi khusus, efek angguk kepala, jadwal per orang, aset paralel sejak 9 Nov, video 13 Nov malam, klaim uji hanya pada dewasa. Versi 3.3 memasukkan review ronde 3 (Wayan) dan cross-check what-if: suapan dinilai dari transisi buka ke tutup dengan buffer sebelum Suap, status tidak pasti, batas lama buka diukur dari tes, gerbang dengan sendok asli, sinyal palsu sejak 9 Nov, mulut karakter SVG parametrik, pemilihan wajah anak, panel ambang runtime untuk final, prioritas video, penguatan fitur AI, default naik tahap 5 sesi. Setelah versi ini, revisi dokumen dihentikan dan kritik dijawab dengan hasil tes. Versi 3.4 (10 November 2026) hanya mengunci keputusan infrastruktur dan hasil cek guidebook: SQLite lokal + Drizzle, versi online di Vercel + Turso, API Hono yang jalan lokal dan sebagai Vercel Functions, penyisihan dinilai dari repo + video tanpa syarat deploy.
+Versi 3.4, 10 November 2026. Status: konsep dan infrastruktur dikunci Darryl, belum dibangun. Versi 3.1 memasukkan masukan Wayan (sinyal deteksi, potongan scope, gerbang go/no-go) dan analisis celah teknis (II.19). Versi 3.2 menambal hasil review lanjutan: syarat buka-lalu-tutup, tanpa deteksi oklusi khusus, efek angguk kepala, jadwal per orang, aset paralel sejak 9 Nov, video 13 Nov malam, klaim uji hanya pada dewasa. Versi 3.3 memasukkan review ronde 3 (Wayan) dan cross-check what-if: suapan dinilai dari transisi buka ke tutup dengan buffer sebelum Suap, status tidak pasti, batas lama buka diukur dari tes, gerbang dengan sendok asli, sinyal palsu sejak 9 Nov, mulut karakter SVG parametrik, pemilihan wajah anak, panel ambang runtime untuk final, prioritas video, penguatan fitur AI, default naik tahap 5 sesi. Setelah versi ini, revisi dokumen dihentikan dan kritik dijawab dengan hasil tes. Versi 3.4 (10 November 2026) hanya mengunci keputusan infrastruktur dan hasil cek guidebook: SQLite lokal + Drizzle, versi online di Vercel + Turso, API Hono yang jalan lokal dan sebagai Vercel Functions, penyisihan dinilai dari repo + video tanpa syarat deploy. **Versi 3.5 (14 November 2026)** menyesuaikan dokumen dengan aplikasi yang sudah dibangun selama Hacking Week (repo `main`, commit `7b384a0`): lihat bagian "Pembaruan versi 3.5" di bawah. Bagian 1, 2, 10, dan 12 ditulis ulang langsung; bagian lain yang berbeda dicatat di tabel itu. Rincian teknis yang mengikat ada di PRD v1.1.
+
+## Pembaruan versi 3.5: yang sudah dibangun (14 November 2026)
+
+Semua kartu inti selesai dan diuji di browser, di versi daring https://suapin.vercel.app (Vercel `sin1` + Turso Singapura), dan dengan kamera laptop. Perbedaan dari rencana versi 3.4:
+
+| Topik | Rencana 3.4 | Kondisi 14 Nov |
+|---|---|---|
+| Karakter | PNG berlapis, satu karakter | SVG flat dengan mulut parametrik. 6 teman makan dipilih di persiapan (Raka, Nara, Jeru, Pao, Dino, Tung). Tanpa gambar AI di aplikasi maupun landing |
+| Menu | Brokoli dulu | 30 makanan, kapsul makanan bisa diketuk untuk mendengar namanya |
+| Pemanasan | 2–3 menit | ±25 detik, 8 babak; kalimat kenalan makanan berganti tiap sesi |
+| Login | Kode akses keluarga, email dokter | Satu halaman `/masuk` email + kata sandi untuk keluarga, dokter, klinik, admin; panel akun demo sekali klik |
+| Peran | Keluarga, dokter | Ditambah **klinik** (ringkasan semua dokter dan pasien, jadwal kontrol) dan **admin** (operator Suapin mendaftarkan klinik dan dokter setelah kerja sama) |
+| Skrining | Tanda bahaya menutup sesi | Tanda bahaya menjadi pengingat konsultasi ke dokter; program tetap jalan |
+| Kode undangan (II.11) | Kode undangan klinik | Diganti tombol **Jadikan pasien saya** di laporan bagikan `/r/:token` |
+| Hasil suapan | Buka 0,3–4 dtk | Buka 0,3–6,5 dtk; kepala condong ke pengasuh tanpa bukaan → tanya pengasuh; Suap ditahan bila anak masih mengunyah |
+| Kunyahan | Jarak dagu-hidung 2D | Jarak 3D + sudut angguk (`pitch`), supaya anggukan tidak terbaca kunyah; patokan diam dari potongan paling tenang sejak awal sesi |
+| Menolak | Karakter netral sebentar | Jeda datar 5 detik, lalu karakter mengambil giliran menggigit |
+| Naik tahap | 5 sesi berturut-turut ≥ 5 suapan | Tahap 1 minimal 8 sesi (paparan 8–10 kali), tahap 2–3 minimal 5 sesi, lalu 3 sesi berturut-turut ≥ 70% suapan diterima dari ≥ 5 ditawarkan. Tracker tahap di beranda, laporan, kartu pasien |
+| Tombol sesi | Suap + Stop | Suap di tengah bawah; Lanjut + Selesai di sisi pengasuh; Jeda (Lanjut Makan · Akhiri · Darurat 119) di pojok sisi jauh; koreksi "Tadi" |
+| Navigasi | Tanpa tab bar | Menu bawah Beranda · Laporan · Profil; halaman Profil (data anak, program, notifikasi, akun) |
+| Beranda | Pelacak "Brokoli 4/10" | Cincin "Hari makan x/7 minggu ini", grafik suapan per hari, stiker harian, tracker tahap; pelacak paparan tetap di catatan setelah sesi |
+| Notifikasi | Tidak ada | Toast galat, pengingat (≥ 2 hari tanpa sesi, trial/program hampir habis), Web Push |
+| AI | gpt-6-luna | Diuji dengan API asli: resep ±6,5 detik, ringkasan ±9 detik (timeout 20 detik); ringkasan hanya boleh memakai angka yang ada di data |
+| Deploy | Bonus | Sudah daring, deploy manual (`npm run deploy:vercel`) |
+| Tipografi | Font sistem | Fraunces + Plus Jakarta Sans, disajikan lokal |
+
+**Hasil uji akurasi (satu orang dewasa, 9 perilaku, 41 suapan):** diterima precision/recall/F1 1,00/0,87/0,93; ditolak 0,91/1,00/0,95; 3 dari 41 ditanyakan ke pengasuh. Dua syarat belum lolos: mulut sudah terbuka 3 detik sebelum Suap (8/11) dan pura-pura menangis (10/18). Belum diuji pada balita. Rincian di README repo dan `docs/hasil-uji.md`.
+
+**Jadwal di bagian 20 sudah lewat.** Submit penyisihan 14 Nov 2026 23.59 WIB (repo + video demo); final luring 29 Nov.
 
 ## Daftar isi
 
@@ -37,7 +66,7 @@ Bagian II — Cara kerja rinci (II.1–II.19), setelah bagian 23: siapa menjalan
 
 ## 1. Ringkasan
 
-Suapin adalah PWA untuk balita 3–5 tahun yang sulit makan (GTM). Sebelum makan, karakter animasi berkenalan dengan makanan hari ini. Saat makan, karakter dan anak bergiliran menggigit. Kamera membaca mulut anak, karakter meniru wajah anak, lalu merayakan saat anak mau mengunyah. Karakter juga mengajak pengasuh ikut makan dan memberi contoh. Program dikurangi bertahap sampai anak makan tanpa layar dan pengasuh menjalankan ritualnya sendiri.
+Suapin adalah PWA untuk balita 3–5 tahun yang sulit makan (GTM). Sebelum makan, karakter animasi berkenalan dengan makanan hari ini. Saat makan, karakter dan anak bergiliran menggigit. Kamera membaca mulut anak langsung di browser, karakter meniru gerak mulut anak, lalu merayakan saat suapan diterima. Karakter juga mengajak pengasuh ikut makan dan memberi contoh. Program dikurangi bertahap sampai anak makan tanpa layar dan pengasuh menjalankan ritualnya sendiri.
 
 Keluarga bisa langsung memakai sendiri (B2C). Kasus berat diarahkan ke dokter, dan dokter melanjutkan di aplikasi yang sama (B2B2C).
 
@@ -55,6 +84,13 @@ Produk ini tidak mendiagnosis, tidak memberi resep makanan, dan tidak menggantik
 | 8 Nov | Karakter makan bareng + lepas layar + panduan pengasuh | Diterima | Anak aktif, bahan aktif terbukti, ada jalan keluar dari layar |
 | 8 Nov | Earphone | Dibuang | Ribet untuk pengasuh. Diganti suara karakter + teks kecil |
 | 8 Nov | Model B2B2C klinik saja | Diubah ke hibrida | GTM kebanyakan ditangani di rumah tanpa dokter |
+| 11 Nov | Karakter PNG berlapis | Diganti SVG flat | Gerbang aset 11 Nov 12.00: lebih cepat dibuat, mulut parametrik menyatu |
+| 12 Nov | Kode akses keluarga | Diganti email + kata sandi semua peran | Satu halaman masuk; keluarga bisa pindah HP tanpa menyimpan kode |
+| 12 Nov | `batasBukaDetik` 4 | Dinaikkan ke 6,5 | Uji gerbang: suapan pelan sering lebih dari 4 detik |
+| 12 Nov | Suap di sisi pengasuh | Suap di tengah bawah | Lebih rapi dan terjangkau dari kedua sisi; desain dikunci |
+| 13 Nov | Tanda bahaya menutup sesi | Jadi pengingat ke dokter | Keluarga tetap terdampingi; dokter melihat hasil skrining |
+| 13 Nov | Naik tahap N sesi ≥ X suapan | Minimal sesi + 3 sesi berturut-turut ≥ 70% | Persen lebih adil untuk porsi berbeda; tahap 1 mengikuti paparan 8–10 kali |
+| 13 Nov | Tanpa tab bar | Menu bawah Beranda · Laporan · Profil | Hasil uji alur: notifikasi dan profil perlu tempat tetap |
 
 Konsekuensi: model hibrida melanggar sebagian kriteria #11 Darryl ("hindari B2C"). Kriteria itu sengaja dilonggarkan karena kenyataan pasar.
 
@@ -301,14 +337,14 @@ Sesi makan sama untuk kedua jalur.
 
 ### Persiapan
 
-1. Pengasuh memilih menu hari ini, misalnya brokoli.
+1. Pengasuh memilih teman makan (6 karakter), menu hari ini dari 30 makanan, dan sisi duduknya (dari arah anak menghadap layar).
 2. HP atau laptop diletakkan sedikit di samping depan anak.
-3. Sistem mengecek wajah dan pencahayaan.
+3. Sistem mengecek wajah dan pencahayaan (kalibrasi 3 detik, karakter menyapa). Bila kamera tidak bisa dipakai, sesi tetap jalan dan pengasuh menjawab "Tadi masuk?" setelah setiap Suap.
 
-### Pemanasan (2–3 menit, sebelum makan)
+### Pemanasan (±25 detik, sebelum makan)
 
-1. Karakter berkenalan dengan brokoli: mencium, menyentuh, menggigit, berekspresi senang.
-2. Karakter mengajak: "Nanti kita makan brokoli bareng ya, Dika!"
+1. Karakter mengintip makanan, mencium wanginya, mengenalkan dengan kalimat yang berganti tiap sesi (warna, bentuk, bau, bunyi), lalu berani mencoba dan menggigit kecil.
+2. Karakter memanggil nama anak dan mengajak makan bareng. Pemanasan bisa dilewati.
 
 Animasi penuh di fase ini. Bagian ini yang paling didukung bukti modeling.
 
@@ -325,7 +361,9 @@ Animasi penuh di fase ini. Bagian ini yang paling didukung bukti modeling.
 │       Mulut terbuka lalu tertutup (menerima suapan) -> karakter merayakan.
 │       Tidak jelas -> teks "Tadi masuk? Ya / Tidak" ke pengasuh.
 │       Menolak (mulut tak pernah terbuka / menoleh menjauh) -> karakter netral
-│       sebentar, "Nanti lagi ya", tanpa animasi lucu + teks untuk pengasuh.
+│       5 detik tanpa animasi lucu + teks untuk pengasuh, lalu karakter
+│       mengambil giliran: "Oke. Aku gigit dulu."
+│       Anak masih mengunyah saat Suap ditekan -> "tunggu, masih mengunyah".
 │
 │   (3) JEDA KUNYAH — layar redup
 │       Karakter duduk mengunyah pelan meniru anak, tanpa cerita baru.
@@ -340,7 +378,7 @@ Animasi penuh di fase ini. Bagian ini yang paling didukung bukti modeling.
 - Momen paling seru ada di (2), dan anak harus beraksi untuk mendapatkannya.
 - Batas waktu dari aturan. Saat habis, karakter mengajak selesai.
 - Sesi juga diakhiri jika anak terus menolak melewati batas aturan.
-- Tombol **Stop** selalu ada.
+- Tombol **Suap** di tengah bawah; **Lanjut** dan **Selesai** di sisi pengasuh; **Jeda** di pojok atas sisi jauh (Lanjut Makan, Akhiri, atau Darurat 119). Hasil suapan terakhir bisa dikoreksi dengan tombol "Tadi".
 
 ### Setelah makan
 
@@ -378,15 +416,16 @@ Klip suara memakai sapaan generik (Mbak, Bu, Oma, Ayah), satu set per sapaan, su
 
 ## 12. Program lepas layar
 
-| Tahap | Layar | Contoh syarat naik tahap |
+| Tahap | Layar | Syarat naik tahap (default) |
 |---|---|---|
-| 1 | Loop penuh | 5 sesi berturut-turut dengan minimal 5 gigitan diterima (default mandiri; dokter bisa mengubah) |
-| 2 | Karakter tidak menggigit; pengasuh yang diajak menggigit duluan | Sama |
-| 3 | Suara saja, layar hitam penuh, kamera tetap membaca | Sama |
-| 4 | Tanpa aplikasi; pengasuh menjalankan ritual sendiri | Dicek di laporan atau saat kontrol |
+| 1 · Karakter memandu | Loop penuh | ≥ 8 sesi, lalu 3 sesi berturut-turut dengan ≥ 70% suapan diterima |
+| 2 · Pengasuh jadi contoh | Karakter hanya muncul saat giliran; pengasuh yang diajak menggigit duluan | ≥ 5 sesi + 3 sesi berturut-turut ≥ 70% |
+| 3 · Layar hitam | Suara saja, layar hitam penuh, kamera tetap membaca | ≥ 5 sesi + 3 sesi berturut-turut ≥ 70% |
+| 4 · Tanpa layar | Pengasuh memimpin, aplikasi hanya mencatat | Tahap akhir; dicek di laporan atau saat kontrol |
 
-- Jalur mandiri: syarat default, naik tahap otomatis.
-- Jalur klinik: dokter mengatur syarat dan tahap.
+- Sesi dengan kurang dari 5 suapan ditawarkan belum dihitung. Angka 70% adalah asumsi desain yang perlu divalidasi saat pilot.
+- Jalur mandiri: syarat default, naik tahap otomatis. Tracker tahap tampil di beranda dan laporan.
+- Jalur klinik: dokter mengatur syarat (persen 50–90, jumlah sesi, panjang deret) dan menaikkan tahap sendiri.
 - Sejak tahap 1, karakter selalu memakai kalimat dan gerakan yang sama dan mengajak pengasuh menirukannya. Di tahap 4, pengasuh yang menjadi contoh.
 
 ## 13. Deteksi

@@ -2,15 +2,45 @@
 
 | | |
 |---|---|
-| Versi | 1.0 |
-| Tanggal | 10 November 2026 |
+| Versi | 1.1 |
+| Tanggal | 14 November 2026 (v1.0: 10 November 2026) |
 | Tim | BOOMERANG, Universitas Airlangga: Darryl (A), Wayan Satya (B), Adit (C) |
 | Lomba | LOGICODIX Hackathon 2026, cabang Web App, subtema Inclusive Health & Well-being |
-| Status | Disusun dari keputusan yang sudah dikunci. Bukan usulan baru |
+| Status | v1.1 disesuaikan dengan aplikasi yang sudah dibangun (repo `main`, commit `7b384a0`). Bila bagian di bawah berbeda dengan tabel "Pembaruan v1.1", ikuti tabel itu dan kodenya |
 | Acuan | `Suapin - Dokumen Produk.md` Versi 3.4 (alasan dan bukti), `jobdesk/Prompt_Orang_*.md` (cara build, lebih baru dari dokumen produk), `brand/README.md` (identitas visual) |
 | Dokumen pasangan | `Suapin - UI UX Guidelines.md` |
 
 **Cara membaca.** Bagian 1–5 menjelaskan *apa* dan *untuk siapa*. Bagian 6–13 menjelaskan *bagaimana* dengan angka, skema, dan aturan yang bisa langsung dibangun. Bagian 14–18 berisi kualitas, uji, jadwal, risiko, dan hal yang belum pasti. Setiap kebutuhan punya ID (`F-xx`, `NF-xx`) dan kriteria terima yang bisa dijalankan. Bila PRD ini berbeda dengan dokumen produk, ikuti PRD ini dan jobdesk, karena keduanya sudah menyesuaikan sisa waktu.
+
+---
+
+## Pembaruan v1.1: kondisi aplikasi per 14 November 2026
+
+PRD v1.0 ditulis sebelum kode ada. Selama Hacking Week (10–14 Nov) beberapa keputusan berubah setelah diuji. Tabel ini merangkum semua perbedaan; bagian yang paling sering dibaca (F-02 sampai F-06, F-15, F-16, F-23 sampai F-29, 11.6) sudah ditulis ulang langsung di tempatnya.
+
+| Area | Rencana v1.0 | Yang dibangun (14 Nov) | Bagian |
+|---|---|---|---|
+| Login | Keluarga masuk dengan kode akses 12 karakter; dokter di `/klinik/masuk` | Satu halaman `/masuk` dengan email + kata sandi untuk semua peran (keluarga, dokter, klinik, admin). Kode akses tidak dipakai lagi untuk masuk. Panel **Akun Demo** masuk sekali klik saat `DEMO=1`. Login "nyangkut": pengguna yang sudah masuk dan membuka `/` atau `/masuk` langsung ke rumah perannya; halaman dalam tanpa login → `/masuk?kembali=<link>` | F-02, F-03, F-26 |
+| Peran | Keluarga dan dokter | Empat peran: keluarga, dokter (`/dokter`), klinik (`/klinik`, ringkasan semua dokter dan pasien), admin (`/admin`, operator Suapin yang mendaftarkan klinik dan dokter) | 4.1, 9 |
+| Skrining | Satu "ya" menutup sesi sampai dokter mengklaim | Tanda bahaya menjadi **pengingat** untuk konsultasi ke dokter; program tetap bisa dipakai | F-04, F-05 |
+| Navigasi keluarga | Tanpa tab bar | Menu bawah Beranda · Laporan · Profil (titik jagung = notifikasi belum dibaca), disembunyikan di layar sesi dan skrining. Halaman baru `/profil`: data anak, program, notifikasi, akun, keluar | F-06 |
+| Beranda | Stiker 7 hari + pelacak "Brokoli 4/10" | Kartu tahap + tracker menuju tahap berikutnya, cincin "Hari makan x/7 minggu ini", suapan diterima per hari, stiker harian. Pelacak paparan tetap di layar catatan | F-06 |
+| Kalibrasi | Kalibrasi 3 detik mencatat baseline | Status `KALIBRASI` 3 detik tetap ada (klip `sapa_awal`), tetapi patokan diam rahang diambil dari potongan paling tenang sejak awal sesi | F-15 |
+| Pemanasan | 60–90 detik | ±25 detik, 8 babak tanpa jeda sunyi; kalimat makanan berganti tiap sesi (warna, bentuk, bau, bunyi) | F-16 |
+| Karakter | PNG berlapis, satu karakter | SVG flat dengan mulut parametrik; **6 teman makan** dipilih di persiapan: Raka, Nara, Jeru, Pao, Dino, Tung. Menu dari 30 makanan | F-11, F-20 |
+| Sinyal | `{t, mulut, rahang, yaw, nangis, terlihat}` | Ditambah `pitch` (sudut angguk). Rahang diukur jarak 3D dagu-hidung; siklus rahang yang bersamaan dengan perubahan pitch > 4° dianggap angguk | F-14, F-19, 11.3 |
+| Penilaian suapan | Buka 0,3–4 dtk | Buka 0,3–6,5 dtk (dari uji gerbang, p90 5,3 dtk). Kepala condong ke pengasuh tanpa bukaan terbaca → `TIDAK_PASTI`, bukan ditolak. Suap ditahan ("tunggu, masih mengunyah") bila rahang masih berirama | F-18, 11.6 |
+| Setelah menolak | Karakter diam | Jeda datar 5 dtk, lalu karakter mengambil giliran menggigit ("Oke. Aku gigit dulu.") | F-17 |
+| Tombol layar makan | Suap di sisi pengasuh, Stop | **Suap di tengah bawah** (bulat jagung, ikon 40 px, label di dalam; desain dikunci). Lanjut, pratinjau kamera, dan **Selesai** di sisi pengasuh. **Jeda** di pojok atas sisi jauh (Lanjut Makan · Akhiri · Darurat 119). Esc = Jeda | F-23 |
+| Naik tahap | N sesi berturut-turut dengan ≥ X suapan diterima | Tahap 1 minimal 8 sesi, tahap 2–3 minimal `sessions` sesi, lalu 3 sesi berturut-turut dengan ≥ 70% suapan diterima dari ≥ 5 ditawarkan. Dokter bisa mengatur persen (50–90), jumlah sesi, panjang deret. Tracker tahap tampil di beranda, laporan, dan kartu pasien | F-25, 11.5 |
+| Dashboard dokter | `/klinik/pasien` | `/dokter` (anak yang dipegang, jadwal kontrol, penanda siap naik/saran turun) dan `/dokter/pasien/:id` (grafik 14 hari, perjalanan tahap, ringkasan AI, riwayat sesi, resep). `/klinik/pasien*` dialihkan | F-27, F-28 |
+| Notifikasi | Tidak ada | Toast galat otomatis dari `panggil()`, pengingat server (≥ 2 hari tanpa sesi, trial/program hampir habis), Web Push (VAPID) | baru |
+| Program berbayar | Program 30 Hari mock | Tetap mock Rp 49.000; program berakhir 30 hari setelah aktif (status `paket_habis`) | F-09 |
+| Deploy | Bonus | Versi daring https://suapin.vercel.app (Vercel `sin1` + Turso Singapura), deploy manual `npm run deploy:vercel` | 6, 17 |
+| Tipografi | Font sistem | Fraunces (judul) + Plus Jakarta Sans (isi), disajikan lokal lewat `@fontsource-variable`, judul Title Case | UI UX 5 |
+| Tes | — | `npm run periksa` (tsc + oxlint + 111 tes Vitest + build). Uji akurasi 9 perilaku: lihat README dan `docs/hasil-uji.md` | 16 |
+
+**Hasil uji akurasi (ringkas, 41 suapan oleh satu orang dewasa):** diterima P/R/F1 1,00/0,87/0,93; ditolak 0,91/1,00/0,95; 3 dari 41 "tidak pasti". Dua syarat gerbang belum lolos: mulut sudah terbuka 3 detik sebelum Suap (8/11) dan pura-pura menangis (10/18). Rincian di README repo.
 
 ---
 
@@ -320,15 +350,16 @@ Format: **Deskripsi**, **Aturan**, **Kriteria terima**. Rute dan endpoint lengka
 - **Aturan:**
   - Isian: panggilan anak (wajib, 1–20 karakter), tanggal lahir (input `date`, wajib, tidak boleh di masa depan), sapaan pengasuh (pilihan `mbak` | `bu` | `oma` | `ayah`), nama pengasuh (wajib, 1–30 karakter).
   - Usia di luar 36–71 bulan: tampilkan catatan "Program dirancang untuk usia 3–5 tahun." Tidak memblokir.
-  - `POST /api/children` → server membuat anak dengan `plan = trial`, `trial_until = sekarang + 5 hari`, `stage = 1`, kode akses 12 karakter, dan memasang cookie `tm_keluarga`.
-  - Kode akses ditampilkan **sekali** dalam kotak besar dengan tombol salin dan teks "Simpan kode ini untuk membuka di HP lain." Server hanya menyimpan hash-nya, jadi kode tidak bisa ditampilkan ulang.
-  - Setelah pengguna menekan Lanjut, arahkan ke `/mulai/skrining`.
-- **Kriteria terima:** anak baru tersimpan; kode bisa dipakai masuk di browser lain; menyegarkan halaman setelah kode tampil tidak menampilkan kode lagi.
+  - Isian akun: email (unik lintas semua peran, 409 bila sudah terdaftar) dan kata sandi minimal 8 karakter (maks 72 byte, hash bcrypt).
+  - `POST /api/children` → server membuat anak dengan `plan = trial`, `trial_until = sekarang + 5 hari`, `stage = 1`, dan memasang cookie `tm_keluarga`. Lalu arahkan ke `/mulai/skrining`.
+- **Kriteria terima:** anak baru tersimpan; email + sandi yang sama bisa dipakai masuk di browser lain; email ganda ditolak dengan pesan yang jelas.
 
-### F-03 Masuk dengan kode `/masuk`
+### F-03 Masuk `/masuk` (semua peran)
 
-- **Aturan:** satu isian kode (12 karakter, huruf besar otomatis, spasi dibuang). `POST /api/masuk`. 401 → tampilkan pesan server "Kode tidak dikenal". Sukses → `/beranda`.
-- **Kriteria terima:** kode benar masuk; kode salah menampilkan pesan tanpa memberi tahu apakah kode hampir benar.
+- **Aturan:** satu form email + kata sandi. `POST /api/masuk` → `{ peran }`, lalu ke rumah peran: keluarga `/beranda`, dokter `/dokter`, klinik `/klinik`, admin `/admin`. 401 → pesan yang sama untuk email tidak terdaftar dan sandi salah.
+- Login nyangkut: `GET /api/peran` dicek saat membuka `/` dan `/masuk`; bila sudah masuk langsung ke rumah peran (layar `Memuat` selama memeriksa). Halaman dalam tanpa login → `/masuk?kembali=<link>`, setelah masuk kembali ke link bila milik peran itu. `POST /api/keluar` menghapus semua cookie.
+- Panel **Akun Demo** (Keluarga, Dokter, Klinik, Admin) masuk sekali klik selama `DEMO=1`.
+- **Kriteria terima:** keempat peran masuk ke rumahnya; `/laporan` tanpa login → masuk → kembali ke `/laporan`; sandi salah tidak membocorkan apakah email terdaftar.
 
 ### F-04 Skrining tanda bahaya `/mulai/skrining`
 
@@ -344,9 +375,9 @@ Format: **Deskripsi**, **Aturan**, **Kriteria terima**. Rute dan endpoint lengka
 - **Aturan:**
   - `POST /api/screenings` dengan `jawaban: boolean[7]`. `ada_tanda_bahaya = jawaban.some(Boolean)`.
   - Semua "tidak": server menulis aturan default (`source = default`, `stage = 1`), lalu arahkan ke `/beranda`.
-  - Satu "ya": layar "Sebaiknya periksa ke dokter dulu". Sesi tidak dibuka. Tampilkan penjelasan bahwa setelah diperiksa, dokter bisa menjadikan anak pasiennya lewat link laporan, dan program dibuka dari sisi dokter. Akun tetap ada.
-  - Teks kecil di bawah daftar: "Daftar ini draf dan sedang ditinjau dokter."
-- **Kriteria terima:** jalur aman dan jalur tanda bahaya sama-sama dicoba; `GET /api/saya` mengembalikan `sesi_dibuka` yang benar untuk keduanya.
+  - Satu "ya" (diubah 13 Nov): server tetap menulis aturan default dan program tetap bisa dipakai. Layar menampilkan saran konsultasi ke dokter, dan beranda menampilkan **pengingat** untuk periksa ke dokter serta cara membagikan laporan. Hasil skrining terlihat oleh dokter di kartu pasien.
+  - Daftar pertanyaan masih draf dan belum ditinjau dokter (dicatat di README, tidak ditampilkan di UI).
+- **Kriteria terima:** jalur aman dan jalur tanda bahaya sama-sama dicoba; jalur tanda bahaya menampilkan pengingat dokter dan sesi tetap terbuka.
 
 ### F-05 Status akun (`plan`) dan penjaga rute
 
@@ -373,18 +404,19 @@ Format: **Deskripsi**, **Aturan**, **Kriteria terima**. Rute dan endpoint lengka
 | `klinik` | Ya, walau skrining berisi tanda bahaya (dokter sudah memeriksa) | Dokter; default sampai dokter mengonfirmasi | Tidak |
 
 - **`GET /api/saya`** menghitung `plan` efektif (trial yang lewat diperbarui jadi `expired`), `sesi_dibuka`, dan `alasan_terkunci` (`skrining_belum` | `tanda_bahaya` | `trial_habis` | `null`).
-- **Penjaga rute keluarga (`ButuhKeluarga`):** 401 → `/`; `skrining_belum` → `/mulai/skrining`; `trial_habis` → `/langganan` (beranda dan laporan tetap boleh dibuka); `tanda_bahaya` → sesi diganti pesan saran ke dokter.
+- **Penjaga rute keluarga (`ButuhKeluarga`):** 401 → `/masuk?kembali=<link>`; `skrining_belum` → `/mulai/skrining`; `trial_habis` atau `paket_habis` → `/langganan` (beranda, laporan, dan profil tetap boleh dibuka). Tanda bahaya tidak lagi mengunci sesi (lihat F-04).
+- `program` berakhir 30 hari setelah `program_since`; setelah itu `alasan_terkunci = paket_habis`.
 - **Kriteria terima:** ubah `trial_until` ke masa lalu di database uji → sesi diarahkan ke `/langganan`; aktifkan → sesi terbuka lagi.
 
 ### F-06 Beranda `/beranda`
 
 - **Isi:**
   - Salam dengan sapaan dan nama panggilan anak, misalnya "Halo Mbak Rini, siap makan bareng Dika?"
-  - Kartu tahap (1–4) dengan satu kalimat penjelasan apa yang terjadi di tahap ini.
+  - Kartu tahap (1–4) dengan satu kalimat penjelasan apa yang terjadi di tahap ini, plus **tracker tahap**: sesi di tahap ini / minimal, dan deret sesi ≥ 70% menuju naik tahap. Riwayat tahap yang sudah lewat berlabel "Selesai".
+  - Cincin **Hari makan x/7 minggu ini** (menggantikan pelacak "Brokoli 4/10", 13 Nov; menu sudah beragam) dan grafik suapan diterima per hari.
   - Stiker 7 hari terakhir: satu lingkaran per hari, terisi bila hari itu ada ≥ 1 sesi dengan ≥ 1 suapan diterima.
-  - Pelacak makanan baru: "Brokoli 4/10" sebagai jalur 10 langkah.
   - Tombol utama **Mulai makan** (→ `/sesi`).
-  - Tautan ke Laporan.
+  - Menu bawah Beranda · Laporan · Profil (bukan tautan di kepala halaman). Notifikasi ada di `/profil`.
   - `plan = trial` → "Sisa trial X hari". Hari ke-4 trial → kartu progres "Dika menerima 6 suapan per sesi. Trial sisa 1 hari." `plan = klinik` → "Program dari dokter".
 - **Keadaan:** belum ada sesi → ajakan sesi pertama; memuat → komponen `Memuat`; galat → `PesanGalat` dengan tombol coba lagi.
 - **Kriteria terima:** data seed Dika tampil lengkap; anak baru tanpa sesi menampilkan ajakan.
@@ -479,11 +511,11 @@ Keluaran per frame, satu bentuk untuk sumber kamera dan sumber palsu (`SinyalSch
 - Status `KALIBRASI` ±3 detik. Klip `sapa_awal` ("Halo! Lihat aku dulu ya!"). Lingkaran panduan wajah di pratinjau.
 - Mencatat `baseline_yaw` dan memilih wajah anak.
 - Wajah tidak stabil terlihat → teks `wajah_tidak_terlihat` ("Wajah tidak terlihat. Geser HP atau tambah cahaya.").
-- Balita jarang mau diam, jadi kalibrasi tidak boleh menahan sesi: setelah 3 detik sesi tetap lanjut memakai baseline bergulir.
+- Balita jarang mau diam, jadi kalibrasi tidak boleh menahan sesi: setelah 3 detik sesi tetap lanjut. Patokan diam rahang (untuk kunyahan) diambil dari potongan paling tenang sejak awal sesi, bukan dari 10 detik terakhir, karena kunyahan terus-menerus ikut mengisi patokan bergulir (temuan uji 13 Nov).
 
 ### F-16 Pemanasan
 
-- Urutan tetap 60–90 detik di MVP (dokumen produk: 2–3 menit; dipangkas ke 30 detik bila waktu habis): karakter memegang makanan → mencium (pose `enak`, klip `kenalan_makanan`) → menyentuh → gigit kecil (pose `menggigit`) → klip `ajak_makan_bareng`, dengan nama panggilan anak di teks layar.
+- Dibangun ±25 detik, 8 babak tanpa jeda sunyi: karakter mengintip makanan (`intip_makanan`), mencium (`cium_wangi`), mengenalkan makanan dengan kalimat yang berganti tiap sesi (warna, bentuk, bau, bunyi; klip kata per makanan di `public/klip/kata/`), berani mencoba (`berani_coba`), gigit kecil, lalu memanggil nama anak. Kapsul makanan di panel samping bisa diketuk untuk mendengar nama makanan.
 - Animasi penuh, layar terang. Bagian ini paling didukung bukti modeling, jadi dibuat paling menarik.
 - Tombol "Lewati" → `tekan("lewati_pemanasan")`. Selesai → `selesaiPemanasan()`.
 - **Kriteria terima:** pemanasan jalan tanpa kamera (`?sumber=slider`) dan bisa dilewati.
@@ -620,14 +652,17 @@ Kunyahan hanya dipakai untuk animasi karakter, akhir jeda kunyah, dan dugaan nge
 
 | Tombol | Selalu ada | Fungsi |
 |---|---|---|
-| **Suap** | Ya, di sisi pengasuh, ≥ 96 px | `tekan("suap")` |
-| **Lanjut** | Ya, kecil | Akhiri jeda kunyah |
-| **Stop** | Ya, kecil | Konfirmasi singkat → `SELESAI`. Di dalam konfirmasi ada tombol **Darurat** |
-| **Koreksi** | Setelah ada suapan tercatat | "Tadi diterima" / "Tadi ditolak" untuk suapan terakhir |
-| **Ya / Tidak** | Saat teks `tanya` | Jawaban `tadi_masuk` atau `ngemut` |
+| **Suap** | Ya, **tengah bawah**, ≥ 112 px, bulat jagung (desain dikunci 12 Nov) | `tekan("suap")`. Ditahan dengan teks "tunggu, masih mengunyah" bila rahang masih berirama |
+| **Lanjut** | Ya, sisi pengasuh | Akhiri jeda kunyah (L) |
+| **Selesai** | Ya, sisi pengasuh, di bawah Lanjut | Akhir makan normal → catatan (dialog "Belum, Lanjut Makan" untuk batal) |
+| **Jeda** | Ya, pojok atas sisi jauh | Menjeda sesi dan suara (Esc). Pilihan: **Lanjut Makan**, **Akhiri**, **Darurat** |
+| **Koreksi "Tadi"** | Setelah ada suapan tercatat, sisi jauh | Ubah hasil suapan terakhir |
+| **Ya / Tidak** | Saat teks `tanya` | Jawaban `tadi_masuk` atau `ngemut`. Tanpa kamera, "Tadi masuk?" menunggu jawaban setelah setiap Suap |
 | **Lewati** | Saat pemanasan | Lewati pemanasan |
 
-**Darurat:** menampilkan "Jika anak tersedak dan tidak bisa bernapas, segera minta bantuan medis atau hubungi 119." lalu `tekan("darurat")`.
+Pratinjau kamera di pojok atas sisi pengasuh, tetap terang di tahap 3. Semua tombol berbentuk pil.
+
+**Darurat:** menampilkan "Jika anak tersedak dan tidak bisa bernapas, segera minta bantuan medis atau hubungi 119." dengan tombol telepon 119, lalu `tekan("darurat")`.
 
 ### F-24 Program lepas layar (saklar tahap)
 
@@ -649,7 +684,10 @@ Kunyahan hanya dipakai untuk animasi karakter, akhir jeda kunyah, dan dugaan nge
 - Galat simpan: data disimpan di `sessionStorage` dan tombol "Coba simpan lagi" tampil sampai berhasil.
 - Server, dalam satu transaksi: simpan `sessions` (dengan jumlah diterima/ditolak/ngemut), `bites`, perbarui paparan.
 - **Paparan:** bila `makanan_baru` dan ≥ 1 diterima → `food_exposures.jumlah += 1` (upsert per anak + makanan). Target 10. Setelah 10, makanan pindah ke "sudah kenal" (produksi).
-- **Naik tahap** (fungsi murni `cekNaikTahap`): ambil `N = advance_rule.sessions` sesi terakhir di tahap sekarang. Bila jumlahnya N dan semuanya punya `diterima ≥ min_accepted_bites` → siap naik.
+- **Naik tahap** (fungsi murni `cekNaikTahap`, aturan baru 13 Nov): dua syarat harus terpenuhi.
+  1. **Cukup paparan:** jumlah sesi di tahap sekarang ≥ `first_stage_sessions` (bawaan 8, untuk tahap 1) atau ≥ `sessions` (tahap 2–3).
+  2. **Stabil:** `streak` sesi terakhir berturut-turut (bawaan 3) masing-masing punya ≥ `percent`% (bawaan 70) suapan diterima. Sesi dengan < 5 suapan ditawarkan tidak dihitung.
+  - Angka 70% adalah asumsi desain, perlu divalidasi saat pilot. Aturan lama `{ sessions, min_accepted_bites }` di database tetap terbaca lewat `.default()`.
   - Jalur mandiri: `children.stage += 1` (maks 4) dan tulis versi aturan baru dengan `stage` baru.
   - Jalur klinik: hanya ditandai `siap_naik_tahap` di dashboard. Dokter yang menaikkan.
 - **Saran turun:** 3 sesi terakhir di tahap ≥ 2 semuanya `diterima = 0` → `saran_turun_tahap = true`. Jalur klinik: ditampilkan ke dokter.
@@ -659,21 +697,25 @@ Kunyahan hanya dipakai untuk animasi karakter, akhir jeda kunyah, dan dugaan nge
 
 ## 9. Kebutuhan fungsional: dashboard klinik dan laporan bagikan
 
-### F-26 Masuk dokter `/klinik/masuk`
+### F-26 Masuk dokter (sekarang lewat `/masuk`)
 
-- Form email + kata sandi. Tombol nonaktif saat mengirim. 401 → pesan di bawah form, **sama** untuk email tidak terdaftar dan sandi salah. Teks kecil "Akun demo lomba".
+- Sejak 12 Nov dokter, klinik, dan admin masuk lewat `/masuk` yang sama (F-03); `/klinik/masuk` dialihkan. Akun dokter dan klinik dibuat oleh admin (`/admin`, sandi sementara 12 karakter tampil sekali; dokter bisa dinonaktifkan).
+- Form email + kata sandi. Tombol nonaktif saat mengirim. 401 → pesan di bawah form, **sama** untuk email tidak terdaftar dan sandi salah.
 - Server: `bcrypt.compare`. Email tidak ada tetap menjalankan `bcrypt.compare` dengan hash palsu supaya waktunya sama.
 - Cookie `tm_dokter` (isi doctor_id), 30 hari. Tombol Keluar di kepala halaman (`POST /api/clinic/logout`).
 - Mendukung `?kembali=<path>` supaya kembali ke `/r/:token` setelah login.
 
-### F-27 Daftar pasien `/klinik/pasien`
+### F-27 Daftar pasien `/dokter` (dokter) dan `/klinik` (klinik)
 
+- `/dokter`: hanya anak dengan `children.doctor_id` = dokter ini, jadwal kontrol (konsultasi awal, kontrol, evaluasi tahap), penanda siap naik/saran turun. `/klinik`: ringkasan per dokter → anak yang dipegang, jadwal, dan pasien tanpa dokter. Alamat lama `/klinik/pasien*` dialihkan.
 - Tabel (laptop) / kartu (HP): panggilan, usia, tahap, sesi 7 hari, diterima/ditolak 7 hari, label "Siap naik tahap" atau "Saran turun tahap", sumber aturan (`default` | `dokter`).
 - Klik baris → detail.
 - Kosong: "Belum ada pasien. Buka link laporan yang dibagikan keluarga, lalu tekan Jadikan pasien saya."
 - Server: agregat 7 hari dengan satu kueri `GROUP BY child_id` (tanpa N+1).
 
-### F-28 Detail pasien dan resep AI `/klinik/pasien/:id`
+### F-28 Detail pasien dan resep AI `/dokter/pasien/:id`
+
+Dibangun dengan: grafik suapan 14 hari, perjalanan tahap + tracker, ringkasan AI, riwayat sesi, hasil skrining terakhir, dan resep. Resep diuji dengan OpenAI asli (±6,5 detik, timeout 20 detik).
 
 Bagian paling penting untuk penilaian Technology Innovation.
 
@@ -700,8 +742,8 @@ Bagian paling penting untuk penilaian Technology Innovation.
 ### F-29 Laporan bagikan `/r/:token`
 
 - Baca-saja: panggilan, usia, tahap, tabel sesi 14 hari, ringkasan versi dokter (label AI). Tanpa kode akses, tanpa nama pengasuh.
-- Dokter sudah login dan anak belum pasiennya → tombol **Jadikan pasien saya** → `POST /api/clinic/claim/:token` → `/klinik/pasien/:id`.
-- Belum login → tombol "Masuk sebagai dokter" ke `/klinik/masuk?kembali=/r/<token>`.
+- Dokter sudah login dan anak belum pasiennya → tombol **Jadikan pasien saya** → `POST /api/clinic/claim/:token` (mengisi `clinic_id` + `doctor_id`) → `/dokter/pasien/:id`.
+- Belum login → tombol "Masuk sebagai dokter" ke `/masuk?sebagai=klinik&kembali=/r/<token>`.
 - Anak sudah pasien klinik lain → 409 "Anak ini sudah menjadi pasien klinik lain".
 - Klaim oleh klinik yang sama: idempoten (200).
 - Setelah klaim: `children.clinic_id` terisi, `plan = klinik`. Aturan default tetap dipakai sampai dokter mengonfirmasi resep.
@@ -788,6 +830,7 @@ export const SinyalSchema = z.object({
   yaw: z.number(),          // derajat; positif = menoleh KE sisi pengasuh, negatif = menjauh
   nangis: z.boolean(),      // dugaan dari eyeSquint + browDown, belum tervalidasi
   terlihat: z.boolean(),    // wajah anak ditemukan dan titik mulut stabil
+  pitch: z.number().optional(), // derajat angguk (ditambah 12 Nov); rekaman lama tanpa pitch tetap valid
 });
 export const RekamanSinyalSchema = z.object({
   versi: z.literal(1), fps: z.number(), catatan: z.string(),
@@ -837,16 +880,19 @@ export const SesiSelesaiSchema = z.object({
 export const AturanSchema = z.object({
   max_minutes: z.number().int().min(10).max(30),
   stage: z.number().int().min(1).max(4),
+  // Naik tahap (13 Nov): cukup paparan DAN stabil (lihat F-25)
   advance_rule: z.object({
-    sessions: z.number().int().min(1).max(7),
-    min_accepted_bites: z.number().int().min(1).max(15),
+    sessions: z.number().int().min(1).max(20),                       // minimal sesi di tahap 2 dan 3
+    first_stage_sessions: z.number().int().min(1).max(20).default(8), // tahap 1
+    percent: z.number().int().min(50).max(90).default(70),
+    streak: z.number().int().min(1).max(7).default(3),
   }),
   end_after_refusal_minutes: z.number().int().min(5).max(15),
   ngemut_hint: z.string().max(100),
 });
 export const ATURAN_DEFAULT = {
   max_minutes: 30, stage: 1,
-  advance_rule: { sessions: 5, min_accepted_bites: 5 },
+  advance_rule: { sessions: 5, first_stage_sessions: 8, percent: 70, streak: 3 },
   end_after_refusal_minutes: 15,
   ngemut_hint: "Tunggu sebentar, tawarkan minum sedikit, jangan dipaksa menelan",
 };
@@ -859,19 +905,23 @@ Program default mengikuti aturan makan IDAI yang ditulis dari ingatan (maksimal 
 | Kunci | Awal | Arti |
 |---|---|---|
 | `terbuka` | 0,3 | Ambang `mulut` dianggap terbuka |
+| `tutup` | 0,15 | Histeresis: bukaan selesai bila mulut di bawah ini... |
+| `tutupDetik` | 0,5 | ...selama ini, supaya tangisan naik-turun tidak terpecah jadi bukaan pendek |
 | `minBukaDetik` | 0,3 | Lama buka minimal untuk suapan |
-| `batasBukaDetik` | 4 | Lama buka maksimal. Final = persentil 90 lama buka saat uji sendok + 1 detik, dibulatkan 0,5 |
+| `batasBukaDetik` | **6,5** | Lama buka maksimal. Dinaikkan dari 4 setelah uji gerbang 12 Nov (p90 lama buka 5,3 detik) |
 | `jendelaDetik` | 6 | Jendela penilaian sejak Suap |
 | `jendelaMaksDetik` | 12 | Batas perpanjangan jendela |
 | `bufferSebelumSuapDetik` | 3 | Sinyal sebelum Suap yang ikut dibaca |
 | `yawMenolakDerajat` | 25 | Sudut menoleh menjauh |
 | `yawMenolakDetik` | 1 | Lama menoleh menjauh |
+| `yawKePengasuhDerajat` | 20 | Condong ke pengasuh tanpa bukaan terbaca → `TIDAK_PASTI`, bukan ditolak |
 | `nangis` | 0,5 | Ambang rata-rata blendshape mata/alis |
 | `kunyahKaliGetar` | 3 | Kelipatan getar diam untuk satu siklus |
 | `kunyahMinimal` | 0,01 | Batas bawah ambang siklus |
+| `kunyahPitchMaks` | 4 | Derajat; siklus rahang dengan perubahan pitch lebih besar = angguk, bukan kunyah |
 | `timerJedaDetik` | 15 | Akhir jeda kunyah bila kunyah tidak terbaca |
 | `ngemutDetik` | 15 | Mulut tertutup + rahang diam untuk dugaan ngemut |
-| `menolakTungguDetik` | 60 | Lama di `MENOLAK` sebelum putaran baru |
+| `menolakTungguDetik` | **5** | Jeda datar singkat di `MENOLAK`, lalu karakter mengambil giliran ("Oke. Aku gigit dulu.") |
 | `tidakPastiTungguDetik` | 10 | Waktu tunggu jawaban `tadi_masuk` |
 | `tidakTerlihatDetik` | 1,5 | Batas wajah hilang |
 | `fpsMaks` | 20 | Batas frame deteksi |
@@ -964,7 +1014,9 @@ const KeluaranResep = z.object({
   max_minutes: z.number().int().nullable(),
   stage: z.number().int().nullable(),
   advance_sessions: z.number().int().nullable(),
-  advance_min_accepted_bites: z.number().int().nullable(),
+  advance_first_stage_sessions: z.number().int().nullable(),
+  advance_percent: z.number().int().nullable(),
+  advance_streak: z.number().int().nullable(),
   end_after_refusal_minutes: z.number().int().nullable(),
   ngemut_hint: z.string().nullable(),
   tidak_dipetakan: z.array(z.string()),   // bagian teks yang tidak punya kolom
@@ -977,7 +1029,7 @@ const KeluaranResep = z.object({
   - Kolom yang tidak disebut diisi `null`. Jangan menebak.
   - Jangan menambah saran medis, menu, atau dosis.
   - Satuan waktu menit.
-  - Contoh: "naik tahap kalau 3 sesi berturut-turut minimal 5 suap" → `advance_sessions: 3, advance_min_accepted_bites: 5`.
+  - Contoh: "naik setelah 6 sesi, 3 sesi berturut-turut minimal 70% masuk" → `advance_sessions: 6, advance_streak: 3, advance_percent: 70`.
   - `ngemut_hint` hanya bila dokter menyebut apa yang dilakukan saat anak mengemut.
 - **Sebelum dikirim:** nama panggilan anak di teks diganti "anak".
 - **Validasi per kolom** terhadap rentang `AturanSchema`:
@@ -987,8 +1039,10 @@ const KeluaranResep = z.object({
 | `max_minutes` | 10–30 |
 | `end_after_refusal_minutes` | 5–15 |
 | `stage` | 1–4 |
-| `advance_rule.sessions` | 1–7 |
-| `advance_rule.min_accepted_bites` | 1–15 |
+| `advance_rule.sessions` | 1–20 |
+| `advance_rule.first_stage_sessions` | 1–20 |
+| `advance_rule.percent` | 50–90 |
+| `advance_rule.streak` | 1–7 |
 | `ngemut_hint` | ≤ 100 karakter, hanya tampil ke pengasuh |
 
   Kolom di luar rentang dikosongkan dan masuk `kolom_bermasalah` dengan alasan. Kolom `null` masuk `kolom_bermasalah` dengan alasan "tidak disebut, isi manual atau pakai nilai sekarang".
@@ -1002,7 +1056,7 @@ Contoh hasil yang benar:
 {
   "max_minutes": 20,
   "stage": 1,
-  "advance_rule": { "sessions": 3, "min_accepted_bites": 5 },
+  "advance_rule": { "sessions": 6, "first_stage_sessions": 8, "percent": 70, "streak": 3 },
   "end_after_refusal_minutes": 10,
   "ngemut_hint": "Tawarkan air sedikit"
 }
