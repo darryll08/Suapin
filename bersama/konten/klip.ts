@@ -16,6 +16,10 @@ export const IdKlip = z.enum([
   "nanti_lagi",
   "waktunya_selesai",
   "penutup",
+  // 14 Nov: babak tambahan pemanasan (pemanasan.tsx) supaya intro tidak sepi.
+  "intip_makanan",
+  "cium_wangi",
+  "berani_coba",
 ]);
 export type IdKlip = z.infer<typeof IdKlip>;
 
@@ -27,8 +31,8 @@ export type Sapaan = "mbak" | "bu" | "oma" | "ayah";
 // `nanti_lagi` (anak menolak) tetap datar tanpa pujian atau bujukan; dibuat dengan suara stabil (scripts/buat-klip.ts).
 export const KLIP: Record<IdKlip, { kalimat: string; variasi: string[]; sapaan?: Sapaan }> = {
   sapa_awal: { kalimat: "Hai, hai! Siap makan bareng?", variasi: ["Halo, teman makanku!"] },
-  kenalan_makanan: { kalimat: "Wah, ini makanan kita hari ini!", variasi: [] },
-  ajak_makan_bareng: { kalimat: "Sekarang kita makan bareng, yuk!", variasi: ["Ayo makan bareng aku!"] },
+  kenalan_makanan: { kalimat: "Wah, ini makanan kita hari ini!", variasi: ["Taraaa! Coba tebak, ini apa?", "Psst… aku bawa sesuatu. Lihat, deh!"] },
+  ajak_makan_bareng: { kalimat: "Sekarang kita makan bareng, yuk!", variasi: ["Ayo makan bareng aku!", "Siap? Kita mulai petualangan makan!"] },
   karakter_enak: { kalimat: "Hmm, enak banget!", variasi: ["Mmm… enaknya!", "Wah, rasanya enak, lho."] },
   giliranmu: { kalimat: "Sekarang giliranmu!", variasi: ["Ayo, kamu juga!", "Giliran kamu! Aaa…"] },
   mbak_gigit_duluan: { kalimat: "Yuk, semuanya ikut gigit!", variasi: ["Ayo, kita gigit bareng!", "Siapa mau gigit duluan? Ayo!"] },
@@ -37,5 +41,8 @@ export const KLIP: Record<IdKlip, { kalimat: string; variasi: string[]; sapaan?:
   masih_ngunyah: { kalimat: "Nyam, nyam. Santai aja yaa.", variasi: [] },
   nanti_lagi: { kalimat: "Oke, nanti lagi.", variasi: ["Oke. Aku gigit dulu."] },
   waktunya_selesai: { kalimat: "Waktunya selesai. Makasih udah makan bareng aku!", variasi: ["Udahan dulu, ya. Makasih, teman makanku!"] },
+  intip_makanan: { kalimat: "Lihat dari dekat, yuk! Wah, lucu bentuknya.", variasi: ["Coba lihat, apa warnanya?", "Hihi, makanannya melambai ke kamu!"] },
+  cium_wangi: { kalimat: "Coba cium… hmm, wanginya!", variasi: ["Sniff, sniff… wangi, ya?", "Dengar, deh. Nyam, nyam, nyam!"] },
+  berani_coba: { kalimat: "Aku udah coba. Seru, lho!", variasi: ["Gigitan kecil aja, kayak aku tadi!", "Wah, aku mau lagi! Kamu juga?"] },
   penutup: { kalimat: "Yeay, kamu dapat stiker!", variasi: ["Ini stiker buat kamu. Yeay!", "Taraaa! Stiker baru buat kamu!"] },
 };

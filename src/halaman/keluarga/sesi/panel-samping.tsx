@@ -12,11 +12,14 @@ const JEDA_KETUK_MS = 2500;
 let audioKata: HTMLAudioElement | null = null;
 
 // Suara ElevenLabs yang sama dengan karakter (public/klip/kata, `npm run klip`); file belum ada → suara HP.
-function ucapkanKata(id: string, k: string) {
+export function urlKata(id: string, k: string): string {
   const kunci = KATA_MAKANAN[id] ? id : "umum";
-  const n = KATA_MAKANAN[kunci].indexOf(k) + 1;
+  return `/klip/kata/${kunci}__${KATA_MAKANAN[kunci].indexOf(k) + 1}.mp3`;
+}
+
+function ucapkanKata(id: string, k: string) {
   audioKata?.pause();
-  audioKata = new Audio(`/klip/kata/${kunci}__${n}.mp3`);
+  audioKata = new Audio(urlKata(id, k));
   audioKata.play().catch(() => {
     if (!("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();

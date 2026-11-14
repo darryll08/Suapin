@@ -147,6 +147,13 @@ export function putarKlip(id: IdKlip, _sapaan: Sapaan = "mbak"): void {
   if (!sedangPutar) void lanjut();
 }
 
+/** Sama dengan putarKlip, untuk berkas di luar KLIP (mis. /klip/kata/*.mp3), supaya ikut antrean dan tidak tabrakan. */
+export function putarBerkas(url: string, kalimat: string): void {
+  antrean.push(`${url}|${kalimat}`);
+  while (antrean.length > MAKS_ANTREAN) antrean.shift();
+  if (!sedangPutar) void lanjut();
+}
+
 export function hentikanSemua(): void {
   antrean.length = 0;
   sedangPutar = false;
