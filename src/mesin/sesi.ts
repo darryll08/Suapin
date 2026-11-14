@@ -449,7 +449,8 @@ export function next(lama: Keadaan, e: Kejadian, kx: Konteks): { keadaan: Keadaa
       if (lamaStatus >= a.menolakTungguDetik * 1000) ke(k, "GILIRAN_KARAKTER", t, kx, p);
       break;
     case "TIDAK_PASTI":
-      if (lamaStatus >= a.tidakPastiTungguDetik * 1000) ke(k, "GILIRAN_KARAKTER", t, kx, p); // tidak dicatat
+      // Tanpa kamera, jawaban pengasuh satu-satunya sumber hasil: tunggu sampai dijawab, jangan hilang sendiri.
+      if (a.hasilDariKamera && lamaStatus >= a.tidakPastiTungguDetik * 1000) ke(k, "GILIRAN_KARAKTER", t, kx, p); // tidak dicatat
       break;
     default:
       break;

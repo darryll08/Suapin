@@ -4,7 +4,7 @@
 // Keluarga mandiri: kartu kecil di bawah; ditonjolkan di atas hanya bila skrining menemukan tanda bahaya.
 import { useState } from "react";
 import { cariMakanan } from "../../../bersama/konten/makanan.ts";
-import { GrafikPil, KartuAngka, LabelAI, RiwayatTahap, TrackerTahap } from "../../komponen/beranda.tsx";
+import { GrafikPil, KartuAngka, LabelAI, RiwayatTahap, TrackerTahap, rentangTanggal } from "../../komponen/beranda.tsx";
 import { KepalaHalaman, Memuat, PesanGalat, Tombol } from "../../komponen/dasar.tsx";
 import { LembarBawah } from "../../komponen/lembar.tsx";
 import { bento, tombolTeks, wadahKeluarga } from "../../gaya/gaya.ts";
@@ -44,7 +44,7 @@ export function Laporan() {
 
   return (
     <main className={wadahKeluarga}>
-      <KepalaHalaman judul={`Laporan makan ${c.panggilan}`} />
+      <KepalaHalaman judul={`Laporan Makan ${c.panggilan}`} />
       {memuat && !lap ? <Memuat /> : galat ? <PesanGalat pesan={galat} ulangi={ulangi} /> : lap && (
         <div className="flex flex-col gap-4">
           {lap.dokter_nama && (
@@ -176,7 +176,10 @@ function Angka14({ sesi, panggilan }: { sesi: SesiLaporan[]; panggilan: string }
         <KartuAngka label="Rata-rata diterima" angka={rata.toFixed(1).replace(".", ",")} ket="suapan per sesi" />
       </div>
       <section className={`${bento} flex flex-col gap-3`}>
-        <h2 className="font-judul text-subjudul font-bold">Suapan per Hari</h2>
+        <div>
+          <h2 className="font-judul text-subjudul font-bold">Suapan per Hari</h2>
+          {hari.length > 0 && <p className="text-kecil text-ungu-muda">{rentangTanggal(hari[0].tanggal, hari[hari.length - 1].tanggal)}</p>}
+        </div>
         <GrafikPil judul={`Suapan ${panggilan} per hari, 14 hari terakhir`}
           batang={hari.map((h) => ({ label: String(Number(h.tanggal.slice(8, 10))), diterima: h.diterima, ditolak: h.ditolak, ada: h.ada, sorot: h.tanggal === hariIni }))} />
       </section>

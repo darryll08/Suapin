@@ -110,7 +110,7 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
 
       {menu && (
         <section className={`${bento} pudar-masuk flex flex-col gap-4`}>
-          <JudulLangkah n={3}>{sapaan} duduk di sebelah mana anak?</JudulLangkah>
+          <JudulLangkah n={3}>{sapaan} Duduk di Sebelah Mana Anak?</JudulLangkah>
           <IlustrasiDuduk sisi={sisi} />
           <div className={`${wadahSegmen} grid-cols-2`}>
             {(["kiri", "kanan"] as const).map((s) => (
@@ -128,7 +128,7 @@ export function Persiapan({ saya, tahap, mulai }: { saya: Saya; tahap: number; m
           <JudulLangkah n={4} gelap>Posisi HP</JudulLangkah>
           <p className="text-isi text-latar/90">Letakkan HP sedikit di samping depan anak, setinggi wajahnya. Wajah anak harus terlihat. Jauhkan HP dari jangkauan tangan anak.</p>
           <button type="button" className={tombolHero} disabled={memuat} aria-busy={memuat || undefined} onClick={tekanMulai}>
-            {memuat ? "Menyiapkan…" : "Mulai makan"}
+            {memuat ? "Menyiapkan…" : "Mulai Makan"}
           </button>
         </section>
       )}

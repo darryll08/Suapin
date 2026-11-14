@@ -50,7 +50,7 @@ export async function buatRingkasan(
   // Hanya id dari daftar makanan bersama yang diteruskan ke LLM; teks lain jadi "umum".
   const menuUmum = (menu: string) => MAKANAN.some((m) => m.id === menu) ? menu : "umum"
   const input = JSON.stringify({ jumlah_sesi: n, diterima: total.diterima, ditolak: total.ditolak,
-    rata_durasi_detik: n ? Math.round(total.durasi / n) : 0, tahap,
+    rata_durasi_menit: n ? Math.max(1, Math.round(total.durasi / n / 60)) : 0, tahap,
     ngemut_dikonfirmasi: dikonfirmasi.length, siap_naik: evaluasi.siapNaik,
     paparan: paparan.map((row) => ({ ...row, makanan: menuUmum(row.makanan) })),
     sesi: riwayat.map(({ sesi, mood }) => {
@@ -74,7 +74,7 @@ export async function buatRingkasan(
     try {
       hasil = validasi(await llm("ringkasan", skema,
         "Ringkas data sesi anak dalam bahasa Indonesia. Tunjukkan 1–2 pola yang tampak dari data dan sebutkan angkanya. " +
-        "Pakai hanya angka yang tertulis persis di data: jangan menghitung, menjumlah, membuat persen, mengubah satuan, atau memakai pemisah ribuan. Sebut \"suapan\", bukan \"makanan\"; tulis \"ya/tidak\", bukan true/false. Versi keluarga hangat dan versi dokter faktual. Jangan mendiagnosis, memberi dosis atau menu, atau menyalahkan pengasuh.", input))
+        "Pakai hanya angka yang tertulis persis di data: jangan menghitung, menjumlah, membuat persen, mengubah satuan, atau memakai pemisah ribuan. Sebut \"suapan\", bukan \"makanan\"; tulis \"ya/tidak\", bukan true/false. Versi keluarga hangat dan versi dokter faktual. Tulis kalimat utuh yang enak dibaca (2–3 kalimat), bukan daftar nama data; \"siap_naik\" ditulis sebagai kalimat (mis. \"belum memenuhi syarat naik tahap\"). Jangan mendiagnosis, memberi dosis atau menu, atau menyalahkan pengasuh.", input))
     } catch { /* Lanjutkan dengan cadangan lokal. */ }
     if (hasil) {
       sumber = "ai"

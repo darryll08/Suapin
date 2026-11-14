@@ -4,7 +4,7 @@ import { cariMakanan } from "../../../bersama/konten/makanan"
 type Sesi = Keluaran<"pasienDetail">["sesi"][number]
 const alasan: Record<Sesi["alasan_selesai"], string> = {
   waktu_habis: "Waktu habis", terlalu_lama_menolak: "Menolak terlalu lama",
-  stop: "Dihentikan", stop_darurat: "Stop darurat",
+  stop: "Selesai", stop_darurat: "Stop darurat",
 }
 
 // Format sesuai UI UX Guidelines 14.3: "Sen, 9 Nov", "07.00", "18 mnt".

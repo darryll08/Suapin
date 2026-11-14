@@ -154,7 +154,7 @@ describe("penilaian suapan", () => {
 });
 
 describe("tombol pengasuh", () => {
-  it("TIDAK_PASTI: Ya → diterima dikoreksi; Tidak → ditolak dikoreksi; diam 10 detik → tidak dicatat", () => {
+  it("TIDAK_PASTI: Ya → diterima dikoreksi; Tidak → ditolak dikoreksi; tanpa kamera menunggu jawaban", () => {
     for (const [jawab, harap] of [["ya", "diterima"], ["tidak", "ditolak"]] as const) {
       const s = new Sim(konteks({ hasilDariKamera: false }));
       s.keGiliranAnak();
@@ -167,8 +167,9 @@ describe("tombol pengasuh", () => {
     s.keGiliranAnak();
     s.tekan("suap");
     s.sinyal(10_500);
-    expect(s.k.status).not.toBe("TIDAK_PASTI");
-    expect(s.hasil()).toEqual([]);
+    expect(s.k.status).toBe("TIDAK_PASTI");
+    s.tekan("ya");
+    expect(s.k.gigitan).toEqual([{ detik: expect.any(Number), hasil: "diterima", dikoreksi: true }]);
   });
 
   it("hasilDariKamera = false → Suap langsung menampilkan teks tadi_masuk", () => {

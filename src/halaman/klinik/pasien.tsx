@@ -5,7 +5,7 @@ import { useState, type ReactNode } from "react"
 import { Navigate, useParams } from "react-router"
 import { cariMakanan } from "../../../bersama/konten/makanan"
 import type { Keluaran } from "../../../bersama/kontrak/api"
-import { GrafikPil, RiwayatTahap, TrackerTahap, type BatangPil } from "../../komponen/beranda"
+import { GrafikPil, RiwayatTahap, TrackerTahap, rentangTanggal, type BatangPil } from "../../komponen/beranda"
 import { FormResep } from "../../komponen/klinik/form-resep"
 import { TabelSesi } from "../../komponen/klinik/tabel-sesi"
 import { Memuat, PesanGalat, Pil, Tombol } from "../../komponen/dasar"
@@ -199,11 +199,14 @@ function Map({ ikon, judul, ket, buka = false, children }: { ikon: NamaIkon; jud
 /** Grafik pil 14 hari (komponen sama dengan beranda/laporan keluarga). */
 function Tren({ sesi }: { sesi: Detail["sesi"] }) {
   const hariIni = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10)
-  const batang: BatangPil[] = Array.from({ length: 14 }, (_, i) => {
-    const d = new Date(Date.now() + 7 * 3600000 - (13 - i) * 86400000).toISOString().slice(0, 10)
+  const tanggal = Array.from({ length: 14 }, (_, i) => new Date(Date.now() + 7 * 3600000 - (13 - i) * 86400000).toISOString().slice(0, 10))
+  const batang: BatangPil[] = tanggal.map((d) => {
     const isi = sesi.filter((s) => s.tanggal === d)
     return { label: String(Number(d.slice(8, 10))), diterima: isi.reduce((n, s) => n + s.diterima, 0),
       ditolak: isi.reduce((n, s) => n + s.ditolak, 0), ada: isi.length > 0, sorot: d === hariIni }
   })
-  return <GrafikPil batang={batang} judul="Suapan per Hari, 14 Hari Terakhir" tinggi={150} />
+  return <>
+    <p className="text-kecil text-ungu-muda">{rentangTanggal(tanggal[0], tanggal[13])}</p>
+    <GrafikPil batang={batang} judul="Suapan per Hari, 14 Hari Terakhir" tinggi={150} />
+  </>
 }

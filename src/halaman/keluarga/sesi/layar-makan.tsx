@@ -52,6 +52,8 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
   const [galatSimpan, setGalatSimpan] = useState("");
   const [menyimpan, setMenyimpan] = useState(false);
   const tanpaKamera = sumber === null || !!sesi.galat;
+  // Selama lembar "kamera tidak bisa dipakai" terbuka, sesi dijeda dan pemanasan belum diputar (intro tidak terlewat).
+  const lembarKamera = !!sesi.galat && !galatKameraDitutup;
   const pakaiKamera = sumber?.jenis === "kamera" && !sesi.galat;
 
   useKlip(v?.klip, { suara: saklar.suara, sapaan: saya.child.sapaan });
@@ -95,6 +97,12 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
   }, [v]);
 
   const simpan = useCallback(async (hasil: SesiSelesai) => {
+    // Simulasi tahap (mode demo) tidak disimpan: tahapnya bukan tahap anak, jadi riwayat dan naik tahap jadi kacau.
+    if (aturan.stage !== saya.child.stage) {
+      beritahu({ nada: "info", judul: "Simulasi selesai", pesan: "Sesi simulasi tahap tidak disimpan ke laporan." });
+      void pindah("/beranda", { replace: true });
+      return;
+    }
     setMenyimpan(true);
     setGalatSimpan("");
     try { sessionStorage.setItem(KUNCI_TERTUNDA, JSON.stringify(hasil)); } catch { /* abaikan */ }
@@ -111,7 +119,7 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
     } finally {
       setMenyimpan(false);
     }
-  }, [pindah]);
+  }, [pindah, aturan.stage, saya.child.stage]);
 
   const disimpan = useRef(false);
   useEffect(() => {
@@ -177,7 +185,7 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
       <div className="absolute inset-0 flex items-center justify-center pt-6 pb-36">
         <div className="relative aspect-square h-[min(70cqh,92cqw)] max-h-full">
           {!v ? <Memuat teks="Menyiapkan teman makan…" />
-            : status === "PEMANASAN" ? (
+            : status === "PEMANASAN" ? (lembarKamera ? null :
               <Pemanasan makanan={pilihan.menu} tokoh={pilihan.tokoh} panggilan={saya.child.panggilan} suara={saklar.suara} onSelesai={sesi.selesaiPemanasan} />
             ) : tampilKarakter ? (
               <Karakter pose={v.pose} mulut={v.mulutKarakter} layar="terang" tokoh={pilihan.tokoh}
@@ -239,7 +247,7 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
         <StripTeks teks={teks} gelap={hitam} className="absolute inset-x-0 bottom-36 sm:bottom-40" />
       )}
 
-      {sesi.galat && !galatKameraDitutup && (
+      {lembarKamera && (
         <LembarBawah judul="Kamera Tidak Bisa Dipakai">
           <p className="text-isi">{sesi.galat}</p>
           <p className="text-kecil text-ungu-muda">Sesi tetap jalan. Setelah Suap, jawab "Tadi masuk?" dengan Ya atau Tidak.</p>
@@ -264,7 +272,7 @@ export function LayarMakan({ saya, aturan, pilihan, sumber, wakeLock }: Props) {
         <LembarBawah judul="Makan Dijeda" tutup={lanjutMakan}>
           <div className="grid gap-3 sm:grid-cols-2">
             <Tombol className="sm:w-full" onClick={lanjutMakan}>Lanjut Makan</Tombol>
-            <Tombol varian="kedua" className="sm:w-full" onClick={() => akhiri("stop")}>Akhiri makan</Tombol>
+            <Tombol varian="kedua" className="sm:w-full" onClick={() => akhiri("stop")}>Akhiri Makan</Tombol>
           </div>
           <button type="button" onClick={() => setDarurat(true)}
             className="flex min-h-12 items-center justify-center gap-2 text-isi font-semibold text-jagung-tua underline-offset-4 hover:underline">

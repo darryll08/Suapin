@@ -39,6 +39,14 @@ export function KartuAngka({ label, angka, satuan, ket }: { label: string; angka
   );
 }
 
+/** "1–14 November 2026", atau "25 Oktober – 7 November 2026" bila melewati pergantian bulan. Input YYYY-MM-DD. */
+export function rentangTanggal(awal: string, akhir: string): string {
+  const f = (iso: string, o: Intl.DateTimeFormatOptions) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("id-ID", { timeZone: "UTC", ...o });
+  return awal.slice(0, 7) === akhir.slice(0, 7)
+    ? `${Number(awal.slice(8, 10))}–${f(akhir, { day: "numeric", month: "long", year: "numeric" })}`
+    : `${f(awal, { day: "numeric", month: "long" })} – ${f(akhir, { day: "numeric", month: "long", year: "numeric" })}`;
+}
+
 export type BatangPil = { label: string; diterima: number; ditolak: number; ada: boolean; sorot?: boolean; stiker?: boolean };
 
 /**
@@ -61,7 +69,7 @@ export function GrafikPil({ batang, judul, tampilDitolak = true, tinggi = 140 }:
           const hTerima = b.ada && total > 0 ? (b.diterima / total) * h : 0;
           return (
             <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
-              {b.sorot && b.ada && <span className="text-kecil font-bold tabular-nums">{b.diterima}</span>}
+              {b.ada && <span className={`${rapat ? "text-[11px]" : "text-kecil"} font-bold tabular-nums ${b.sorot ? "" : "text-ungu-muda"}`}>{b.diterima}</span>}
               <div className={`flex w-full ${b.ada ? "max-w-9" : "max-w-6"} flex-col overflow-hidden rounded-full ${b.ada ? (tampilDitolak && b.ditolak ? "arsir border border-ungu-muda" : "") : "border-2 border-dashed border-ungu-muda"} ${b.sorot ? "ring-2 ring-jagung-tua ring-offset-2 ring-offset-permukaan" : ""}`}
                 style={{ height: h }}>
                 <span className="mt-auto block w-full rounded-full bg-ungu" style={{ height: hTerima }} />
@@ -147,10 +155,12 @@ export function TrackerTahap({ tahap, progres, gelap = false }: { tahap: number;
         {Array.from({ length: progres.streak_target }, (_, i) => {
           const x = sesi[i];
           const persen = x && x.ditawarkan > 0 ? Math.round((x.diterima / x.ditawarkan) * 100) : null;
+          // Kurang dari batas suapan ditawarkan: belum dihitung, jangan tampil seperti persen yang gagal.
+          const kurang = !!x && x.ditawarkan < progres.min_ditawarkan;
           return (
-            <li key={i} title={x ? `${x.diterima}/${x.ditawarkan} suapan` : "belum ada sesi"}
+            <li key={i} title={!x ? "belum ada sesi" : kurang ? `Belum dihitung: baru ${x.ditawarkan} suapan, minimal ${progres.min_ditawarkan}` : `${x.diterima}/${x.ditawarkan} suapan`}
               className={`inline-flex h-6 items-center justify-center rounded-full text-[11px] font-bold tabular-nums ${x?.bagus ? "bg-jagung text-ungu" : `${kosong} ${redup}`}`}>
-              {persen === null ? "–" : `${persen}%`}
+              {persen === null ? "–" : kurang ? `<${progres.min_ditawarkan}` : `${persen}%`}
             </li>
           );
         })}

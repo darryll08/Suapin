@@ -26,6 +26,8 @@ export function Admin() {
   const [keluar, setKeluar] = useState(false);
 
   if (galat instanceof GalatApi && galat.status === 401) return <Navigate to={keMasuk(location.pathname + location.search)} replace />;
+  // Form admin baru tampil setelah peran admin terbukti (akun lain tidak melihatnya sekilas sebelum dialihkan).
+  if (!data && !galat) return <Memuat />;
 
   const selesai = (s: Rahasia) => { setRahasia(s); ulang(); window.scrollTo({ top: 0 }); };
   const keluarAdmin = async () => {

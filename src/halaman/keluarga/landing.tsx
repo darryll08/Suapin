@@ -149,7 +149,7 @@ export function Landing() {
           ))}
         </ol>
         <Muncul className="mx-auto max-w-[640px] text-center text-kecil text-ungu-muda">
-          Naik tahap otomatis setelah 5 sesi dengan minimal 5 suapan diterima. Di jalur klinik, dokter yang menaikkan.
+          Naik tahap otomatis setelah cukup sesi dan 3 sesi berturut-turut dengan minimal 70% suapan diterima. Di jalur klinik, dokter yang menaikkan.
         </Muncul>
       </section>
 
